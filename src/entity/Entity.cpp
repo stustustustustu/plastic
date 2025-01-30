@@ -1,0 +1,291 @@
+#include "Entity.h"
+#include "../src/config.h"
+#include "../src/utils/render/RenderUtils.h"
+#include "../Game.h"
+
+/**
+ * @brief Constructor to initialize the Entity's attributes.
+ *
+ * @param position A pair of floats representing the Entity's center position.
+ * @param speed The speed of the Entity (default is 1.0).
+ * @param damage The damage dealt by the Entity (default is 1.0).
+ * @param health The current health of the Entity (default is 100.0).
+ * @param shield The current shield of the Entity (default is 0.0).
+ * @param level The level of the Entity (default is 1).
+ * @param targets The number of current targets (default is 0).
+ */
+Entity::Entity(
+    std::vector<float> position,
+    float speed,
+    float damage,
+
+    float health,
+    float maxHealth,
+
+    float shield,
+    float maxShield,
+
+    int level,
+
+    int targets,
+    int maxTargets
+) : position(position), speed(speed), damage(damage), health(health), maxHealth(maxHealth), shield(shield), maxShield(maxShield), level(level), targets(targets), maxTargets(maxTargets) {}
+
+/**
+ * @brief Draws the Entity on screen and the health bar of the said Entity.
+ *
+ * @param hex The color of the entity to draw.
+ */
+void Entity::drawEntity(int hex) const {
+    drawRectangle(getRenderPosition().at(0) - 16, getRenderPosition().at(1) - 16, 32, 32, hex);
+
+    drawRectangle(getRenderPosition().at(0) - 16 - 16 * (100 - this -> getHealth()) / 100, getRenderPosition().at(1) - 38, 32 * this -> getHealth() / 100, 2, 0xFF0000); // Healthbar
+
+    drawRectangle(getRenderPosition().at(0) - 16 - 16 * (100 - this -> getShield()) / 100, getRenderPosition().at(1) - 38, 32 * this -> getShield() / 100, 2, 0x55FFFF); // Shieldbar
+}
+
+/**
+ * @brief Draws a line from the entity to another on screen.
+ *
+ * @param hex The color of the line to draw.
+ */
+void Entity::drawTargetLine(Entity target, float thickness, int hex) const {
+    drawLine(this -> getRenderPosition().at(0) - 16, this -> getRenderPosition().at(1) - 16, target.getRenderPosition().at(0) - 16, target.getRenderPosition().at(1) - 16, thickness, hex);
+}
+
+/**
+ * @brief Getter for the Entity's position.
+ *
+ * @return A vector of floats representing the Entity's position.
+ */
+std::vector<float> Entity::getPosition() const {
+    return this -> position;
+}
+
+/**
+ * @brief Getter for the Entity's render position.
+ *
+ * @return A vector of integers representing the Entity's render position.
+ */
+std::vector<int> Entity::getRenderPosition() const {
+    return {static_cast<int>(std::round(position[0])), static_cast<int>(std::round(position[1]))};
+}
+
+/**
+ * @brief Setter for the Entity's position.
+ *
+ * @param position A vector representing the new position of the Entity.
+ */
+void Entity::setPosition(std::vector<float> position) {
+    this -> position = position;
+}
+
+/**
+ * @brief Moves the Entity by a given delta in both x and y directions.
+ *
+ * @param delta A vector representing the change in position.
+ */
+void Entity::move(std::vector<int> delta) {
+    position.at(0) += delta.at(0) * getSpeed();
+    position.at(1) += delta.at(1) * getSpeed();
+}
+
+void Entity::move(const std::vector<float>& delta) {
+    position.at(0) += delta.at(0) * getSpeed();
+    position.at(1) += delta.at(1) * getSpeed();
+}
+
+/**
+ * @brief Getter for the Entity's speed.
+ *
+ * @return The speed value of the Entity.
+ */
+float Entity::getSpeed() const {
+    return this -> speed;
+}
+
+/**
+ * @brief Setter for the Entity's speed.
+ *
+ * @param speed The new speed value to be set for the Entity.
+ */
+void Entity::setSpeed(float speed) {
+    this -> speed = speed;
+}
+
+/**
+ * @brief Getter for the Entity's damage value.
+ *
+ * @return The damage value of the Entity.
+ */
+float Entity::getDamage() const {
+    return this -> damage;
+}
+
+/**
+ * @brief Setter for the Entity's damage value.
+ *
+ * @param damage The new damage value to be set for the Entity.
+ */
+void Entity::setDamage(float damage) {
+    this -> damage = damage;
+}
+
+/**
+ * @brief Getter for the Entity's current health.
+ *
+ * @return The current health value of the Entity.
+ */
+float Entity::getHealth() const {
+    return this -> health;
+}
+
+/**
+ * @brief Setter for the Entity's health value.
+ *
+ * @param health The new health value to be set for the Entity. Health cannot be negative.
+ */
+void Entity::setHealth(float health) {
+    this -> health = (health >= 0) ? health : 0;
+}
+
+/**
+ * @brief Getter for the Entity's maximum health.
+ *
+ * @return The maximum health value of the Entity.
+ */
+float Entity::getMaxHealth() const {
+    return this -> maxHealth;
+}
+
+/**
+ * @brief Setter for the Entity's maximum health value.
+ *
+ * @param health The new maximum health value to be set. Max health cannot be negative.
+ */
+void Entity::setMaxHealth(float health) {
+    if (health >= 0) {
+        this -> maxHealth = health;
+    }
+}
+
+/**
+ * @brief Getter for the Entity's shield value.
+ *
+ * @return The current shield value of the Entity.
+ */
+float Entity::getShield() const {
+    return this -> shield;
+}
+
+/**
+ * @brief Setter for the Entity's shield value.
+ *
+ * @param shield The new shield value to be set for the Entity. Shield cannot be negative.
+ */
+void Entity::setShield(float shield) {
+    this -> shield = (shield >= 0) ? shield : 0;
+}
+
+/**
+ * @brief Getter for the Entity's maximum shield value.
+ *
+ * @return The maximum shield value of the Entity.
+ */
+float Entity::getMaxShield() const {
+    return this -> maxShield;
+}
+
+/**
+ * @brief Setter for the Entity's maximum shield value.
+ *
+ * @param shield The new maximum shield value to be set. Max shield cannot be negative.
+ */
+void Entity::setMaxShield(float shield) {
+    if (shield >= 0) {
+        this -> maxShield = shield;
+    }
+}
+
+/**
+ * @brief Handles damage taken by the Entity, affecting shield and health.
+ *
+ * If the Entity has a shield and the damage is not true damage, the shield is damaged first.
+ * If the shield is depleted, the remaining damage affects health. If the damage is true damage,
+ * it bypasses the shield and directly affects health.
+ *
+ * @param damage The amount of damage to be taken.
+ * @param trueDamage If true, the damage bypasses the shield and directly reduces health.
+ */
+void Entity::hit(float damage, bool trueDamage) {
+    if (damage <= 0) {
+        std::cerr << "Damage taken cannot be negative or 0." << std::endl;
+        return;
+    }
+
+    // Damage the shield first (if trueDamage == false)
+    if (getShield() > 0 && !trueDamage) {
+        if (getShield() >= damage) {
+            setShield(getShield() - damage);
+        } else {
+            damage -= getShield();
+            setShield(0);
+            setHealth(getHealth() - damage);
+        }
+    } else {
+        setHealth(getHealth() - damage);
+    }
+
+    // No negative health
+    if (getHealth() < 0) {
+        setHealth(0);
+    }
+}
+
+/**
+ * @brief Heals the Entity by a certain amount.
+ * If shield is true, the shield will be healed; otherwise, health is healed.
+ *
+ * @param healing The amount of health or shield to be restored.
+ * @param shield If true, restores shield instead of health.
+ */
+void Entity::heal(float healing, bool shield) {
+    if (healing <= 0) {
+        std::cerr << "Healing cannot be negative or 0." << std::endl;
+        return;
+    }
+
+    if (!shield) {
+        if (getHealth() + healing > getMaxHealth()) {
+            setHealth(getMaxHealth());
+        } else {
+            setHealth(getHealth() + healing);
+        }
+    } else {
+        if (getShield() + healing > getMaxShield()) {
+            setShield(getMaxShield());
+        } else {
+            setShield(getShield() + healing);
+        }
+    }
+}
+
+/**
+ * @brief Getter for the Entity's current level.
+ *
+ * @return The level of the Entity.
+ */
+int Entity::getLevel() const {
+    return this -> level;
+}
+
+/**
+ * @brief Setter for the Entity's level.
+ *
+ * @param level The new level to be set for the Entity. Level must be greater than 0.
+ */
+void Entity::setLevel(int level) {
+    if (level > 0) {
+        this -> level = level;
+    }
+}
