@@ -1,6 +1,6 @@
 #include "Entity.h"
 #include "../src/config.h"
-#include "../src/utils/render/RenderUtils.h"
+#include "../utils/render/Renderer.h"
 #include "../Game.h"
 
 /**
@@ -36,12 +36,12 @@ Entity::Entity(
  *
  * @param hex The color of the entity to draw.
  */
-void Entity::drawEntity(int hex) const {
-    drawRectangle(getRenderPosition().at(0) - 16, getRenderPosition().at(1) - 16, 32, 32, hex);
+void Entity::drawEntity(Renderer &renderer, int hex) const {
+    renderer.DrawRectangle(getRenderPosition().at(0) - 16, getRenderPosition().at(1) - 16, 32, 32, hex);
 
-    drawRectangle(getRenderPosition().at(0) - 16 - 16 * (100 - this -> getHealth()) / 100, getRenderPosition().at(1) - 38, 32 * this -> getHealth() / 100, 2, 0xFF0000); // Healthbar
+    renderer.DrawRectangle(getRenderPosition().at(0) - 16 - 16 * (100 - this -> getHealth()) / 100, getRenderPosition().at(1) - 38, 32 * this -> getHealth() / 100, 2, 0xFF0000); // Healthbar
 
-    drawRectangle(getRenderPosition().at(0) - 16 - 16 * (100 - this -> getShield()) / 100, getRenderPosition().at(1) - 38, 32 * this -> getShield() / 100, 2, 0x55FFFF); // Shieldbar
+    renderer.DrawRectangle(getRenderPosition().at(0) - 16 - 16 * (100 - this -> getShield()) / 100, getRenderPosition().at(1) - 38, 32 * this -> getShield() / 100, 2, 0x55FFFF); // Shieldbar
 }
 
 /**
@@ -49,8 +49,8 @@ void Entity::drawEntity(int hex) const {
  *
  * @param hex The color of the line to draw.
  */
-void Entity::drawTargetLine(Entity target, float thickness, int hex) const {
-    drawLine(this -> getRenderPosition().at(0) - 16, this -> getRenderPosition().at(1) - 16, target.getRenderPosition().at(0) - 16, target.getRenderPosition().at(1) - 16, thickness, hex);
+void Entity::drawTargetLine(Renderer &renderer, Entity target, float thickness, int hex) const {
+    renderer.DrawLine(this -> getRenderPosition().at(0) - 16, this -> getRenderPosition().at(1) - 16, target.getRenderPosition().at(0) - 16, target.getRenderPosition().at(1) - 16, thickness, hex);
 }
 
 /**

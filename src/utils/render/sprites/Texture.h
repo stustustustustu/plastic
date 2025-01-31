@@ -4,15 +4,15 @@
 #include "../src/config.h"
 
 class Texture {
-public:
-    GLuint ID;
-    int Width, Height;
+    public:
+        unsigned int ID;
+        int Width, Height;
 
-    Texture();
-    void Generate(const std::string &file, bool alpha);
-    void Bind() const;
-    void Unbind() const;
-    void Delete();
+        Texture();
+        void Generate(const std::string &file, bool alpha);
+        void Bind() const;
+        void Unbind() const;
+        void Delete();
 };
 
 #endif

@@ -16,6 +16,7 @@ class ShaderUtils {
         void SetMat4(const std::string &name, const glm::mat4 &matrix) const;
         void SetVec3(const std::string &name, const glm::vec3 &value) const;
         void SetVec4(const std::string &name, const glm::vec4 &value) const;
+        void SetTexture(const std::string &name, int textureUnit) const;
     };
 
 #endif // SHADERUTILS_H

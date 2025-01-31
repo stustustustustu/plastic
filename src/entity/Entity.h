@@ -2,7 +2,7 @@
 #define Entity_H
 
 #include "../src/config.h"
-#include "../utils/shader/ShaderUtils.h"
+#include "../utils/render/Renderer.h"
 
 class Entity {
     private:
@@ -43,9 +43,9 @@ class Entity {
             int maxTargets = 1
         );
 
-        void drawEntity(int hex) const;
+        void drawEntity(Renderer &renderer, int hex) const;
 
-        void drawTargetLine(Entity target, float thickness, int hex) const;
+        void drawTargetLine(Renderer &renderer, Entity target, float thickness, int hex) const;
 
         std::vector<float> getPosition() const;
         std::vector<int> getRenderPosition() const;

@@ -16,13 +16,8 @@ add_executable(
 
         src/utils/shader/ShaderUtils.cpp
         src/utils/shader/ShaderUtils.h
-        src/utils/render/RenderUtils.cpp
-        src/utils/render/RenderUtils.h
-        src/utils/render/sprites/SpriteRenderer.cpp
-        src/utils/render/sprites/SpriteRenderer.h
-
-        src/utils/time/TimeUtils.cpp
-        src/utils/time/TimeUtils.h
+        src/utils/render/Renderer.cpp
+        src/utils/render/Renderer.h
 
         src/entity/Entity.cpp
         src/entity/Entity.h
@@ -36,6 +31,11 @@ add_executable(
         dependencies/stb/stb_image.cpp
         src/Game.cpp
         src/Game.h
+        src/core/wave/Wave.cpp
+        src/core/wave/Wave.h
+        src/core/wave/manager/WaveManager.cpp
+        src/core/wave/manager/WaveManager.h
+        src/utils/math/random.cpp
 )
 
 target_include_directories(plastic PRIVATE dependencies) # Includes location

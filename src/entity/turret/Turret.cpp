@@ -71,15 +71,15 @@ void Turret::shoot() {
 
 }
 
-void Turret::drawTargetLine() const {
+void Turret::drawTargetLine(Renderer &renderer) const {
     if (!target) return;
 
     if (target -> getPosition().size() > 0) {
-        Entity::drawTargetLine(*target, 2.0f, 0xFF0000);
+        Entity::drawTargetLine(renderer, *target, 2.0f, 0xFF0000);
     }
 }
 
-void Turret::render() const {
+void Turret::render(Renderer &renderer) const {
     int hex;
     switch (type) {
         case TurretType::LASER:
@@ -92,7 +92,7 @@ void Turret::render() const {
             hex = 0x323232;
             break;
     }
-    drawRectangle(getRenderPosition().at(0) - 16, getRenderPosition().at(1) - 16, 32, 32, hex);
+    renderer.DrawRectangle(getRenderPosition().at(0) - 16, getRenderPosition().at(1) - 16, 32, 32, hex);
 }
 
 float Turret::calculateDistance(const std::vector<float>& a, const std::vector<float>& b) {

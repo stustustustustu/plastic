@@ -61,8 +61,6 @@ void Entity::populate(std::vector<Entity>& enemies, int n, GLFWwindow* window) {
 
     srand(time(NULL)); // Seed RNG
 
-    std::cout << "spawned enemies" << std::endl;
-
     for (int i = 0; i < n; ++i) {
         float x, y;
         do {

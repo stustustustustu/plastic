@@ -58,3 +58,7 @@ void ShaderUtils::SetVec3(const std::string &name, const glm::vec3 &value) const
 void ShaderUtils::SetVec4(const std::string &name, const glm::vec4 &value) const {
     glUniform4f(glGetUniformLocation(ID, name.c_str()), value.x, value.y, value.z, value.w);
 }
+
+void ShaderUtils::SetTexture(const std::string &name, int textureUnit) const {
+    glUniform1i(glGetUniformLocation(ID, name.c_str()), textureUnit);
+}

@@ -1,12 +1,12 @@
 #include "Game.h"
 
-Game::Game(float width, float height) : state(ACTIVE), width(width), height(height), window(NULL), shader(NULL), texture(NULL), renderer(NULL), player({width/2, height/2}) {
-}
+Game::Game(float width, float height) : state(ACTIVE), width(width), height(height), window(NULL), shader(NULL), texture(NULL), renderer(NULL), manager(NULL), player({width/2, height/2}) {}
 
 Game::~Game() {
     delete shader;
     delete texture;
     delete renderer;
+    delete manager;
 }
 
 std::vector<float> Game::getSize() {
@@ -14,7 +14,7 @@ std::vector<float> Game::getSize() {
 }
 
 bool Game::Init() {
-    if (!initializeWindow(window, getSize().at(0), getSize().at(1), "plastic")) {
+    if (!renderer -> initializeWindow(window, getSize().at(0), getSize().at(1), "plastic")) {
         return false;
     }
 
@@ -24,40 +24,50 @@ bool Game::Init() {
         "../src/utils/shader/shaders/fragment.txt"
     );
 
-    Texture texture;
-    texture.Generate("../src/assets/sprites/sheet.png", true);
+    texture = new Texture;
+    texture -> Generate("C:/Users/stupe/Desktop/plastic/src/assets/sprites/sheet.png", true);
 
-    renderer = new SpriteRenderer(*shader);
-
+    renderer = new Renderer(*shader);
+    manager = new WaveManager();
 
     // Spawn 3 turret objects
     turrets.push_back(Turret({width/2 - 100, height/2 - 100}, TurretType::LASER));
     turrets.push_back(Turret({width/2 + 100, height/2 - 100}, TurretType::RIFLE));
     turrets.push_back(Turret({width/2 + 100, height/2 + 100}, TurretType::BOMB));
 
-    Entity::populate(enemies, 5, window);
+    manager -> generateWaves(5, window);
 
     return true;
 }
 
 void Game::Update(float dt) {
-    Player::Movement(player, window, enemies); // player movement
+    auto& enemies = manager -> getCurrentWave() -> getEnemies();
 
-    for (auto& turret : turrets) { // turret shooting
+    Player::Movement(player, window, enemies); // Player movement
+
+    for (auto& turret : turrets) { // Turret shooting
         turret.findTarget(enemies);
         turret.shoot();
     }
 
-    for (int i = 0; i < enemies.size(); i++) {
-        // enemy movement
+    for (int i = 0; i < enemies.size();) {
         enemies[i].moveTo(player);
         enemies[i].setSpeed(0.25f);
 
         if (enemies[i].getHealth() <= 0) {
             enemies.erase(enemies.begin() + i);
             if (enemies.empty()) {
-                Entity::populate(enemies, 5, window);
+                if (manager -> hasNextWave()) {
+                    manager -> startNextWave();
+                    if (manager -> getCurrentWave()) {
+                        enemies = manager -> getCurrentWave() -> getEnemies();
+                    }
+                } else {
+                    std::cout << "All waves defeated!" << std::endl;
+                }
             }
+        } else {
+            ++i;
         }
     }
 }
@@ -65,22 +75,25 @@ void Game::Update(float dt) {
 void Game::Render() const {
     glClear(GL_COLOR_BUFFER_BIT);
 
-    //renderer -> DrawSprite(*texture, glm::vec2(10.0f, 10.0f), glm::vec2(1.0f, 1.0f), 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-
     if (player.getHealth() > 0) {
-        player.drawEntity(-1);
+        player.drawEntity(*renderer, -1);
     }
 
     for (auto& turret : turrets) {
-        turret.render();
-        turret.drawTargetLine();
+        turret.render(*renderer);
+        turret.drawTargetLine(*renderer);
     }
 
-    for (auto& enemy : enemies) {
-        if (enemy.getHealth() > 0) {
-            enemy.drawEntity(0);
+    if (manager && manager->getCurrentWave()) {
+        const auto& enemies = manager->getCurrentWave()->getEnemies();
+        for (const auto& enemy : enemies) {
+            if (enemy.getHealth() > 0) {
+                enemy.drawEntity(*renderer, 0);
+            }
         }
     }
+
+    //renderer -> DrawSprite(*texture, glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 1.0f), 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
     glfwSwapBuffers(window);
     glUseProgram(shader -> ID);

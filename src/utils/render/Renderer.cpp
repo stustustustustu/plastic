@@ -1,32 +1,89 @@
-#include "RenderUtils.h"
+#include "Renderer.h"
 
-bool initializeWindow(GLFWwindow*& window, int width, int height, const std::string& title) {
-    if (!glfwInit()) {
-        std::cout << "GLFW couldn't initialize." << std::endl;
-        return false;
-    }
+#include <../dependencies/glm/ext/matrix_clip_space.hpp>
+#include <../dependencies//glm/ext/matrix_transform.hpp>
 
-    window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
-    if (!window) {
-        std::cout << "GLFW couldn't create a window." << std::endl;
-        glfwTerminate();
-        return false;
-    }
-
-    glfwMakeContextCurrent(window);
-
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-        std::cout << "GLAD couldn't initialize." << std::endl;
-        glfwDestroyWindow(window);
-        glfwTerminate();
-        return false;
-    }
-
-    glClearColor(0.25f, 0.5f, 0.75f, 1.0f);
-    return true;
+Renderer::Renderer(ShaderUtils &shader) : shader(shader), quadVAO(0) {
+    initRenderData();
 }
 
-void drawRectangle(int x, int y, int width, int height, int hex) {
+Renderer::~Renderer() {
+    glDeleteVertexArrays(1, &quadVAO);
+}
+
+void Renderer::initRenderData() {
+    unsigned int VBO;
+    float vertices[] = {
+        // Pos      // Tex
+        0.0f, 1.0f, 0.0f, 1.0f,
+        1.0f, 0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 0.0f,
+
+        0.0f, 1.0f, 0.0f, 1.0f,
+        1.0f, 1.0f, 1.0f, 1.0f,
+        1.0f, 0.0f, 1.0f, 0.0f
+    };
+
+    glGenVertexArrays(1, &quadVAO);
+    glGenBuffers(1, &VBO);
+
+    glBindVertexArray(quadVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+}
+
+void Renderer::DrawSprite(const Texture &texture, glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color) const {
+    int screenWidth, screenHeight;
+    glfwGetFramebufferSize(glfwGetCurrentContext(), &screenWidth, &screenHeight);
+
+    if (texture.ID == 0) {
+        std::cerr << "WARNING: Attempting to draw a sprite with an uninitialized texture!" << std::endl;
+        return;
+    }
+
+    shader.Use();
+
+    // Set the sprite color
+    shader.SetVec3("spriteColor", color);
+
+    // Calculate transformation matrix
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(position, 0.0f));
+    model = glm::translate(model, glm::vec3(0.5f * size.x, 0.5f * size.y, 0.0f));
+    model = glm::rotate(model, glm::radians(rotate), glm::vec3(0.0f, 0.0f, 1.0f));
+    model = glm::translate(model, glm::vec3(-0.5f * size.x, -0.5f * size.y, 0.0f));
+    model = glm::scale(model, glm::vec3(size, 1.0f));
+
+    // Set the model matrix
+    shader.SetMat4("model", model);
+
+
+    glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(screenWidth), static_cast<float>(screenHeight), 0.0f, -1.0f, 1.0f); // Replace with actual projection matrix
+
+    shader.SetMat4("view", view);
+    shader.SetMat4("projection", projection);
+
+    // Bind the texture and set the texture uniform
+    glActiveTexture(GL_TEXTURE0);
+    texture.Bind();
+    shader.SetTexture("texture1", 0);
+    shader.SetBool("hasTexture", true); // Set the flag to indicate we have a texture
+
+    glBindVertexArray(quadVAO);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glBindVertexArray(0);
+}
+
+void Renderer::DrawRectangle(int x, int y, int width, int height, int hex) const {
     // Get the current framebuffer size (screen size)
     int screenWidth, screenHeight;
     glfwGetFramebufferSize(glfwGetCurrentContext(), &screenWidth, &screenHeight);
@@ -60,21 +117,15 @@ void drawRectangle(int x, int y, int width, int height, int hex) {
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
     glGenBuffers(1, &EBO);
-
     glBindVertexArray(VAO);
-
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
-
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
@@ -87,7 +138,7 @@ void drawRectangle(int x, int y, int width, int height, int hex) {
     glDeleteBuffers(1, &EBO);
 }
 
-void drawLine(float x1, float y1, float x2, float y2, float thickness, int hex) {
+void Renderer::DrawLine(float x1, float y1, float x2, float y2, float thickness, int hex) const {
     // Get the current framebuffer size (screen size)
     int screenWidth, screenHeight;
     glfwGetFramebufferSize(glfwGetCurrentContext(), &screenWidth, &screenHeight);
@@ -136,4 +187,30 @@ void drawLine(float x1, float y1, float x2, float y2, float thickness, int hex) 
 
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
+}
+
+bool Renderer::initializeWindow(GLFWwindow*& window, int width, int height, const std::string& title) {
+    if (!glfwInit()) {
+        std::cout << "GLFW couldn't initialize." << std::endl;
+        return false;
+    }
+
+    window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
+    if (!window) {
+        std::cout << "GLFW couldn't create a window." << std::endl;
+        glfwTerminate();
+        return false;
+    }
+
+    glfwMakeContextCurrent(window);
+
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+        std::cout << "GLAD couldn't initialize." << std::endl;
+        glfwDestroyWindow(window);
+        glfwTerminate();
+        return false;
+    }
+
+    glClearColor(0.25f, 0.5f, 0.75f, 1.0f);
+    return true;
 }

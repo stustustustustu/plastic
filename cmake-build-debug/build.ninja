@@ -70,26 +70,12 @@ build CMakeFiles/plastic.dir/src/utils/shader/ShaderUtils.cpp.obj: CXX_COMPILER_
   OBJECT_DIR = CMakeFiles\plastic.dir
   OBJECT_FILE_DIR = CMakeFiles\plastic.dir\src\utils\shader
 
-build CMakeFiles/plastic.dir/src/utils/render/RenderUtils.cpp.obj: CXX_COMPILER__plastic_unscanned_Debug C$:/Users/stupe/Desktop/plastic/src/utils/render/RenderUtils.cpp || cmake_object_order_depends_target_plastic
-  DEP_FILE = CMakeFiles\plastic.dir\src\utils\render\RenderUtils.cpp.obj.d
+build CMakeFiles/plastic.dir/src/utils/render/Renderer.cpp.obj: CXX_COMPILER__plastic_unscanned_Debug C$:/Users/stupe/Desktop/plastic/src/utils/render/Renderer.cpp || cmake_object_order_depends_target_plastic
+  DEP_FILE = CMakeFiles\plastic.dir\src\utils\render\Renderer.cpp.obj.d
   FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
   INCLUDES = -IC:/Users/stupe/Desktop/plastic/dependencies
   OBJECT_DIR = CMakeFiles\plastic.dir
   OBJECT_FILE_DIR = CMakeFiles\plastic.dir\src\utils\render
-
-build CMakeFiles/plastic.dir/src/utils/render/sprites/SpriteRenderer.cpp.obj: CXX_COMPILER__plastic_unscanned_Debug C$:/Users/stupe/Desktop/plastic/src/utils/render/sprites/SpriteRenderer.cpp || cmake_object_order_depends_target_plastic
-  DEP_FILE = CMakeFiles\plastic.dir\src\utils\render\sprites\SpriteRenderer.cpp.obj.d
-  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/stupe/Desktop/plastic/dependencies
-  OBJECT_DIR = CMakeFiles\plastic.dir
-  OBJECT_FILE_DIR = CMakeFiles\plastic.dir\src\utils\render\sprites
-
-build CMakeFiles/plastic.dir/src/utils/time/TimeUtils.cpp.obj: CXX_COMPILER__plastic_unscanned_Debug C$:/Users/stupe/Desktop/plastic/src/utils/time/TimeUtils.cpp || cmake_object_order_depends_target_plastic
-  DEP_FILE = CMakeFiles\plastic.dir\src\utils\time\TimeUtils.cpp.obj.d
-  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/stupe/Desktop/plastic/dependencies
-  OBJECT_DIR = CMakeFiles\plastic.dir
-  OBJECT_FILE_DIR = CMakeFiles\plastic.dir\src\utils\time
 
 build CMakeFiles/plastic.dir/src/entity/Entity.cpp.obj: CXX_COMPILER__plastic_unscanned_Debug C$:/Users/stupe/Desktop/plastic/src/entity/Entity.cpp || cmake_object_order_depends_target_plastic
   DEP_FILE = CMakeFiles\plastic.dir\src\entity\Entity.cpp.obj.d
@@ -140,6 +126,27 @@ build CMakeFiles/plastic.dir/src/Game.cpp.obj: CXX_COMPILER__plastic_unscanned_D
   OBJECT_DIR = CMakeFiles\plastic.dir
   OBJECT_FILE_DIR = CMakeFiles\plastic.dir\src
 
+build CMakeFiles/plastic.dir/src/core/wave/Wave.cpp.obj: CXX_COMPILER__plastic_unscanned_Debug C$:/Users/stupe/Desktop/plastic/src/core/wave/Wave.cpp || cmake_object_order_depends_target_plastic
+  DEP_FILE = CMakeFiles\plastic.dir\src\core\wave\Wave.cpp.obj.d
+  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
+  INCLUDES = -IC:/Users/stupe/Desktop/plastic/dependencies
+  OBJECT_DIR = CMakeFiles\plastic.dir
+  OBJECT_FILE_DIR = CMakeFiles\plastic.dir\src\core\wave
+
+build CMakeFiles/plastic.dir/src/core/wave/manager/WaveManager.cpp.obj: CXX_COMPILER__plastic_unscanned_Debug C$:/Users/stupe/Desktop/plastic/src/core/wave/manager/WaveManager.cpp || cmake_object_order_depends_target_plastic
+  DEP_FILE = CMakeFiles\plastic.dir\src\core\wave\manager\WaveManager.cpp.obj.d
+  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
+  INCLUDES = -IC:/Users/stupe/Desktop/plastic/dependencies
+  OBJECT_DIR = CMakeFiles\plastic.dir
+  OBJECT_FILE_DIR = CMakeFiles\plastic.dir\src\core\wave\manager
+
+build CMakeFiles/plastic.dir/src/utils/math/random.cpp.obj: CXX_COMPILER__plastic_unscanned_Debug C$:/Users/stupe/Desktop/plastic/src/utils/math/random.cpp || cmake_object_order_depends_target_plastic
+  DEP_FILE = CMakeFiles\plastic.dir\src\utils\math\random.cpp.obj.d
+  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
+  INCLUDES = -IC:/Users/stupe/Desktop/plastic/dependencies
+  OBJECT_DIR = CMakeFiles\plastic.dir
+  OBJECT_FILE_DIR = CMakeFiles\plastic.dir\src\utils\math
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target plastic
@@ -148,7 +155,7 @@ build CMakeFiles/plastic.dir/src/Game.cpp.obj: CXX_COMPILER__plastic_unscanned_D
 #############################################
 # Link the executable plastic.exe
 
-build plastic.exe: CXX_EXECUTABLE_LINKER__plastic_Debug CMakeFiles/plastic.dir/src/main.cpp.obj CMakeFiles/plastic.dir/src/glad.c.obj CMakeFiles/plastic.dir/src/utils/shader/ShaderUtils.cpp.obj CMakeFiles/plastic.dir/src/utils/render/RenderUtils.cpp.obj CMakeFiles/plastic.dir/src/utils/render/sprites/SpriteRenderer.cpp.obj CMakeFiles/plastic.dir/src/utils/time/TimeUtils.cpp.obj CMakeFiles/plastic.dir/src/entity/Entity.cpp.obj CMakeFiles/plastic.dir/src/entity/player/Player.cpp.obj CMakeFiles/plastic.dir/src/entity/enemy/Enemy.cpp.obj CMakeFiles/plastic.dir/src/entity/turret/Turret.cpp.obj CMakeFiles/plastic.dir/src/utils/render/sprites/Texture.cpp.obj CMakeFiles/plastic.dir/dependencies/stb/stb_image.cpp.obj CMakeFiles/plastic.dir/src/Game.cpp.obj
+build plastic.exe: CXX_EXECUTABLE_LINKER__plastic_Debug CMakeFiles/plastic.dir/src/main.cpp.obj CMakeFiles/plastic.dir/src/glad.c.obj CMakeFiles/plastic.dir/src/utils/shader/ShaderUtils.cpp.obj CMakeFiles/plastic.dir/src/utils/render/Renderer.cpp.obj CMakeFiles/plastic.dir/src/entity/Entity.cpp.obj CMakeFiles/plastic.dir/src/entity/player/Player.cpp.obj CMakeFiles/plastic.dir/src/entity/enemy/Enemy.cpp.obj CMakeFiles/plastic.dir/src/entity/turret/Turret.cpp.obj CMakeFiles/plastic.dir/src/utils/render/sprites/Texture.cpp.obj CMakeFiles/plastic.dir/dependencies/stb/stb_image.cpp.obj CMakeFiles/plastic.dir/src/Game.cpp.obj CMakeFiles/plastic.dir/src/core/wave/Wave.cpp.obj CMakeFiles/plastic.dir/src/core/wave/manager/WaveManager.cpp.obj CMakeFiles/plastic.dir/src/utils/math/random.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lglfw3  -lkernel32  -luser32  -lgdi32  -lwinspool  -lshell32  -lole32  -loleaut32  -luuid  -lcomdlg32  -ladvapi32  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   LINK_PATH = -LC:/Users/stupe/Desktop/plastic/dependencies/GLFW/library

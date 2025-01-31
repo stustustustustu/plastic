@@ -2,7 +2,6 @@
 #define TURRET_H
 
 #include "../Entity.h"
-#include "../../utils/render/RenderUtils.h"
 
 enum class TurretType {
     LASER,
@@ -30,9 +29,9 @@ class Turret : public Entity {
 
         void shoot();
 
-        void drawTargetLine() const;
+        void drawTargetLine(Renderer &renderer) const;
 
-        void render() const;
+        void render(Renderer &renderer) const;
 
     private:
         static float calculateDistance(const std::vector<float>& a, const std::vector<float>& b);

@@ -2,8 +2,8 @@
 #define GAME_H
 
 #include "config.h"
-#include "utils/render/sprites/SpriteRenderer.h"
-#include "utils/render/RenderUtils.h"
+#include "core/wave/manager/WaveManager.h"
+#include "utils/render/Renderer.h"
 #include "utils/render/sprites/Texture.h"
 #include "utils/shader/ShaderUtils.h"
 
@@ -27,7 +27,8 @@ class Game {
         GLFWwindow *window;
         ShaderUtils *shader;
         Texture *texture;
-        SpriteRenderer  *renderer;
+        Renderer  *renderer;
+        WaveManager *manager;
 
         Entity player;
         std::vector<Turret> turrets;
