@@ -12,50 +12,54 @@ Renderer::~Renderer() {
 }
 
 void Renderer::initRenderData() {
-    unsigned int VBO;
-    float vertices[] = {
-        // Pos      // Tex
-        0.0f, 1.0f, 0.0f, 1.0f,
-        1.0f, 0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, 0.0f,
+    GLuint posVBO, texVBO;
+    // Pos VBO
+    GLfloat positions[] = {
+        0.0f, 1.0f,
+        1.0f, 0.0f,
+        0.0f, 0.0f,
 
-        0.0f, 1.0f, 0.0f, 1.0f,
-        1.0f, 1.0f, 1.0f, 1.0f,
-        1.0f, 0.0f, 1.0f, 0.0f
-    };
+        0.0f, 1.0f,
+        1.0f, 1.0f,
+        1.0f, 0.0f};
 
-    glGenVertexArrays(1, &quadVAO);
-    glGenBuffers(1, &VBO);
+    // Texture VBO
+    GLfloat texCoords[] = {
+        0.0f, 1.0f,
+        1.0f, 0.0f,
+        0.0f, 0.0f,
 
-    glBindVertexArray(quadVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+        0.0f, 1.0f,
+        1.0f, 1.0f,
+        1.0f, 0.0f};
+
+    glGenVertexArrays(1, &this -> quadVAO);
+    glBindVertexArray(this -> quadVAO);
+
+    glGenBuffers(1, &posVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, posVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (GLvoid *)0);
 
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+    glGenBuffers(1, &texVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, texVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(texCoords), texCoords, GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (GLvoid *)0);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 }
 
-void Renderer::DrawSprite(const Texture &texture, glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color) const {
+void Renderer::DrawSprite(Texture &texture, glm::vec2 position, float u1, float v1, float u2, float v2, glm::vec2 size, float rotate, glm::vec3 color) {
     int screenWidth, screenHeight;
     glfwGetFramebufferSize(glfwGetCurrentContext(), &screenWidth, &screenHeight);
 
-    if (texture.ID == 0) {
-        std::cerr << "WARNING: Attempting to draw a sprite with an uninitialized texture!" << std::endl;
-        return;
-    }
+    this -> shader.Use();
 
-    shader.Use();
-
-    // Set the sprite color
-    shader.SetVec3("spriteColor", color);
-
-    // Calculate transformation matrix
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(position, 0.0f));
     model = glm::translate(model, glm::vec3(0.5f * size.x, 0.5f * size.y, 0.0f));
@@ -63,22 +67,80 @@ void Renderer::DrawSprite(const Texture &texture, glm::vec2 position, glm::vec2 
     model = glm::translate(model, glm::vec3(-0.5f * size.x, -0.5f * size.y, 0.0f));
     model = glm::scale(model, glm::vec3(size, 1.0f));
 
-    // Set the model matrix
-    shader.SetMat4("model", model);
+    this -> shader.SetBool("useTexture", true);
+    this -> shader.SetMat4("model", model);
+    this -> shader.SetVec3("spriteColor", color);
+    this -> shader.SetBool("useMask", false);
 
+    // clang-format off
+    GLfloat texCoords[] = {
+        u1, v2,
+        u2, v1,
+        u1, v1,
 
-    glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(screenWidth), static_cast<float>(screenHeight), 0.0f, -1.0f, 1.0f); // Replace with actual projection matrix
+        u1, v2,
+        u2, v2,
+        u2, v1,
+    };
+    // clang-format on
 
-    shader.SetMat4("view", view);
-    shader.SetMat4("projection", projection);
+    glBindVertexArray(this -> quadVAO);
 
-    // Bind the texture and set the texture uniform
+    GLuint texVBO;
+    glGenBuffers(1, &texVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, texVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(texCoords), texCoords, GL_DYNAMIC_DRAW);
+
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid *)0);
+
     glActiveTexture(GL_TEXTURE0);
     texture.Bind();
-    shader.SetTexture("texture1", 0);
-    shader.SetBool("hasTexture", true); // Set the flag to indicate we have a texture
 
-    glBindVertexArray(quadVAO);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+    glDeleteBuffers(1, &texVBO);
+}
+
+void Renderer::DrawSprite(Texture &texture, glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color) {
+    this -> DrawSprite(texture, position, 0.0f, 0.0f, 1.0f, 1.0f, size, rotate, color);
+}
+
+void Renderer::DrawSpriteSheet(Texture &texture, glm::vec2 position, int index, int rows, int cols, glm::vec2 size, float rotate, glm::vec3 color) {
+    float u1 = (index % cols) / (float)cols;
+    float v1 = (index / cols) / (float)rows;
+    float u2 = (index % cols + 1) / (float)cols;
+    float v2 = (index / cols + 1) / (float)rows;
+
+    this -> DrawSprite(texture, position, u1, v1, u2, v2, size, rotate, color);
+}
+
+void Renderer::DrawSpriteWithMask(Texture &spriteTexture, Texture &maskTexture, glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color) {
+    this -> shader.Use();
+
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(position, 0.0f));
+    model = glm::translate(model, glm::vec3(0.5f * size.x, 0.5f * size.y, 0.0f));
+    model = glm::rotate(model, glm::radians(rotate), glm::vec3(0.0f, 0.0f, 1.0f));
+    model = glm::translate(model, glm::vec3(-0.5f * size.x, -0.5f * size.y, 0.0f));
+    model = glm::scale(model, glm::vec3(size, 1.0f));
+
+    this -> shader.SetBool("useTexture", true);
+    this -> shader.SetMat4("model", model);
+    this -> shader.SetVec3("spriteColor", color);
+    this -> shader.SetBool("useMask", true);
+
+    glActiveTexture(GL_TEXTURE0);
+    spriteTexture.Bind();
+    this -> shader.SetInt("spriteTexture", 0);
+
+    glActiveTexture(GL_TEXTURE1);
+    maskTexture.Bind();
+    this -> shader.SetInt("maskTexture", 1);
+
+    glBindVertexArray(this -> quadVAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
 }
@@ -128,6 +190,10 @@ void Renderer::DrawRectangle(int x, int y, int width, int height, int hex) const
     glEnableVertexAttribArray(1);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+
+    shader.Use();
+
+    shader.SetBool("useTexture", false);
 
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -179,6 +245,10 @@ void Renderer::DrawLine(float x1, float y1, float x2, float y2, float thickness,
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+
+    shader.Use();
+
+    shader.SetBool("useTexture", false);
 
     // Draw the line
     glBindVertexArray(VAO);

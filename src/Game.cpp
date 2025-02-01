@@ -20,15 +20,23 @@ bool Game::Init() {
 
     // Create the shader program
     shader = new ShaderUtils(
-        "../src/utils/shader/shaders/vertex.txt",
-        "../src/utils/shader/shaders/fragment.txt"
+        "../src/utils/shader/shaders/vertex.glsl",
+        "../src/utils/shader/shaders/fragment.glsl"
     );
-
-    texture = new Texture;
-    texture -> Generate("C:/Users/stupe/Desktop/plastic/src/assets/sprites/sheet.png", true);
 
     renderer = new Renderer(*shader);
     manager = new WaveManager();
+
+    texture = new Texture;
+
+    if (!texture -> Create("C:/Users/stupe/Desktop/plastic/src/assets/sprites/sheet.png")) {
+        std::cerr << "ERROR: Failed to load texture!" << std::endl;
+        return false;
+    } else {
+        std::cout << "Texture loaded successfully!" << std::endl;
+    }
+
+    texture -> Bind();
 
     // Spawn 3 turret objects
     turrets.push_back(Turret({width/2 - 100, height/2 - 100}, TurretType::LASER));
@@ -36,6 +44,7 @@ bool Game::Init() {
     turrets.push_back(Turret({width/2 + 100, height/2 + 100}, TurretType::BOMB));
 
     manager -> generateWaves(5, window);
+    std::cout << "Starting wave 1." << std::endl;
 
     return true;
 }
@@ -58,12 +67,14 @@ void Game::Update(float dt) {
             enemies.erase(enemies.begin() + i);
             if (enemies.empty()) {
                 if (manager -> hasNextWave()) {
+                    std::cout << "Starting wave " << manager -> getWaveIndex(*manager -> getCurrentWave()) + 2 << "." << std::endl;
                     manager -> startNextWave();
                     if (manager -> getCurrentWave()) {
                         enemies = manager -> getCurrentWave() -> getEnemies();
                     }
                 } else {
                     std::cout << "All waves defeated!" << std::endl;
+                    glfwSetWindowShouldClose(window, true);
                 }
             }
         } else {
@@ -74,6 +85,8 @@ void Game::Update(float dt) {
 
 void Game::Render() const {
     glClear(GL_COLOR_BUFFER_BIT);
+
+    //renderer -> DrawSprite(*texture, glm::vec2(0, 0), 0, 0, 1, 1, glm::vec2(0.1f, 0.1f), 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
     if (player.getHealth() > 0) {
         player.drawEntity(*renderer, -1);
@@ -93,10 +106,8 @@ void Game::Render() const {
         }
     }
 
-    //renderer -> DrawSprite(*texture, glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 1.0f), 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-
-    glfwSwapBuffers(window);
     glUseProgram(shader -> ID);
+    glfwSwapBuffers(window);
     glfwPollEvents();
 }
 
