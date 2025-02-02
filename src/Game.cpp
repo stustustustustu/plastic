@@ -1,5 +1,7 @@
 #include "Game.h"
 
+#include <glm/ext/matrix_clip_space.hpp>
+
 Game::Game(float width, float height) : state(ACTIVE), width(width), height(height), window(NULL), shader(NULL), texture(NULL), renderer(NULL), manager(NULL), player({width/2, height/2}) {}
 
 Game::~Game() {
@@ -20,20 +22,19 @@ bool Game::Init() {
 
     // Create the shader program
     shader = new ShaderUtils(
-        "../src/utils/shader/shaders/vertex.glsl",
-        "../src/utils/shader/shaders/fragment.glsl"
+        "../src/utils/shader/shaders/sprite/vertex.glsl",
+        "../src/utils/shader/shaders/sprite/fragment.glsl"
     );
 
     renderer = new Renderer(*shader);
     manager = new WaveManager();
 
-    texture = new Texture;
 
-    if (!texture -> Create("C:/Users/stupe/Desktop/plastic/src/assets/sprites/sheet.png")) {
+    texture = Texture::Create("../src/assets/sprites/sheet.png", true);
+
+    if (!texture) {
         std::cerr << "ERROR: Failed to load texture!" << std::endl;
         return false;
-    } else {
-        std::cout << "Texture loaded successfully!" << std::endl;
     }
 
     texture -> Bind();
@@ -74,7 +75,7 @@ void Game::Update(float dt) {
                     }
                 } else {
                     std::cout << "All waves defeated!" << std::endl;
-                    glfwSetWindowShouldClose(window, true);
+                    //glfwSetWindowShouldClose(window, true);
                 }
             }
         } else {
@@ -86,7 +87,7 @@ void Game::Update(float dt) {
 void Game::Render() const {
     glClear(GL_COLOR_BUFFER_BIT);
 
-    //renderer -> DrawSprite(*texture, glm::vec2(0, 0), 0, 0, 1, 1, glm::vec2(0.1f, 0.1f), 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+    renderer -> DrawSpriteSheet(*texture, glm::vec2(width/2, height/2), 0, 16, 16);
 
     if (player.getHealth() > 0) {
         player.drawEntity(*renderer, -1);
@@ -97,8 +98,8 @@ void Game::Render() const {
         turret.drawTargetLine(*renderer);
     }
 
-    if (manager && manager->getCurrentWave()) {
-        const auto& enemies = manager->getCurrentWave()->getEnemies();
+    if (manager && manager -> getCurrentWave()) {
+        const auto& enemies = manager -> getCurrentWave() -> getEnemies();
         for (const auto& enemy : enemies) {
             if (enemy.getHealth() > 0) {
                 enemy.drawEntity(*renderer, 0);

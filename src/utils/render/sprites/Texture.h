@@ -17,8 +17,10 @@ class Texture {
         unsigned int FilterMax;
 
         Texture();
+        ~Texture();
+
         void Generate(unsigned int width, unsigned int height, unsigned char* data);
-        bool Create(const std::string& filePath, unsigned int wrapS = GL_REPEAT, unsigned int wrapT = GL_REPEAT, unsigned int filterMin = GL_LINEAR_MIPMAP_LINEAR, unsigned int filterMax = GL_LINEAR);
+        static Texture* Create(const char *file, bool alpha);
         void Bind() const;
         void Unbind() const;
         void Delete();

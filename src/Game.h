@@ -27,7 +27,7 @@ class Game {
         GLFWwindow *window;
         ShaderUtils *shader;
         Texture *texture;
-        Renderer  *renderer;
+        Renderer *renderer;
         WaveManager *manager;
 
         Entity player;

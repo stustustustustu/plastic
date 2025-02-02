@@ -10,15 +10,37 @@ class Renderer {
         void initRenderData();
         ShaderUtils &shader;
         unsigned int quadVAO;
+        unsigned int quadVBO;
 
     public:
         Renderer(ShaderUtils &shader);
         ~Renderer();
 
-        void DrawSprite(Texture &texture, glm::vec2 position, float u1, float v1, float u2, float v2, glm::vec2 size, float rotate, glm::vec3 color);
-        void DrawSprite(Texture &texture, glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color);
-        void DrawSpriteSheet(Texture &texture, glm::vec2 position, int index, int rows, int cols, glm::vec2 size, float rotate, glm::vec3 color);
-        void DrawSpriteWithMask(Texture &spriteTexture, Texture &maskTexture, glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color);
+        void DrawSprite(
+            Texture &texture,
+            glm::vec2 position,
+            float u1, float v1, float u2, float v2,
+            glm::vec2 size = glm::vec2(512.0f),
+            float rotate = 0.0f,
+            glm::vec3 color = glm::vec3(1.0f)
+        ) const;
+
+        void DrawSprite(
+            Texture &texture,
+            glm::vec2 position,
+            glm::vec2 size = glm::vec2(512.0f),
+            float rotate = 0.0f,
+            glm::vec3 color = glm::vec3(1.0f)
+        );
+
+        void DrawSpriteSheet(
+            Texture &texture,
+            glm::vec2 position,
+            int index, int rows, int cols,
+            glm::vec2 size = glm::vec2(512.0f),
+            float rotate = 0.0f,
+            glm::vec3 color = glm::vec3(1.0f)
+        );
 
         void DrawRectangle(int x, int y, int width, int height, int hex) const;
         void DrawLine(float x1, float y1, float x2, float y2, float thickness, int hex) const;
