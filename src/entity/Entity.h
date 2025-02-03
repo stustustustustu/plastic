@@ -43,7 +43,7 @@ class Entity {
             int maxTargets = 1
         );
 
-        void drawEntity(Renderer &renderer, int hex) const;
+        void drawEntity(Renderer &renderer, Texture *texture, int hex) const;
 
         void drawTargetLine(Renderer &renderer, Entity target, float thickness, int hex) const;
 

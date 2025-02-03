@@ -79,7 +79,7 @@ void Turret::drawTargetLine(Renderer &renderer) const {
     }
 }
 
-void Turret::render(Renderer &renderer) const {
+void Turret::render(Renderer &renderer, Texture *texture) const {
     int hex;
     switch (type) {
         case TurretType::LASER:
@@ -92,7 +92,8 @@ void Turret::render(Renderer &renderer) const {
             hex = 0x323232;
             break;
     }
-    renderer.DrawRectangle(getRenderPosition().at(0) - 16, getRenderPosition().at(1) - 16, 32, 32, hex);
+
+    renderer.DrawSpriteSheet(*texture, glm::vec2(getRenderPosition().at(0), getRenderPosition().at(1)), 1, 16, 16);
 }
 
 float Turret::calculateDistance(const std::vector<float>& a, const std::vector<float>& b) {

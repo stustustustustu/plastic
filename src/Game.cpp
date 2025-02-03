@@ -75,7 +75,7 @@ void Game::Update(float dt) {
                     }
                 } else {
                     std::cout << "All waves defeated!" << std::endl;
-                    //glfwSetWindowShouldClose(window, true);
+                    glfwSetWindowShouldClose(window, true);
                 }
             }
         } else {
@@ -87,22 +87,20 @@ void Game::Update(float dt) {
 void Game::Render() const {
     glClear(GL_COLOR_BUFFER_BIT);
 
-    renderer -> DrawSpriteSheet(*texture, glm::vec2(width/2, height/2), 0, 16, 16);
-
     if (player.getHealth() > 0) {
-        player.drawEntity(*renderer, -1);
+        player.drawEntity(*renderer, texture, -1);
     }
 
     for (auto& turret : turrets) {
-        turret.render(*renderer);
-        turret.drawTargetLine(*renderer);
+        turret.render(*renderer, texture);
+        //turret.drawTargetLine(*renderer);
     }
 
     if (manager && manager -> getCurrentWave()) {
         const auto& enemies = manager -> getCurrentWave() -> getEnemies();
         for (const auto& enemy : enemies) {
             if (enemy.getHealth() > 0) {
-                enemy.drawEntity(*renderer, 0);
+                enemy.drawEntity(*renderer, texture, 0);
             }
         }
     }

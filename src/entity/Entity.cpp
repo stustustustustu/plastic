@@ -36,12 +36,12 @@ Entity::Entity(
  *
  * @param hex The color of the entity to draw.
  */
-void Entity::drawEntity(Renderer &renderer, int hex) const {
-    renderer.DrawRectangle(getRenderPosition().at(0) - 16, getRenderPosition().at(1) - 16, 32, 32, hex);
+void Entity::drawEntity(Renderer &renderer, Texture *texture, int hex) const {
+    renderer.DrawSpriteSheet(*texture, glm::vec2(getRenderPosition().at(0), getRenderPosition().at(1)), 0, 16, 16);
 
-    renderer.DrawRectangle(getRenderPosition().at(0) - 16 - 16 * (100 - this -> getHealth()) / 100, getRenderPosition().at(1) - 38, 32 * this -> getHealth() / 100, 2, 0xFF0000); // Healthbar
+    //renderer.DrawRectangle(getRenderPosition().at(0) - 16 - 16 * (100 - this -> getHealth()) / 100, getRenderPosition().at(1) - 38, 32 * this -> getHealth() / 100, 2, 0xFF0000); // Healthbar
 
-    renderer.DrawRectangle(getRenderPosition().at(0) - 16 - 16 * (100 - this -> getShield()) / 100, getRenderPosition().at(1) - 38, 32 * this -> getShield() / 100, 2, 0x55FFFF); // Shieldbar
+    //renderer.DrawRectangle(getRenderPosition().at(0) - 16 - 16 * (100 - this -> getShield()) / 100, getRenderPosition().at(1) - 38, 32 * this -> getShield() / 100, 2, 0x55FFFF); // Shieldbar
 }
 
 /**

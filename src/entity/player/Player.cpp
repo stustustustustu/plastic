@@ -56,16 +56,16 @@ bool Player::canMove(Entity& player, GLFWwindow* window, std::vector<float>& del
     float newY = position[1] + delta[1] * player.getSpeed();
 
     // Horizontal check
-    if (newX - 2 * halfWidth < border) {
+    if (newX < border) {
         delta[0] = std::max(0.0f, delta[0]); // Left
-    } else if (newX + halfWidth / 2 - border > screenWidth) {
+    } else if (newX + 2 * halfWidth + border > screenWidth) {
         delta[0] = std::min(0.0f, delta[0]); // Right
     }
 
     // Vertical check
-    if (newY - 2 * halfHeight < border) {
+    if (newY < border) {
         delta[1] = std::max(0.0f, delta[1]); // Up
-    } else if (newY + halfHeight / 2 - border > screenHeight) {
+    } else if (newY + 2 * halfHeight + border > screenHeight) {
         delta[1] = std::min(0.0f, delta[1]); // Down
     }
 

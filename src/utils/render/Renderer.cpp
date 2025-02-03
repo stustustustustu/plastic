@@ -1,7 +1,7 @@
 #include "Renderer.h"
 
 #include <../dependencies/glm/ext/matrix_clip_space.hpp>
-#include <../dependencies//glm/ext/matrix_transform.hpp>
+#include <../dependencies/glm/ext/matrix_transform.hpp>
 
 Renderer::Renderer(ShaderUtils &shader) : shader(shader), quadVAO(0) {
     initRenderData();
@@ -12,41 +12,57 @@ Renderer::~Renderer() {
 }
 
 void Renderer::initRenderData() {
-    unsigned int VBO;
-    float vertices[] = {
-        // pos      // tex
-        0.0f, 1.0f, 0.0f, 1.0f,
-        1.0f, 0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, 0.0f,
+	GLuint posVBO, texVBO;
+	// pos VBO
+	GLfloat posCoords[] = {
+		0.0f, 1.0f,
+		1.0f, 0.0f,
+		0.0f, 0.0f,
 
-        0.0f, 1.0f, 0.0f, 1.0f,
-        1.0f, 1.0f, 1.0f, 1.0f,
-        1.0f, 0.0f, 1.0f, 0.0f
-    };
+		0.0f, 1.0f,
+		1.0f, 1.0f,
+		1.0f, 0.0f};
+
+	// tex VBO
+	GLfloat texCoords[] = {
+		0.0f, 1.0f,
+		1.0f, 0.0f,
+		0.0f, 0.0f,
+
+		0.0f, 1.0f,
+		1.0f, 1.0f,
+		1.0f, 0.0f
+	};
 
     glGenVertexArrays(1, &this -> quadVAO);
-    glGenBuffers(1, &VBO);
+	glBindVertexArray(this -> quadVAO);
 
-    glBindVertexArray(this -> quadVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glGenBuffers(1, &posVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, posVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(posCoords), posCoords, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), NULL);
+
+    glGenBuffers(1, &texVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, texVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(texCoords), texCoords, GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), NULL);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 }
 
 void Renderer::DrawSprite(Texture &texture, glm::vec2 position, float u1, float v1, float u2, float v2, glm::vec2 size, float rotate, glm::vec3 color) const {
-	this->shader.Use();
+	this -> shader.Use();
 
-	int screenWidth, screenHeight;
-	glfwGetFramebufferSize(glfwGetCurrentContext(), &screenWidth, &screenHeight);
+	int width, height;
+	glfwGetFramebufferSize(glfwGetCurrentContext(), &width, &height);
 
-	glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(screenWidth), static_cast<float>(screenHeight), 0.0f, -1.0f, 1.0f);
+	glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(width), static_cast<float>(height), 0.0f, -1.0f, 1.0f);
+
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, glm::vec3(position, 0.0f));
 	model = glm::translate(model, glm::vec3(0.5f * size.x, 0.5f * size.y, 0.0f));
@@ -54,11 +70,10 @@ void Renderer::DrawSprite(Texture &texture, glm::vec2 position, float u1, float 
 	model = glm::translate(model, glm::vec3(-0.5f * size.x, -0.5f * size.y, 0.0f));
 	model = glm::scale(model, glm::vec3(size, 1.0f));
 
-	this->shader.SetMat4("model", model);
-	this->shader.SetMat4("projection", projection);
-	this->shader.SetVec3("spriteColor", color);
+	this -> shader.SetMat4("model", model);
+	this -> shader.SetMat4("projection", projection);
+	this -> shader.SetVec3("spriteColor", color);
 
-	// clang-format off
     GLfloat texCoords[] = {
         u1, v2,
         u2, v1,
@@ -69,12 +84,11 @@ void Renderer::DrawSprite(Texture &texture, glm::vec2 position, float u1, float 
         u2, v1,
 
     };
-	// clang-format on
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	glBindVertexArray(this->quadVAO);
+	glBindVertexArray(this -> quadVAO);
 
 	GLuint texVBO;
 	glGenBuffers(1, &texVBO);
@@ -82,7 +96,7 @@ void Renderer::DrawSprite(Texture &texture, glm::vec2 position, float u1, float 
 	glBufferData(GL_ARRAY_BUFFER, sizeof(texCoords), texCoords, GL_DYNAMIC_DRAW);
 
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid *)0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), NULL);
 
 	glActiveTexture(GL_TEXTURE0);
 	texture.Bind();
@@ -96,17 +110,15 @@ void Renderer::DrawSprite(Texture &texture, glm::vec2 position, float u1, float 
 }
 
 void Renderer::DrawSprite(Texture &texture, glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color) {
-	this->DrawSprite(texture, position, 0.0f, 0.0f, 1.0f, 1.0f, size, rotate, color);
+	this -> DrawSprite(texture, position, 0.0f, 0.0f, 1.0f, 1.0f, size, rotate, color);
 }
 
 void Renderer::DrawSpriteSheet(Texture &texture, glm::vec2 position, int index, int rows, int cols, glm::vec2 size, float rotate, glm::vec3 color) {
-	// Calculate texture coordinates for the specified sprite
 	float u1 = static_cast<float>(index % cols) / cols;
 	float v1 = static_cast<float>(index / cols) / rows;
 	float u2 = static_cast<float>((index % cols) + 1) / cols;
 	float v2 = static_cast<float>((index / cols) + 1) / rows;
 
-	// Call the DrawSprite method with the calculated texture coordinates
 	this->DrawSprite(texture, position, u1, v1, u2, v2, size, rotate, color);
 }
 
@@ -245,6 +257,8 @@ bool Renderer::initializeWindow(GLFWwindow*& window, int width, int height, cons
         glfwTerminate();
         return false;
     }
+
+	glViewport(0, 0, width, height);
 
     glClearColor(0.25f, 0.5f, 0.75f, 1.0f);
     return true;
