@@ -5,6 +5,7 @@
 #include "core/wave/manager/WaveManager.h"
 #include "core/upgrades/manager/UpgradeManager.h"
 #include "core/inventory/Inventory.h"
+#include "core/island/Island.h"
 #include "utils/render/Renderer.h"
 #include "utils/render/sprites/Texture.h"
 #include "utils/shader/ShaderUtils.h"
@@ -35,6 +36,9 @@ class Game {
         WaveManager *wave;
         UpgradeManager *upgrade;
         Inventory *inventory;
+
+        // island generation
+        Island *generator;
 
         Entity player;
         std::vector<Turret> turrets;

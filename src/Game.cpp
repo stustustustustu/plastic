@@ -2,7 +2,7 @@
 
 #include <glm/ext/matrix_clip_space.hpp>
 
-Game::Game(float width, float height) : state(ACTIVE), width(width), height(height), window(NULL), shader(NULL), texture(NULL), renderer(NULL), wave(NULL), upgrade(NULL), inventory(NULL), player({width/2, height/2}) {}
+Game::Game(float width, float height) : state(ACTIVE), width(width), height(height), window(NULL), shader(NULL), texture(NULL), renderer(NULL), wave(NULL), upgrade(NULL), inventory(NULL), generator(NULL), player({width/2, height/2}) {}
 
 Game::~Game() {
     delete shader;
@@ -11,6 +11,7 @@ Game::~Game() {
     delete wave;
     delete upgrade;
     delete inventory;
+    delete generator;
 }
 
 std::vector<float> Game::getSize() {
@@ -32,7 +33,9 @@ bool Game::Init() {
     wave = new WaveManager();
     inventory = new Inventory(player);
     upgrade = new UpgradeManager(*inventory);
+    generator = new Island(width, height, 5);
 
+    generator -> generate();
 
     texture = Texture::Create("../src/assets/sprites/sheet.png", true);
 

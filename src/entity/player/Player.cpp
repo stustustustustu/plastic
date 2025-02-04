@@ -87,5 +87,5 @@ bool Player::isMouseOver(GLFWwindow* window, double x, double y) {
 
     glfwGetCursorPos(window, &mouseX, &mouseY);
 
-    return mouseX >= x - 32 && mouseX <= x && mouseY >= y - 32 && mouseY <= y;
+    return mouseX >= x && mouseX <= x + 32 && mouseY >= y && mouseY <= y + 32;
 }

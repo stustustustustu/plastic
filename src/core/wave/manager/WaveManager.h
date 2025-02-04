@@ -2,7 +2,6 @@
 #define WAVEMANAGER_H
 
 #include "../Wave.h"
-#include "../src/utils/math/random.cpp"
 
 class WaveManager {
     private:

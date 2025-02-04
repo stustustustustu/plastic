@@ -3,7 +3,9 @@ project(plastic VERSION 0.1)
 
 # todo: add font renderer using FreeType
 
-find_package(OpenGL REQUIRED)
+find_package(
+        OpenGL REQUIRED
+)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -35,7 +37,6 @@ add_executable(
         src/core/wave/Wave.h
         src/core/wave/manager/WaveManager.cpp
         src/core/wave/manager/WaveManager.h
-        src/utils/math/random.cpp
         src/core/upgrades/Upgrade.cpp
         src/core/upgrades/Upgrade.h
         src/core/upgrades/manager/UpgradePath.cpp
@@ -44,6 +45,10 @@ add_executable(
         src/core/upgrades/manager/UpgradeManager.h
         src/core/inventory/Inventory.cpp
         src/core/inventory/Inventory.h
+        src/core/island/Island.cpp
+        src/core/island/Island.h
+        src/utils/math/noise/Perlin.cpp
+        src/utils/math/noise/Perlin.h
 )
 
 target_include_directories(plastic PRIVATE dependencies) # Includes location
