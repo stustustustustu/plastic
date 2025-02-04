@@ -36,6 +36,14 @@ add_executable(
         src/core/wave/manager/WaveManager.cpp
         src/core/wave/manager/WaveManager.h
         src/utils/math/random.cpp
+        src/core/upgrades/Upgrade.cpp
+        src/core/upgrades/Upgrade.h
+        src/core/upgrades/manager/UpgradePath.cpp
+        src/core/upgrades/manager/UpgradePath.h
+        src/core/upgrades/manager/UpgradeManager.cpp
+        src/core/upgrades/manager/UpgradeManager.h
+        src/core/inventory/Inventory.cpp
+        src/core/inventory/Inventory.h
 )
 
 target_include_directories(plastic PRIVATE dependencies) # Includes location

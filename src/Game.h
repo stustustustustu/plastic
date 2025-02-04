@@ -3,6 +3,8 @@
 
 #include "config.h"
 #include "core/wave/manager/WaveManager.h"
+#include "core/upgrades/manager/UpgradeManager.h"
+#include "core/inventory/Inventory.h"
 #include "utils/render/Renderer.h"
 #include "utils/render/sprites/Texture.h"
 #include "utils/shader/ShaderUtils.h"
@@ -28,7 +30,11 @@ class Game {
         ShaderUtils *shader;
         Texture *texture;
         Renderer *renderer;
-        WaveManager *manager;
+
+        // core systems
+        WaveManager *wave;
+        UpgradeManager *upgrade;
+        Inventory *inventory;
 
         Entity player;
         std::vector<Turret> turrets;

@@ -147,6 +147,34 @@ build CMakeFiles/plastic.dir/src/utils/math/random.cpp.obj: CXX_COMPILER__plasti
   OBJECT_DIR = CMakeFiles\plastic.dir
   OBJECT_FILE_DIR = CMakeFiles\plastic.dir\src\utils\math
 
+build CMakeFiles/plastic.dir/src/core/upgrades/Upgrade.cpp.obj: CXX_COMPILER__plastic_unscanned_Debug C$:/Users/stupe/Desktop/plastic/src/core/upgrades/Upgrade.cpp || cmake_object_order_depends_target_plastic
+  DEP_FILE = CMakeFiles\plastic.dir\src\core\upgrades\Upgrade.cpp.obj.d
+  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
+  INCLUDES = -IC:/Users/stupe/Desktop/plastic/dependencies
+  OBJECT_DIR = CMakeFiles\plastic.dir
+  OBJECT_FILE_DIR = CMakeFiles\plastic.dir\src\core\upgrades
+
+build CMakeFiles/plastic.dir/src/core/upgrades/manager/UpgradePath.cpp.obj: CXX_COMPILER__plastic_unscanned_Debug C$:/Users/stupe/Desktop/plastic/src/core/upgrades/manager/UpgradePath.cpp || cmake_object_order_depends_target_plastic
+  DEP_FILE = CMakeFiles\plastic.dir\src\core\upgrades\manager\UpgradePath.cpp.obj.d
+  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
+  INCLUDES = -IC:/Users/stupe/Desktop/plastic/dependencies
+  OBJECT_DIR = CMakeFiles\plastic.dir
+  OBJECT_FILE_DIR = CMakeFiles\plastic.dir\src\core\upgrades\manager
+
+build CMakeFiles/plastic.dir/src/core/upgrades/manager/UpgradeManager.cpp.obj: CXX_COMPILER__plastic_unscanned_Debug C$:/Users/stupe/Desktop/plastic/src/core/upgrades/manager/UpgradeManager.cpp || cmake_object_order_depends_target_plastic
+  DEP_FILE = CMakeFiles\plastic.dir\src\core\upgrades\manager\UpgradeManager.cpp.obj.d
+  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
+  INCLUDES = -IC:/Users/stupe/Desktop/plastic/dependencies
+  OBJECT_DIR = CMakeFiles\plastic.dir
+  OBJECT_FILE_DIR = CMakeFiles\plastic.dir\src\core\upgrades\manager
+
+build CMakeFiles/plastic.dir/src/core/inventory/Inventory.cpp.obj: CXX_COMPILER__plastic_unscanned_Debug C$:/Users/stupe/Desktop/plastic/src/core/inventory/Inventory.cpp || cmake_object_order_depends_target_plastic
+  DEP_FILE = CMakeFiles\plastic.dir\src\core\inventory\Inventory.cpp.obj.d
+  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
+  INCLUDES = -IC:/Users/stupe/Desktop/plastic/dependencies
+  OBJECT_DIR = CMakeFiles\plastic.dir
+  OBJECT_FILE_DIR = CMakeFiles\plastic.dir\src\core\inventory
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target plastic
@@ -155,7 +183,7 @@ build CMakeFiles/plastic.dir/src/utils/math/random.cpp.obj: CXX_COMPILER__plasti
 #############################################
 # Link the executable plastic.exe
 
-build plastic.exe: CXX_EXECUTABLE_LINKER__plastic_Debug CMakeFiles/plastic.dir/src/main.cpp.obj CMakeFiles/plastic.dir/src/glad.c.obj CMakeFiles/plastic.dir/src/utils/shader/ShaderUtils.cpp.obj CMakeFiles/plastic.dir/src/utils/render/Renderer.cpp.obj CMakeFiles/plastic.dir/src/entity/Entity.cpp.obj CMakeFiles/plastic.dir/src/entity/player/Player.cpp.obj CMakeFiles/plastic.dir/src/entity/enemy/Enemy.cpp.obj CMakeFiles/plastic.dir/src/entity/turret/Turret.cpp.obj CMakeFiles/plastic.dir/src/utils/render/sprites/Texture.cpp.obj CMakeFiles/plastic.dir/dependencies/stb/stb_image.cpp.obj CMakeFiles/plastic.dir/src/Game.cpp.obj CMakeFiles/plastic.dir/src/core/wave/Wave.cpp.obj CMakeFiles/plastic.dir/src/core/wave/manager/WaveManager.cpp.obj CMakeFiles/plastic.dir/src/utils/math/random.cpp.obj
+build plastic.exe: CXX_EXECUTABLE_LINKER__plastic_Debug CMakeFiles/plastic.dir/src/main.cpp.obj CMakeFiles/plastic.dir/src/glad.c.obj CMakeFiles/plastic.dir/src/utils/shader/ShaderUtils.cpp.obj CMakeFiles/plastic.dir/src/utils/render/Renderer.cpp.obj CMakeFiles/plastic.dir/src/entity/Entity.cpp.obj CMakeFiles/plastic.dir/src/entity/player/Player.cpp.obj CMakeFiles/plastic.dir/src/entity/enemy/Enemy.cpp.obj CMakeFiles/plastic.dir/src/entity/turret/Turret.cpp.obj CMakeFiles/plastic.dir/src/utils/render/sprites/Texture.cpp.obj CMakeFiles/plastic.dir/dependencies/stb/stb_image.cpp.obj CMakeFiles/plastic.dir/src/Game.cpp.obj CMakeFiles/plastic.dir/src/core/wave/Wave.cpp.obj CMakeFiles/plastic.dir/src/core/wave/manager/WaveManager.cpp.obj CMakeFiles/plastic.dir/src/utils/math/random.cpp.obj CMakeFiles/plastic.dir/src/core/upgrades/Upgrade.cpp.obj CMakeFiles/plastic.dir/src/core/upgrades/manager/UpgradePath.cpp.obj CMakeFiles/plastic.dir/src/core/upgrades/manager/UpgradeManager.cpp.obj CMakeFiles/plastic.dir/src/core/inventory/Inventory.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lglfw3  -lkernel32  -luser32  -lgdi32  -lwinspool  -lshell32  -lole32  -loleaut32  -luuid  -lcomdlg32  -ladvapi32  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   LINK_PATH = -LC:/Users/stupe/Desktop/plastic/dependencies/GLFW/library

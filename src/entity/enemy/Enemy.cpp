@@ -52,14 +52,14 @@ bool isPositionValidWithOthers(float x, float y, int halfWidth, int halfHeight, 
 }
 
 void Entity::populate(std::vector<Entity>& enemies, int n, GLFWwindow* window) {
+    srand(time(NULL));
+
     int screenWidth, screenHeight;
     glfwGetFramebufferSize(window, &screenWidth, &screenHeight);
 
     const int halfWidth = 16;
     const int halfHeight = 16;
     const int border = 4;
-
-    srand(time(NULL)); // Seed RNG
 
     for (int i = 0; i < n; ++i) {
         float x, y;

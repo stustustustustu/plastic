@@ -20,6 +20,7 @@ class Entity {
         float maxShield;
 
         int level;
+        int coins;
 
         int targets;
         int maxTargets;
@@ -38,6 +39,7 @@ class Entity {
             float maxShield = 50.0f,
 
             int level = 1,
+            int coins = 100,
 
             int targets = 0,
             int maxTargets = 1
@@ -76,6 +78,12 @@ class Entity {
 
         int getLevel() const;
         void setLevel(int);
+
+        int getCoins() const;
+        void setCoins(int);
+        void addCoins(int);
+        bool spendCoins(int);
+        bool takeCoins(Entity&, float);
 
         static void populate(std::vector<Entity>&, int, GLFWwindow*); // Spawn Entities in a vector (used for enemies)
         void moveTo(Entity&); // Move Entity to player

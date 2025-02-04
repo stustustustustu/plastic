@@ -12,6 +12,7 @@
  * @param health The current health of the Entity (default is 100.0).
  * @param shield The current shield of the Entity (default is 0.0).
  * @param level The level of the Entity (default is 1).
+ * @param coins The current coins of the Entity (default is 100).
  * @param targets The number of current targets (default is 0).
  */
 Entity::Entity(
@@ -26,10 +27,11 @@ Entity::Entity(
     float maxShield,
 
     int level,
+    int coins,
 
     int targets,
     int maxTargets
-) : position(position), speed(speed), damage(damage), health(health), maxHealth(maxHealth), shield(shield), maxShield(maxShield), level(level), targets(targets), maxTargets(maxTargets) {}
+) : position(position), speed(speed), damage(damage), health(health), maxHealth(maxHealth), shield(shield), maxShield(maxShield), level(level), coins(coins), targets(targets), maxTargets(maxTargets) {}
 
 /**
  * @brief Draws the Entity on screen and the health bar of the said Entity.
@@ -288,4 +290,46 @@ void Entity::setLevel(int level) {
     if (level > 0) {
         this -> level = level;
     }
+}
+
+int Entity::getCoins() const {
+    return this -> coins;
+}
+
+void Entity::setCoins(int coins) {
+    this -> coins = coins;
+}
+
+void Entity::addCoins(int coins) {
+    this -> coins += coins;
+}
+
+bool Entity::spendCoins(int coins) {
+    if (this -> coins - coins >= 0) {
+        this -> coins -= coins;
+        return true;
+    }
+    std::cerr << "Insufficient funds." << std::endl;
+    return false;
+}
+
+bool Entity::takeCoins(Entity &target, float percentage) {
+    if (percentage < 0.0f || percentage > 1.0f) {
+        std::cerr << "Invalid percentage. Must be between 0 and 1." << std::endl;
+        return false;
+    }
+
+    int amount = static_cast<int>(target.getCoins() * percentage);
+    if (amount <= 0) {
+        //std::cerr << "No coins to steal." << std::endl;
+        return false;
+    }
+
+    if (target.spendCoins(amount)) {
+        this -> addCoins(amount);
+        //std::cout << "Stole " << amount << " coins from the target." << std::endl;
+        return true;
+    }
+
+    return false;
 }
