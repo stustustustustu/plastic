@@ -30,7 +30,10 @@ add_executable(
         src/entity/turret/Turret.h
         src/utils/render/sprites/Texture.cpp
         src/utils/render/sprites/Texture.h
+
         dependencies/stb/stb_image.cpp
+        dependencies/stb/stb_perlin.cpp
+
         src/Game.cpp
         src/Game.h
         src/core/wave/Wave.cpp
@@ -49,6 +52,12 @@ add_executable(
         src/core/island/Island.h
         src/utils/math/noise/Perlin.cpp
         src/utils/math/noise/Perlin.h
+        src/tilemap/Tile.h
+        src/tilemap/Tilemap.cpp
+        src/tilemap/Tilemap.h
+        dependencies/stb/stb_perlin.cpp
+        src/entity/enemy/Enemy.h
+        src/utils/math/color/color.h
 )
 
 target_include_directories(plastic PRIVATE dependencies) # Includes location

@@ -84,9 +84,6 @@ class Entity {
         void addCoins(int);
         bool spendCoins(int);
         bool takeCoins(Entity&, float);
-
-        static void populate(std::vector<Entity>&, int, GLFWwindow*); // Spawn Entities in a vector (used for enemies)
-        void moveTo(Entity&); // Move Entity to player
 };
 
 #endif //Entity_H

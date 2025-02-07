@@ -2,13 +2,14 @@
 #define PLAYER_H
 
 #include "../Entity.h"
+#include "../enemy/Enemy.h"
 
-class Player : Entity {
+class Player : public Entity {
     public:
-        static void Movement(Entity& player, GLFWwindow* window, std::vector<Entity>& enemies);
+        static void Movement(Renderer *renderer, Entity& player, GLFWwindow* window, std::vector<Enemy>& enemies);
         static bool canMove(Entity &player, GLFWwindow *window, std::vector<float> &delta);
 
-        static void drawTargetLine(Entity& player, GLFWwindow* window, std::vector<Entity>& enemies);
+        static void drawTargetLine(Entity& player, GLFWwindow* window, std::vector<Enemy>& enemies);
 
         static bool isKeyPressed(GLFWwindow* window, int key);
         static bool isMousePressed(GLFWwindow* window, int key);

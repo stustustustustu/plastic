@@ -2,6 +2,7 @@
 #define TURRET_H
 
 #include "../Entity.h"
+#include "../enemy/Enemy.h"
 
 enum class TurretType {
     LASER,
@@ -14,7 +15,7 @@ class Turret : public Entity {
         TurretType type;
         float rotationSpeed;
         float currentAngle;
-        Entity* target;
+        Enemy* target;
 
         float fireRate;
         float timeSinceLastShot;
@@ -23,7 +24,7 @@ class Turret : public Entity {
     public:
         Turret(std::vector<float> position, TurretType type);
 
-        void findTarget(const std::vector<Entity>& enemies);
+        void findTarget(const std::vector<Enemy>& enemies);
 
         void rotateTowardsTarget();
 

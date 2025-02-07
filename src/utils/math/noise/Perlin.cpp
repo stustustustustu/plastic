@@ -52,10 +52,10 @@ void Perlin::initPermutationTable(int seed) {
 }
 
 float Perlin::grad(int hash, float x, float y) const {
-    int h = hash & 15; // Take the low 4 bits of the hash
-    float u = h < 8 ? x : y; // If the high bit of h is 0, use x; otherwise, use y
-    float v = h < 4 ? y : (h == 12 || h == 14 ? x : 0.0f); // Use y if h is 0, 1, 4, or 5; otherwise, use x or 0
-    return ((h & 1) == 0 ? u : -u) + ((h & 2) == 0 ? v : -v); // Compute the dot product
+    int h = hash & 7;
+    float u = h < 4 ? x : y;
+    float v = h < 2 ? y : (h == 2 || h == 3 ? x : 0.0f);
+    return ((h & 1) ? -u : u) + ((h & 2) ? -v : v);
 }
 
 float Perlin::smoothstep(float t) const {

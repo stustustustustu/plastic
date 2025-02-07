@@ -2,6 +2,7 @@
 #include "../src/config.h"
 #include "../utils/render/Renderer.h"
 #include "../Game.h"
+#include "../utils/math/color/color.h"
 
 /**
  * @brief Constructor to initialize the Entity's attributes.
@@ -40,10 +41,6 @@ Entity::Entity(
  */
 void Entity::drawEntity(Renderer &renderer, Texture *texture, int hex) const {
     renderer.DrawSpriteSheet(*texture, glm::vec2(getRenderPosition().at(0), getRenderPosition().at(1)), 0, 16, 16);
-
-    //renderer.DrawRectangle(getRenderPosition().at(0) - 16 - 16 * (100 - this -> getHealth()) / 100, getRenderPosition().at(1) - 38, 32 * this -> getHealth() / 100, 2, 0xFF0000); // Healthbar
-
-    //renderer.DrawRectangle(getRenderPosition().at(0) - 16 - 16 * (100 - this -> getShield()) / 100, getRenderPosition().at(1) - 38, 32 * this -> getShield() / 100, 2, 0x55FFFF); // Shieldbar
 }
 
 /**
@@ -52,7 +49,7 @@ void Entity::drawEntity(Renderer &renderer, Texture *texture, int hex) const {
  * @param hex The color of the line to draw.
  */
 void Entity::drawTargetLine(Renderer &renderer, Entity target, float thickness, int hex) const {
-    renderer.DrawLine(this -> getRenderPosition().at(0) - 16, this -> getRenderPosition().at(1) - 16, target.getRenderPosition().at(0) - 16, target.getRenderPosition().at(1) - 16, thickness, hex);
+    renderer.DrawLine(this -> getRenderPosition().at(0) + 16, this -> getRenderPosition().at(1) + 16, target.getRenderPosition().at(0) + 16, target.getRenderPosition().at(1) + 16, thickness, HEXtoRGB(hex));
 }
 
 /**

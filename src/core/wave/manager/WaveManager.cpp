@@ -1,16 +1,5 @@
 #include "WaveManager.h"
 
-void WaveManager::generateWaves(int n, GLFWwindow *window) {
-    std::cout << "Generated " << n << " waves." << std::endl;
-
-    for (int i = 0; i < n; i++) {
-        Wave wave(5, window);
-        addWave(i, wave);
-    }
-
-    currentWaveIndex = 0;
-}
-
 void WaveManager::addWave(int index, const Wave &wave) {
     waves[index] = wave;
 }
@@ -25,16 +14,8 @@ bool WaveManager::removeWave(int index) {
     return false;
 }
 
-bool WaveManager::hasNextWave() {
-    return waves.find(currentWaveIndex + 1) != waves.end();
-}
-
 Wave* WaveManager::getCurrentWave() {
-    const auto it = waves.find(currentWaveIndex);
-    if (it == waves.end()) {
-        return NULL;
-    }
-    return &it -> second;
+    return std::move(currentWave);
 }
 
 int WaveManager::getWaveIndex(const Wave &wave) const {
@@ -46,8 +27,9 @@ int WaveManager::getWaveIndex(const Wave &wave) const {
     return -1;  // Wave not found
 }
 
-void WaveManager::startNextWave() {
-    if (hasNextWave()) {
-        ++currentWaveIndex;
-    }
+void WaveManager::startNextWave(GLFWwindow* window) {
+    ++currentWaveIndex;
+    currentWave = new Wave(5, window);
+
+    std::cout << "Started Wave " << currentWaveIndex << " with " << currentWave -> getEnemies().size() << " enemies." << std::endl;
 }

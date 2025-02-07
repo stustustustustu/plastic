@@ -19,11 +19,13 @@ std::vector<float> Game::getSize() {
 }
 
 bool Game::Init() {
+    srand(time(NULL));
+    float tileSize = 32.0f;
+
     if (!renderer -> initializeWindow(window, getSize().at(0), getSize().at(1), "plastic")) {
         return false;
     }
 
-    // Create the shader program
     shader = new ShaderUtils(
         "../src/utils/shader/shaders/sprite/vertex.glsl",
         "../src/utils/shader/shaders/sprite/fragment.glsl"
@@ -33,9 +35,7 @@ bool Game::Init() {
     wave = new WaveManager();
     inventory = new Inventory(player);
     upgrade = new UpgradeManager(*inventory);
-    generator = new Island(width, height, 5);
-
-    generator -> generate();
+    generator = new Island(width / tileSize, height / tileSize, rand(), 50.0f); // rand() instead of 1
 
     texture = Texture::Create("../src/assets/sprites/sheet.png", true);
 
@@ -46,13 +46,11 @@ bool Game::Init() {
 
     texture -> Bind();
 
-    // Spawn 3 turret objects
     turrets.push_back(Turret({width/2 - 100, height/2 - 100}, TurretType::LASER));
     turrets.push_back(Turret({width/2 + 100, height/2 - 100}, TurretType::RIFLE));
     turrets.push_back(Turret({width/2 + 100, height/2 + 100}, TurretType::BOMB));
 
-    wave -> generateWaves(5, window);
-    std::cout << "Starting wave 1." << std::endl;
+    wave -> startNextWave(window);
 
     return true;
 }
@@ -60,7 +58,7 @@ bool Game::Init() {
 void Game::Update(float dt) {
     auto& enemies = wave -> getCurrentWave() -> getEnemies();
 
-    Player::Movement(player, window, enemies); // Player movement
+    Player::Movement(renderer, player, window, enemies); // Player movement
 
     for (auto& turret : turrets) { // Turret shooting
         turret.findTarget(enemies);
@@ -69,21 +67,15 @@ void Game::Update(float dt) {
 
     for (int i = 0; i < enemies.size();) {
         enemies[i].moveTo(player);
-        enemies[i].setSpeed(0.25f);
+        enemies[i].setSpeed(0.5f);
 
         if (enemies[i].getHealth() <= 0) {
             player.takeCoins(enemies[i], 1.0f);
             enemies.erase(enemies.begin() + i);
             if (enemies.empty()) {
-                if (wave -> hasNextWave()) {
-                    std::cout << "Starting wave " << wave -> getWaveIndex(*wave -> getCurrentWave()) + 2 << "." << std::endl;
-                    wave -> startNextWave();
-                    if (wave -> getCurrentWave()) {
-                        enemies = wave -> getCurrentWave() -> getEnemies();
-                    }
-                } else {
-                    std::cout << "All waves defeated!" << std::endl;
-                    glfwSetWindowShouldClose(window, true);
+                wave -> startNextWave(window);
+                if (wave -> getCurrentWave()) {
+                    enemies = wave -> getCurrentWave() -> getEnemies();
                 }
             }
         } else {
@@ -95,13 +87,15 @@ void Game::Update(float dt) {
 void Game::Render() const {
     glClear(GL_COLOR_BUFFER_BIT);
 
+    //generator -> render(renderer, texture);
+
     if (player.getHealth() > 0) {
         player.drawEntity(*renderer, texture, -1);
     }
 
     for (auto& turret : turrets) {
         turret.render(*renderer, texture);
-        //turret.drawTargetLine(*renderer);
+        turret.drawTargetLine(*renderer);
     }
 
     if (wave && wave -> getCurrentWave()) {

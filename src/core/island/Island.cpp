@@ -1,116 +1,72 @@
 #include "Island.h"
 
-Island::Island(int width, int height, int seed) : WIDTH(width), HEIGHT(height) {
-    if (seed == 0) {
-        std::srand(time(NULL));
-        seed = std::rand();
-    }
-    perlin.initPermutationTable(seed);
-}
+void Island::generate(unsigned int seed) {
+    std::cout << "Generating and island with seed: " << seed << std::endl;
 
-void Island::generate() {
-    generateNoiseMap();
-    applyMask();
-    addSmallIslands();
-    normalizeMap();
-}
+    std::lock_guard<std::mutex> lock(mx);
 
-float Island::getNoiseValue(int x, int y) const {
-    return noiseMap[x][y];
-}
+    glm::vec2 centerPos = glm::vec2(tilemap.width / 2.0f, tilemap.height / 2.0f);
 
-TileType Island::getTileType(int x, int y, float treshold) const {
-    if (noiseMap[x][y] < treshold) {
-        return WATER;
-    }
+    for (int y = 0; y < tilemap.height; ++y) {
+        for (int x = 0; x < tilemap.width; ++x) {
+            float avgNoise = tilemap.calculateAvgNoise(glm::vec2(x, y), 1, seed);
+            avgNoise = (avgNoise + 1.0f) / 2.0f;
+            float distanceCenter = std::sqrt((x - centerPos.x) * (x - centerPos.x) + (y - centerPos.y) * (y - centerPos.y));
+            float value = avgNoise * (1.0f - (distanceCenter / radius));
 
-    return SAND;
-}
+            Tile tile;
 
-void Island::generateNoiseMap() {
-    float frequency = 0.05f; // detail of the map
-    for (int x = 0; x < WIDTH; ++x) {
-        for (int y = 0; y < HEIGHT; ++y) {
-            float nx = (float) x / WIDTH * 2.0f - 1.0f;
-            float ny = (float) y / HEIGHT * 2.0f - 1.0f;
-            noiseMap[x][y] = perlin.getNoise(nx, ny, frequency);
-        }
-    }
-}
-
-void Island::applyMask() {
-    float centerX = WIDTH / 2;
-    float centerY = HEIGHT / 2;
-    float radius = std::min(centerX, centerY) * 0.35f;
-
-    for (int x = 0; x < WIDTH; ++x) {
-        for (int y = 0; y < HEIGHT; ++y) {
-            float distance = std::sqrt((x - centerX) * (x - centerX) + (y - centerY) * (y - centerY));
-            if (distance > radius) {
-                noiseMap[x][y] -= 0.3f;
+            if (value > 0.45f) {
+                tile.type = SAND;
+                tile.collidable = false;
+            } else {
+                tile.type = WATER;
+                tile.collidable = false;
             }
+
+            tilemap.setTile(glm::vec2(x, y), tile);
         }
     }
+
+    applyBitmask();
+
+    complete = true;
+    cv.notify_one();
 }
 
-void Island::addSmallIslands() {
-    std::srand(time(NULL));
-    float radius = std::min(WIDTH, HEIGHT) * 0.05f;
-    int num = std::rand() % 3;
+void Island::applyBitmask() {
+    for (int y = 0; y < tilemap.height; ++y) {
+        for (int x = 0; x < tilemap.width; ++x) {
+            Tile tile = tilemap.getTile(glm::vec2(x, y));
+            TileType type = tilemap.getTile(glm::vec2(x, y)).type;
 
-    for (int i = 0; i < num; ++i) {
-        float islandX = rand() % WIDTH;
-        float islandY = rand() % HEIGHT;
+            if (type == SAND) {
+                int bitmask = tilemap.getBitmask(glm::vec2(x, y), type);
+                tile.variant = tilemap.getVariant(bitmask, type);
 
-        for (int x = 0; x < WIDTH; ++x) {
-            for (int y = 0; y < HEIGHT; ++y) {
-                float distance = std::sqrt((x - islandX) * (x - islandX) + (y - islandY) * (y - islandY));
-                if (distance <= radius) {
-                    noiseMap[x][y] += 0.5f;
+                if (tile.variant != 0) {
+                    //std::cout << "sand variant: " << tile.variant << " at coords: " << x << ", " <<  y << std::endl;
                 }
+
+                tilemap.setTile(glm::vec2(x, y), tilemap.getTile(glm::vec2(x, y)));
             }
         }
     }
 }
 
-void Island::normalizeMap() {
-    float min = FLT_MAX, max = -FLT_MAX;
 
-    for (int x = 0; x < WIDTH; ++x) {
-        for (int y = 0; y < HEIGHT; ++y) {
-            if (noiseMap[x][y] < min) min = noiseMap[x][y];
-            if (noiseMap[x][y] > max) max = noiseMap[x][y];
+void Island::render(Renderer* renderer, Texture* texture) {
+    std::vector<glm::vec2> positions;
+    std::vector<int> indices;
+
+    for (int y = 0; y < tilemap.height; ++y) {
+        for (int x = 0; x < tilemap.width; ++x) {
+            Tile tile = tilemap.getTile(glm::vec2(x, y));
+
+            positions.push_back(glm::vec2(x * 32.0f, y * 32.0f));
+            indices.push_back(tile.variant);
         }
     }
 
-    for (int x = 0; x < WIDTH; ++x) {
-        for (int y = 0; y < HEIGHT; ++y) {
-            noiseMap[x][y] = (noiseMap[x][y] - min) / (max - min);
-        }
-    }
-}
-
-void Island::renderIsland(Renderer *renderer, Texture *texture, float tileSize) {
-
-}
-
-void Island::printNoiseMap() {
-    for (int x = 0; x < WIDTH; ++x) {
-        for (int y = 0; y < HEIGHT; ++y) {
-            TileType type = getTileType(x, y);
-
-            int index = 0;
-            switch (type) {
-                case WATER:
-                    index = 7;
-                    std::cout << "w ";
-                    break;
-                case SAND:
-                    std::cout << "s ";
-                    index = 3;
-                    break;
-            }
-        }
-        std::cout << std::endl;
-    }
+    renderer -> DrawTilemap(*texture, positions, indices, 32.0f);
 }

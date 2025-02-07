@@ -2,36 +2,31 @@
 #define ISLANDGENERATION_H
 
 #include <../src/config.h>
-#include "../src/utils/math/noise/Perlin.h"
-#include "../src/utils/render/Renderer.h"
-#include "../src/utils/render/sprites/Texture.h"
-
-enum TileType {
-    WATER,
-    SAND
-};
+#include <stb/stb_perlin.h>
+#include "../src/tilemap/Tilemap.h"
 
 class Island {
-    private:
-        int WIDTH, HEIGHT;
-        float noiseMap[1280][1280 * 3/4];
+private:
+    int width, height;
+    Tilemap tilemap;
+    bool complete = false;
 
-        Perlin perlin;
+    int seed;
+    float radius;
 
-    public:
-        Island(int width, int height, int seed = 0);
-        void generate();
-        float getNoiseValue(int x, int y) const;
-        TileType getTileType(int x, int y, float treshold = 0.5f) const;
+    std::mutex mx;
+    std::condition_variable cv;
+private:
+    void applyBitmask();
 
-        void renderIsland(Renderer* renderer, Texture* texture, float tileSize);
+public:
+    Island(int width, int height, int seed, float radius) : tilemap(width, height), seed(seed), radius(radius) {
+        generate(seed);
+    }
 
-    private:
-        void generateNoiseMap();
-        void applyMask();
-        void addSmallIslands();
-        void normalizeMap();
-        void printNoiseMap();
+    void generate(unsigned int seed);
+    void render(Renderer* renderer, Texture* texture);
 };
+
 
 #endif //ISLANDGENERATION_H

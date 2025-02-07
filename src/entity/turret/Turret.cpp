@@ -19,7 +19,7 @@ Turret::Turret(std::vector<float> position, TurretType type) : Entity(position),
     rotationSpeed = 90.0f;
 }
 
-void Turret::findTarget(const std::vector<Entity>& enemies) {
+void Turret::findTarget(const std::vector<Enemy>& enemies) {
     float minDistance = std::numeric_limits<float>::max();
     target = NULL;
 
@@ -27,7 +27,7 @@ void Turret::findTarget(const std::vector<Entity>& enemies) {
         float distance = calculateDistance(getPosition(), enemy.getPosition());
         if (distance < minDistance) {
             minDistance = distance;
-            target = const_cast<Entity*>(&enemy);
+            target = const_cast<Enemy*>(&enemy);
         }
     }
 }

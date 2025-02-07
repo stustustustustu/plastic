@@ -6,19 +6,18 @@
 class WaveManager {
     private:
         std::map<int, Wave> waves;
-        int currentWaveIndex = 0;
-    public:
-        void generateWaves(int n, GLFWwindow *window); // wave number
 
+        int currentWaveIndex = 0;
+        Wave *currentWave = NULL;
+
+    public:
         void addWave(int index, const Wave &wave);
         bool removeWave(int index);
 
-        bool hasNextWave();
-
-         Wave *getCurrentWave();
+        Wave *getCurrentWave();
         int getWaveIndex(const Wave &wave) const;
 
-        void startNextWave();
+        void startNextWave(GLFWwindow* window);
 };
 
 #endif //WAVEMANAGER_H

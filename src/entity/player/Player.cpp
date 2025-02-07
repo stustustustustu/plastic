@@ -2,7 +2,7 @@
 #include "Player.h"
 #include "../src/config.h"
 
-void Player::Movement(Entity& player, GLFWwindow* window, std::vector<Entity>& enemies) {
+void Player::Movement(Renderer *renderer, Entity& player, GLFWwindow* window, std::vector<Enemy>& enemies) {
     std::vector<float> delta {0, 0};
 
     // Movement logic
@@ -31,6 +31,7 @@ void Player::Movement(Entity& player, GLFWwindow* window, std::vector<Entity>& e
         for (auto it = enemies.begin(); it != enemies.end();) {
             Entity& enemy = *it;
             if (isMouseOver(window, enemy.getPosition().at(0), enemy.getPosition().at(1))) {
+                player.drawTargetLine(*renderer, enemy, 2.0f, 0xFF0000);
                 enemy.hit(player.getDamage(), false);
             }
             ++it;

@@ -3,16 +3,17 @@
 
 #include "../src/config.h"
 #include "../src/entity/Entity.h"
+#include "../../entity/enemy/Enemy.h"
 
 class Wave {
     private:
-        std::vector<Entity> enemies;
+        std::vector<Enemy> enemies;
 
     public:
         Wave();
         Wave(int n, GLFWwindow* window);
 
-        void addEnemy(Entity& enemy);
-        std::vector<Entity> &getEnemies();
+        void addEnemy(Enemy& enemy);
+        std::vector<Enemy> &getEnemies();
 };
 #endif //WAVE_H

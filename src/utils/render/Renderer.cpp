@@ -3,7 +3,7 @@
 #include <../dependencies/glm/ext/matrix_clip_space.hpp>
 #include <../dependencies/glm/ext/matrix_transform.hpp>
 
-Renderer::Renderer(ShaderUtils &shader) : shader(shader), quadVAO(0) {
+Renderer::Renderer(ShaderUtils &shader) : shader(shader), quadVAO(0), pixel(Texture::Create("../src/assets/sprites/pixel.png", true)){
     initRenderData();
 }
 
@@ -109,11 +109,11 @@ void Renderer::DrawSprite(Texture &texture, glm::vec2 position, float u1, float 
 	glDisable(GL_BLEND);
 }
 
-void Renderer::DrawSprite(Texture &texture, glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color) {
+void Renderer::DrawSprite(Texture &texture, glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color) const {
 	this -> DrawSprite(texture, position, 0.0f, 0.0f, 1.0f, 1.0f, size, rotate, color);
 }
 
-void Renderer::DrawSpriteSheet(Texture &texture, glm::vec2 position, int index, int rows, int cols, glm::vec2 size, float rotate, glm::vec3 color) {
+void Renderer::DrawSpriteSheet(Texture &texture, glm::vec2 position, int index, int rows, int cols, glm::vec2 size, float rotate, glm::vec3 color) const {
 	float u1 = static_cast<float>(index % cols) / cols;
 	float v1 = static_cast<float>(index / cols) / rows;
 	float u2 = static_cast<float>((index % cols) + 1) / cols;
@@ -122,118 +122,71 @@ void Renderer::DrawSpriteSheet(Texture &texture, glm::vec2 position, int index, 
 	this->DrawSprite(texture, position, u1, v1, u2, v2, size, rotate, color);
 }
 
-void Renderer::DrawRectangle(int x, int y, int width, int height, int hex) const {
-    // Get the current framebuffer size (screen size)
-    int screenWidth, screenHeight;
-    glfwGetFramebufferSize(glfwGetCurrentContext(), &screenWidth, &screenHeight);
+void Renderer::DrawTilemap(Texture &texture, const std::vector<glm::vec2>& positions, const std::vector<int>& indices, float tileSize) const {
+	static GLuint instanceVBO = 0, indexVBO = 0;
+	static bool initialized = false;
 
-    // Normalize the screen coordinates to OpenGL's NDC (Normalized Device Coordinates)
-    float normalizedX = (2.0f * x / screenWidth) - 1.0f;   // x maps from [0, screenWidth] -> [-1, 1]
-    float normalizedY = 1.0f - (2.0f * y / screenHeight);  // y maps from [0, screenHeight] -> [1, -1]
-    float normalizedWidth = (2.0f * width / screenWidth);   // width maps from [0, screenWidth] -> [0, 2]
-    float normalizedHeight = (2.0f * height / screenHeight); // height maps from [0, screenHeight] -> [0, 2]
+	if (!initialized) {
+		glGenBuffers(1, &instanceVBO);
+		glGenBuffers(1, &indexVBO);
+		initialized = true;
+	}
 
-    // Extract the RGB components from the hex color (0xRRGGBB)
-    float red   = ((hex >> 16) & 0xFF) / 255.0f;   // Extract red (bits 16-23) and normalize to [0, 1]
-    float green = ((hex >> 8) & 0xFF) / 255.0f;    // Extract green (bits 8-15) and normalize to [0, 1]
-    float blue  = (hex & 0xFF) / 255.0f;           // Extract blue (bits 0-7) and normalize to [0, 1]
+	this->shader.Use();
 
-    // Define the vertices for the rectangle in NDC coordinates
-    float vertices[] = {
-        // Positions              // Colors
-        normalizedX - normalizedWidth / 2, normalizedY - normalizedHeight / 2, 0.0f, red, green, blue,  // Bottom left
-        normalizedX + normalizedWidth / 2, normalizedY - normalizedHeight / 2, 0.0f, red, green, blue,  // Bottom right
-        normalizedX + normalizedWidth / 2, normalizedY + normalizedHeight / 2, 0.0f, red, green, blue,  // Top right
-        normalizedX - normalizedWidth / 2, normalizedY + normalizedHeight / 2, 0.0f, red, green, blue   // Top left
-    };
+	int width, height;
+	glfwGetFramebufferSize(glfwGetCurrentContext(), &width, &height);
+	glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(width), static_cast<float>(height), 0.0f, -1.0f, 1.0f);
+	this->shader.SetMat4("projection", projection);
 
-    unsigned int indices[] = {
-        0, 1, 2, // First triangle
-        2, 3, 0  // Second triangle
-    };
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    unsigned int VBO, VAO, EBO;
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
+	glBindVertexArray(this->quadVAO);
 
-    shader.Use();
+	// Upload once, reuse
+	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
+	glBufferData(GL_ARRAY_BUFFER, positions.size() * sizeof(glm::vec2), positions.data(), GL_DYNAMIC_DRAW);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), (void*)0);
+	glEnableVertexAttribArray(2);
+	glVertexAttribDivisor(2, 1);
 
-    shader.SetBool("useTexture", false);
+	glBindBuffer(GL_ARRAY_BUFFER, indexVBO);
+	glBufferData(GL_ARRAY_BUFFER, indices.size() * sizeof(int), indices.data(), GL_DYNAMIC_DRAW);
+	glVertexAttribPointer(3, 1, GL_INT, GL_FALSE, sizeof(int), (void*)0);
+	glEnableVertexAttribArray(3);
+	glVertexAttribDivisor(3, 1);
 
-    glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-    glBindVertexArray(0);
+	for (size_t i = 0; i < positions.size(); i++) {
+		glm::vec2 position = positions[i];
 
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &EBO);
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(position, 0.0f));
+		model = glm::scale(model, glm::vec3(tileSize, tileSize, 1.0f));
+
+		this->shader.SetMat4("model", model);
+		this->shader.SetInt("spriteIndex", indices[i]);
+
+		glDrawArraysInstanced(GL_TRIANGLES, 0, 6, 1);
+	}
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+	glDisable(GL_BLEND);
 }
 
-void Renderer::DrawLine(float x1, float y1, float x2, float y2, float thickness, int hex) const {
-    // Get the current framebuffer size (screen size)
-    int screenWidth, screenHeight;
-    glfwGetFramebufferSize(glfwGetCurrentContext(), &screenWidth, &screenHeight);
+void Renderer::DrawLine(glm::vec2 position1, glm::vec2 position2, float thickness, glm::vec3 color) const {
+	glm::vec2 pos = (position1 + position2) / 2.0f;
+	glm::vec2 scale = glm::vec2(glm::distance(position1, position2), thickness);
+	
+	float angle = glm::degrees(glm::atan(position2.y - position1.y, position2.x - position1.x));
+	pos -= scale / 2.0f;
+	
+	DrawSprite(*pixel, pos, scale, angle, color);
+}
 
-    // Normalize the screen coordinates to OpenGL's NDC (Normalized Device Coordinates)
-    float normalizedX1 = (2.0f * x1 / screenWidth) - 1.0f;   // x1 maps from [0, screenWidth] -> [-1, 1]
-    float normalizedY1 = 1.0f - (2.0f * y1 / screenHeight);  // y1 maps from [0, screenHeight] -> [1, -1]
-
-    float normalizedX2 = (2.0f * x2 / screenWidth) - 1.0f;   // x2 maps from [0, screenWidth] -> [-1, 1]
-    float normalizedY2 = 1.0f - (2.0f * y2 / screenHeight);  // y2 maps from [0, screenHeight] -> [1, -1]
-
-    // Extract the RGB components from the hex color (0xRRGGBB)
-    float red   = ((hex >> 16) & 0xFF) / 255.0f;   // Extract red (bits 16-23) and normalize to [0, 1]
-    float green = ((hex >> 8) & 0xFF) / 255.0f;    // Extract green (bits 8-15) and normalize to [0, 1]
-    float blue  = (hex & 0xFF) / 255.0f;           // Extract blue (bits 0-7) and normalize to [0, 1]
-
-    // Define the vertices for the line in NDC coordinates
-    float vertices[] = {
-        normalizedX1, normalizedY1, 0.0f, red, green, blue,  // Start point
-        normalizedX2, normalizedY2, 0.0f, red, green, blue   // End point
-    };
-
-    unsigned int VBO, VAO;
-    glLineWidth(thickness);
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-
-    glBindVertexArray(VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-
-    shader.Use();
-
-    shader.SetBool("useTexture", false);
-
-    // Draw the line
-    glBindVertexArray(VAO);
-    glDrawArrays(GL_LINES, 0, 2);
-    glBindVertexArray(0);
-
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
+void Renderer::DrawLine(float x1, float y1, float x2, float y2, float thickness, glm::vec3 color) const {
+	DrawLine(glm::vec2(x1, y1), glm::vec2(x2, y2), thickness, color);
 }
 
 bool Renderer::initializeWindow(GLFWwindow*& window, int width, int height, const std::string& title) {
