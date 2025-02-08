@@ -3,7 +3,7 @@
 #include <../dependencies/glm/ext/matrix_clip_space.hpp>
 #include <../dependencies/glm/ext/matrix_transform.hpp>
 
-Renderer::Renderer(ShaderUtils &shader) : shader(shader), quadVAO(0), pixel(Texture::Create("../src/assets/sprites/pixel.png", true)){
+Renderer::Renderer(ShaderUtils &shader) : shader(shader), quadVAO(0), pixel(Texture::Create("../src/assets/sprites/pixel.png", true)), background(Texture::Create("../src/assets/sprites/background.png", true)){
     initRenderData();
 }
 
@@ -122,57 +122,11 @@ void Renderer::DrawSpriteSheet(Texture &texture, glm::vec2 position, int index, 
 	this->DrawSprite(texture, position, u1, v1, u2, v2, size, rotate, color);
 }
 
-void Renderer::DrawTilemap(Texture &texture, const std::vector<glm::vec2>& positions, const std::vector<int>& indices, float tileSize) const {
-	static GLuint instanceVBO = 0, indexVBO = 0;
-	static bool initialized = false;
+void Renderer::DrawBackground(int index) const {
+	glm::vec2 position(0.0f, 0.0f);
+	glm::vec2 size(1280.0f, 960.0f);
 
-	if (!initialized) {
-		glGenBuffers(1, &instanceVBO);
-		glGenBuffers(1, &indexVBO);
-		initialized = true;
-	}
-
-	this->shader.Use();
-
-	int width, height;
-	glfwGetFramebufferSize(glfwGetCurrentContext(), &width, &height);
-	glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(width), static_cast<float>(height), 0.0f, -1.0f, 1.0f);
-	this->shader.SetMat4("projection", projection);
-
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	glBindVertexArray(this->quadVAO);
-
-	// Upload once, reuse
-	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
-	glBufferData(GL_ARRAY_BUFFER, positions.size() * sizeof(glm::vec2), positions.data(), GL_DYNAMIC_DRAW);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), (void*)0);
-	glEnableVertexAttribArray(2);
-	glVertexAttribDivisor(2, 1);
-
-	glBindBuffer(GL_ARRAY_BUFFER, indexVBO);
-	glBufferData(GL_ARRAY_BUFFER, indices.size() * sizeof(int), indices.data(), GL_DYNAMIC_DRAW);
-	glVertexAttribPointer(3, 1, GL_INT, GL_FALSE, sizeof(int), (void*)0);
-	glEnableVertexAttribArray(3);
-	glVertexAttribDivisor(3, 1);
-
-	for (size_t i = 0; i < positions.size(); i++) {
-		glm::vec2 position = positions[i];
-
-		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(position, 0.0f));
-		model = glm::scale(model, glm::vec3(tileSize, tileSize, 1.0f));
-
-		this->shader.SetMat4("model", model);
-		this->shader.SetInt("spriteIndex", indices[i]);
-
-		glDrawArraysInstanced(GL_TRIANGLES, 0, 6, 1);
-	}
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
-	glDisable(GL_BLEND);
+	DrawSpriteSheet(*background, position, index, 1, 4, size);
 }
 
 void Renderer::DrawLine(glm::vec2 position1, glm::vec2 position2, float thickness, glm::vec3 color) const {
@@ -181,7 +135,7 @@ void Renderer::DrawLine(glm::vec2 position1, glm::vec2 position2, float thicknes
 	
 	float angle = glm::degrees(glm::atan(position2.y - position1.y, position2.x - position1.x));
 	pos -= scale / 2.0f;
-	
+
 	DrawSprite(*pixel, pos, scale, angle, color);
 }
 

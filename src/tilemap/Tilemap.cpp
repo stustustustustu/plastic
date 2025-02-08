@@ -22,10 +22,10 @@ float Tilemap::calculateAvgNoise(glm::vec2 startPos, int quadSize, int seed) {
     for (int y = startPos.y; y < startPos.y + quadSize; ++y) {
         for (int x = startPos.x; x < startPos.x + quadSize; ++x) {
             float noiseValue = stb_perlin_noise3(
-                (x + seed) * 0.05f, // Scale X
-                (y + seed) * 0.05f, // Scale Y
-                0.0f,               // Z (constant for 2D)
-                1.0f, 1.0f, 1.0f    // Frequency
+                (x + seed) * 0.05f,             // Scale X
+                (y + seed) * 0.05f,             // Scale Y
+                0.0f,                           // Z (constant for 2D)
+                1.0f, 1.0f, 1.0f  // Frequency
             );
             total += noiseValue;
             count++;
@@ -60,6 +60,7 @@ int Tilemap::getVariant(int bitmask, TileType type) {
 
     if (type == SAND) {
         auto it = sandVariants.find(bitmask);
+
         return it != sandVariants.end() ? it -> second : 0;
     }
 

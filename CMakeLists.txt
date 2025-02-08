@@ -58,6 +58,8 @@ add_executable(
         dependencies/stb/stb_perlin.cpp
         src/entity/enemy/Enemy.h
         src/utils/math/color/color.h
+        src/utils/math/collision/Collision.cpp
+        src/utils/math/collision/Collision.h
 )
 
 target_include_directories(plastic PRIVATE dependencies) # Includes location

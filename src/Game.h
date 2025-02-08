@@ -50,7 +50,7 @@ class Game {
         std::vector<float> getSize();
 
         bool Init();
-        void Update(float deltaTime);
+        void Update();
         void Render() const;
         void Loop();
 };

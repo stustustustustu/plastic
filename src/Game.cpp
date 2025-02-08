@@ -20,7 +20,6 @@ std::vector<float> Game::getSize() {
 
 bool Game::Init() {
     srand(time(NULL));
-    float tileSize = 32.0f;
 
     if (!renderer -> initializeWindow(window, getSize().at(0), getSize().at(1), "plastic")) {
         return false;
@@ -35,7 +34,7 @@ bool Game::Init() {
     wave = new WaveManager();
     inventory = new Inventory(player);
     upgrade = new UpgradeManager(*inventory);
-    generator = new Island(width / tileSize, height / tileSize, rand(), 50.0f); // rand() instead of 1
+    //generator = new Island(width / 32.0f, height / 32.0f, std::pow(rand(), 2), 50.0f);
 
     texture = Texture::Create("../src/assets/sprites/sheet.png", true);
 
@@ -55,7 +54,7 @@ bool Game::Init() {
     return true;
 }
 
-void Game::Update(float dt) {
+void Game::Update() {
     auto& enemies = wave -> getCurrentWave() -> getEnemies();
 
     Player::Movement(renderer, player, window, enemies); // Player movement
@@ -87,6 +86,18 @@ void Game::Update(float dt) {
 void Game::Render() const {
     glClear(GL_COLOR_BUFFER_BIT);
 
+    static int currentFrame = 0;
+    static std::chrono::steady_clock::time_point lastUpdateTime = std::chrono::steady_clock::now();
+    auto currentTime = std::chrono::steady_clock::now();
+    auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - lastUpdateTime).count();
+
+    if (elapsedTime >= 400) {
+        currentFrame = (currentFrame + 1) % 4;
+        lastUpdateTime = currentTime;
+    }
+
+    renderer -> DrawBackground(currentFrame);
+
     //generator -> render(renderer, texture);
 
     if (player.getHealth() > 0) {
@@ -113,16 +124,9 @@ void Game::Render() const {
 }
 
 void Game::Loop() {
-    float deltaTime = 0.0f;
-    float lastFrame = 0.0f;
-
     while (!glfwWindowShouldClose(window)) {
-        float currentFrame = glfwGetTime();
-        deltaTime = currentFrame - lastFrame;
-        lastFrame = currentFrame;
-
         glfwPollEvents();
-        Update(deltaTime);
+        Update();
         Render();
     }
 
