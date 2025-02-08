@@ -1,15 +1,35 @@
 #include "Wave.h"
 
-Wave::Wave() {}
+Wave::Wave(int index, int weight, bool bossfight) : index(index), weight(weight), bossfight(bossfight) {}
 
-Wave::Wave(int n, GLFWwindow* window) {
-    Enemy::populate(enemies, n, window, 30);
+void Wave::addEnemies(const std::vector<Enemy> &enemies) {
+    this -> enemies.insert(this -> enemies.end(), enemies.begin(), enemies.end());
 }
 
-void Wave::addEnemy(Enemy& enemy) {
-    enemies.push_back(enemy);
+std::vector<Enemy> & Wave::getEnemies() {
+    return this -> enemies;
 }
 
-std::vector<Enemy> &Wave::getEnemies() {
-    return enemies;
+int Wave::getIndex() const {
+    return this -> index;
+}
+
+void Wave::setIndex(int index) {
+    this -> index = index;
+}
+
+int Wave::getWeight() const {
+    return this -> weight;
+}
+
+void Wave::setWeight(int weight) {
+    this -> weight = weight;
+}
+
+bool Wave::isBossfight() const {
+    return this -> bossfight;
+}
+
+void Wave::setBossfight(bool bossfight) {
+    this -> bossfight = bossfight;
 }

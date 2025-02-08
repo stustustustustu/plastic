@@ -5,19 +5,28 @@
 
 class WaveManager {
     private:
-        std::map<int, Wave> waves;
+        std::vector<Wave> waves;
 
-        int currentWaveIndex = 0;
-        Wave *currentWave = NULL;
+        int currentWaveIndex;
+        bool forcable;
+
+        std::deque<std::shared_ptr<Wave>> activeWaves;
+        std::chrono::steady_clock::time_point lastWaveSpawnTime;
 
     public:
-        void addWave(int index, const Wave &wave);
-        bool removeWave(int index);
-
-        Wave *getCurrentWave();
-        int getWaveIndex(const Wave &wave) const;
+        WaveManager();
 
         void startNextWave(GLFWwindow* window);
+        void forceNextWave(GLFWwindow* window);
+
+        void updateWaveStatus();
+        void removeCompletedWaves();
+
+        std::vector<Enemy> *getCurrentEnemies() const;
+
+        void addWave(Wave wave);
+
+        bool isActive() const;
 };
 
 #endif //WAVEMANAGER_H

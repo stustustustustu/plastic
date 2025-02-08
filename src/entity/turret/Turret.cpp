@@ -72,7 +72,7 @@ void Turret::shoot() {
 }
 
 void Turret::drawTargetLine(Renderer &renderer) const {
-    if (!target) return;
+    if (!target || target -> getPosition().empty()) return;
 
     if (target -> getPosition().size() > 0) {
         Entity::drawTargetLine(renderer, *target, 2.0f, 0xFF0000);

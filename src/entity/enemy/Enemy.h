@@ -20,22 +20,27 @@ enum class EnemyType {
 };
 
 class Enemy : public Entity {
-private:
-    EnemyType type;
-    float health;
-    float speed;
+    private:
+        EnemyType type;
 
     public:
-        Enemy(const std::vector<float>& position, float health, float speed);
-
+        Enemy(EnemyType type, const std::vector<float>& position);
         void moveTowards(const std::vector<float>& targetPos);
-        void moveTo(Entity& player);
+        void moveTowards(Entity& player);
 
-        static void populate(std::vector<Enemy>& enemies, int count, GLFWwindow* window, float minDistance);
+        static std::map<EnemyType, std::tuple<float, float, float, float>> getEnemyData();
 
-        static float calculateDistance(const std::vector<float>& pos1, const std::vector<float>& pos2);
+        void setType(EnemyType type) const;
+        EnemyType getType() const;
+
+        static std::vector<Enemy> generateEnemies(int index, int totalWeight, GLFWwindow *window);
+
         static bool isPositionValid(float x, float y, int halfWidth, int halfHeight, int border, int screenWidth, int screenHeight);
         static bool isPositionValidWithOthers(float x, float y, int halfWidth, int halfHeight, int border, int screenWidth, int screenHeight, const std::vector<Enemy>& enemies, float minDistance);
+
+    private:
+        static float calculateDistance(const std::vector<float>& pos1, const std::vector<float>& pos2);
+
 };
 
 #endif //ENEMY_H

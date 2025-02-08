@@ -21,10 +21,20 @@ enum GameState {
     NONE
 };
 
+enum Difficulty {
+    EASY,
+    MEDIUM,
+    HARD,
+    EXPERT,
+    IMPOSSIBLE
+};
+
 class Game {
     private:
         GameState state;
         float width, height; // window dimensions;
+        Difficulty difficulty;
+
     public:
         // rendering
         GLFWwindow *window;
@@ -42,7 +52,7 @@ class Game {
 
         Entity player;
         std::vector<Turret> turrets;
-        std::vector<Entity> enemies;
+        std::vector<Enemy> *enemies;
 
         Game(float, float);
         ~Game();

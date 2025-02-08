@@ -55,27 +55,26 @@ bool Game::Init() {
 }
 
 void Game::Update() {
-    auto& enemies = wave -> getCurrentWave() -> getEnemies();
+    enemies = wave -> getCurrentEnemies();
 
-    Player::Movement(renderer, player, window, enemies); // Player movement
+    Player::Movement(renderer, player, window, *enemies); // Player movement
 
     for (auto& turret : turrets) { // Turret shooting
-        turret.findTarget(enemies);
+        turret.findTarget(*enemies);
         turret.shoot();
     }
 
-    for (int i = 0; i < enemies.size();) {
-        enemies[i].moveTo(player);
-        enemies[i].setSpeed(0.5f);
+    for (int i = 0; i < enemies -> size();) {
+        (*enemies)[i].moveTowards(player);
+        (*enemies)[i].setSpeed(0.25f);
 
-        if (enemies[i].getHealth() <= 0) {
-            player.takeCoins(enemies[i], 1.0f);
-            enemies.erase(enemies.begin() + i);
-            if (enemies.empty()) {
+        if ((*enemies)[i].getHealth() <= 0) {
+            player.takeCoins((*enemies)[i], 1.0f);
+            enemies -> erase(enemies -> begin() + i);
+            if (enemies -> empty()) {
                 wave -> startNextWave(window);
-                if (wave -> getCurrentWave()) {
-                    enemies = wave -> getCurrentWave() -> getEnemies();
-                }
+                wave -> updateWaveStatus();
+                enemies = wave -> getCurrentEnemies();
             }
         } else {
             ++i;
@@ -106,12 +105,10 @@ void Game::Render() const {
 
     for (auto& turret : turrets) {
         turret.render(*renderer, texture);
-        turret.drawTargetLine(*renderer);
     }
 
-    if (wave && wave -> getCurrentWave()) {
-        const auto& enemies = wave -> getCurrentWave() -> getEnemies();
-        for (const auto& enemy : enemies) {
+    if (wave) {
+        for (const auto& enemy : *enemies) {
             if (enemy.getHealth() > 0) {
                 enemy.drawEntity(*renderer, texture, 0);
             }
