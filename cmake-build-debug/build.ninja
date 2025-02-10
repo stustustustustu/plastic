@@ -182,20 +182,6 @@ build CMakeFiles/plastic.dir/src/core/island/Island.cpp.obj: CXX_COMPILER__plast
   OBJECT_DIR = CMakeFiles\plastic.dir
   OBJECT_FILE_DIR = CMakeFiles\plastic.dir\src\core\island
 
-build CMakeFiles/plastic.dir/src/utils/math/noise/Perlin.cpp.obj: CXX_COMPILER__plastic_unscanned_Debug C$:/Users/stupe/Desktop/plastic/src/utils/math/noise/Perlin.cpp || cmake_object_order_depends_target_plastic
-  DEP_FILE = CMakeFiles\plastic.dir\src\utils\math\noise\Perlin.cpp.obj.d
-  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/stupe/Desktop/plastic/dependencies
-  OBJECT_DIR = CMakeFiles\plastic.dir
-  OBJECT_FILE_DIR = CMakeFiles\plastic.dir\src\utils\math\noise
-
-build CMakeFiles/plastic.dir/src/tilemap/Tilemap.cpp.obj: CXX_COMPILER__plastic_unscanned_Debug C$:/Users/stupe/Desktop/plastic/src/tilemap/Tilemap.cpp || cmake_object_order_depends_target_plastic
-  DEP_FILE = CMakeFiles\plastic.dir\src\tilemap\Tilemap.cpp.obj.d
-  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/stupe/Desktop/plastic/dependencies
-  OBJECT_DIR = CMakeFiles\plastic.dir
-  OBJECT_FILE_DIR = CMakeFiles\plastic.dir\src\tilemap
-
 build CMakeFiles/plastic.dir/src/utils/math/collision/Collision.cpp.obj: CXX_COMPILER__plastic_unscanned_Debug C$:/Users/stupe/Desktop/plastic/src/utils/math/collision/Collision.cpp || cmake_object_order_depends_target_plastic
   DEP_FILE = CMakeFiles\plastic.dir\src\utils\math\collision\Collision.cpp.obj.d
   FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
@@ -224,6 +210,13 @@ build CMakeFiles/plastic.dir/src/utils/render/batch/BatchRenderer.cpp.obj: CXX_C
   OBJECT_DIR = CMakeFiles\plastic.dir
   OBJECT_FILE_DIR = CMakeFiles\plastic.dir\src\utils\render\batch
 
+build CMakeFiles/plastic.dir/dependencies/noise/FastNoise.cpp.obj: CXX_COMPILER__plastic_unscanned_Debug C$:/Users/stupe/Desktop/plastic/dependencies/noise/FastNoise.cpp || cmake_object_order_depends_target_plastic
+  DEP_FILE = CMakeFiles\plastic.dir\dependencies\noise\FastNoise.cpp.obj.d
+  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
+  INCLUDES = -IC:/Users/stupe/Desktop/plastic/dependencies
+  OBJECT_DIR = CMakeFiles\plastic.dir
+  OBJECT_FILE_DIR = CMakeFiles\plastic.dir\dependencies\noise
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target plastic
@@ -232,7 +225,7 @@ build CMakeFiles/plastic.dir/src/utils/render/batch/BatchRenderer.cpp.obj: CXX_C
 #############################################
 # Link the executable plastic.exe
 
-build plastic.exe: CXX_EXECUTABLE_LINKER__plastic_Debug CMakeFiles/plastic.dir/src/main.cpp.obj CMakeFiles/plastic.dir/src/glad.c.obj CMakeFiles/plastic.dir/src/utils/shader/ShaderUtils.cpp.obj CMakeFiles/plastic.dir/src/utils/render/Renderer.cpp.obj CMakeFiles/plastic.dir/src/entity/Entity.cpp.obj CMakeFiles/plastic.dir/src/entity/player/Player.cpp.obj CMakeFiles/plastic.dir/src/entity/enemy/Enemy.cpp.obj CMakeFiles/plastic.dir/src/entity/turret/Turret.cpp.obj CMakeFiles/plastic.dir/src/utils/render/sprites/Texture.cpp.obj CMakeFiles/plastic.dir/dependencies/stb/stb_image.cpp.obj CMakeFiles/plastic.dir/dependencies/stb/stb_perlin.cpp.obj CMakeFiles/plastic.dir/src/Game.cpp.obj CMakeFiles/plastic.dir/src/core/wave/Wave.cpp.obj CMakeFiles/plastic.dir/src/core/wave/manager/WaveManager.cpp.obj CMakeFiles/plastic.dir/src/core/upgrades/Upgrade.cpp.obj CMakeFiles/plastic.dir/src/core/upgrades/manager/UpgradePath.cpp.obj CMakeFiles/plastic.dir/src/core/upgrades/manager/UpgradeManager.cpp.obj CMakeFiles/plastic.dir/src/core/inventory/Inventory.cpp.obj CMakeFiles/plastic.dir/src/core/island/Island.cpp.obj CMakeFiles/plastic.dir/src/utils/math/noise/Perlin.cpp.obj CMakeFiles/plastic.dir/src/tilemap/Tilemap.cpp.obj CMakeFiles/plastic.dir/src/utils/math/collision/Collision.cpp.obj CMakeFiles/plastic.dir/src/core/UI/Element.cpp.obj CMakeFiles/plastic.dir/src/core/camera/Camera.cpp.obj CMakeFiles/plastic.dir/src/utils/render/batch/BatchRenderer.cpp.obj
+build plastic.exe: CXX_EXECUTABLE_LINKER__plastic_Debug CMakeFiles/plastic.dir/src/main.cpp.obj CMakeFiles/plastic.dir/src/glad.c.obj CMakeFiles/plastic.dir/src/utils/shader/ShaderUtils.cpp.obj CMakeFiles/plastic.dir/src/utils/render/Renderer.cpp.obj CMakeFiles/plastic.dir/src/entity/Entity.cpp.obj CMakeFiles/plastic.dir/src/entity/player/Player.cpp.obj CMakeFiles/plastic.dir/src/entity/enemy/Enemy.cpp.obj CMakeFiles/plastic.dir/src/entity/turret/Turret.cpp.obj CMakeFiles/plastic.dir/src/utils/render/sprites/Texture.cpp.obj CMakeFiles/plastic.dir/dependencies/stb/stb_image.cpp.obj CMakeFiles/plastic.dir/dependencies/stb/stb_perlin.cpp.obj CMakeFiles/plastic.dir/src/Game.cpp.obj CMakeFiles/plastic.dir/src/core/wave/Wave.cpp.obj CMakeFiles/plastic.dir/src/core/wave/manager/WaveManager.cpp.obj CMakeFiles/plastic.dir/src/core/upgrades/Upgrade.cpp.obj CMakeFiles/plastic.dir/src/core/upgrades/manager/UpgradePath.cpp.obj CMakeFiles/plastic.dir/src/core/upgrades/manager/UpgradeManager.cpp.obj CMakeFiles/plastic.dir/src/core/inventory/Inventory.cpp.obj CMakeFiles/plastic.dir/src/core/island/Island.cpp.obj CMakeFiles/plastic.dir/src/utils/math/collision/Collision.cpp.obj CMakeFiles/plastic.dir/src/core/UI/Element.cpp.obj CMakeFiles/plastic.dir/src/core/camera/Camera.cpp.obj CMakeFiles/plastic.dir/src/utils/render/batch/BatchRenderer.cpp.obj CMakeFiles/plastic.dir/dependencies/noise/FastNoise.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lglfw3  -lkernel32  -luser32  -lgdi32  -lwinspool  -lshell32  -lole32  -loleaut32  -luuid  -lcomdlg32  -ladvapi32  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   LINK_PATH = -LC:/Users/stupe/Desktop/plastic/dependencies/GLFW/library

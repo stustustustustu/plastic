@@ -50,12 +50,6 @@ add_executable(
         src/core/inventory/Inventory.h
         src/core/island/Island.cpp
         src/core/island/Island.h
-        src/utils/math/noise/Perlin.cpp
-        src/utils/math/noise/Perlin.h
-        src/tilemap/Tile.h
-        src/tilemap/Tilemap.cpp
-        src/tilemap/Tilemap.h
-        dependencies/stb/stb_perlin.cpp
         src/entity/enemy/Enemy.h
         src/utils/math/color/color.h
         src/utils/math/collision/Collision.cpp
@@ -66,6 +60,8 @@ add_executable(
         src/core/camera/Camera.h
         src/utils/render/batch/BatchRenderer.cpp
         src/utils/render/batch/BatchRenderer.h
+
+        dependencies/noise/FastNoise.cpp
 )
 
 target_include_directories(plastic PRIVATE dependencies) # Includes location

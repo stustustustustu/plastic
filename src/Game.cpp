@@ -46,7 +46,7 @@ bool Game::Init() {
     wave = new WaveManager();
     inventory = new Inventory(player);
     upgrade = new UpgradeManager(*inventory);
-    //generator = new Island(width / 32.0f, height / 32.0f, std::pow(rand(), 2), 50.0f);
+    generator = new Island(std::pow(rand(), 2));
 
     texture = Texture::Create("../src/assets/sprites/sheet.png", true);
 
@@ -109,7 +109,7 @@ void Game::Render() const {
 
     renderer -> DrawBackground(currentFrame);
 
-    //generator -> render(renderer, texture);
+    generator -> render(*texture);
 
     if (player.getHealth() > 0) {
         player.drawEntity(texture);

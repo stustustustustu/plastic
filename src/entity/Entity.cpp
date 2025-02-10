@@ -41,7 +41,7 @@ Entity::Entity(
  * @param hex The color of the entity to draw.
  */
 void Entity::drawEntity(Texture *texture) const {
-    game -> renderer -> DrawSpriteSheet(*texture, glm::vec2(getRenderPosition().at(0), getRenderPosition().at(1)), 0, 16, 16);
+    game -> renderer -> DrawSpriteSheet(*texture, glm::vec2(getRenderPosition().at(0), getRenderPosition().at(1)), 1, 64, 64);
 }
 
 /**
