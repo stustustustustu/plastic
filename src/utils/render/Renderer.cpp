@@ -1,4 +1,5 @@
 #include "Renderer.h"
+#include "../src/Game.h"
 
 #include <../dependencies/glm/ext/matrix_clip_space.hpp>
 #include <../dependencies/glm/ext/matrix_transform.hpp>
@@ -56,6 +57,8 @@ void Renderer::initRenderData() {
 }
 
 void Renderer::DrawSprite(Texture &texture, glm::vec2 position, float u1, float v1, float u2, float v2, glm::vec2 size, float rotate, glm::vec3 color) const {
+	Game::getInstance() -> batch -> pushObject(texture, position, {u1, v1, u2, v2}, size, color);
+
 	this -> shader.Use();
 
 	int width, height;
@@ -119,7 +122,7 @@ void Renderer::DrawSpriteSheet(Texture &texture, glm::vec2 position, int index, 
 	float u2 = static_cast<float>((index % cols) + 1) / cols;
 	float v2 = static_cast<float>((index / cols) + 1) / rows;
 
-	this->DrawSprite(texture, position, u1, v1, u2, v2, size, rotate, color);
+	this -> DrawSprite(texture, position, u1, v1, u2, v2, size, rotate, color);
 }
 
 void Renderer::DrawBackground(int index) const {

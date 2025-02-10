@@ -1,10 +1,13 @@
 #include "Enemy.h"
+#include "../src/Game.h"
 
 Enemy::Enemy(EnemyType type, const std::vector<float>& position): Entity(position), type(type) {
     auto[weight, health, damage, speed] = getEnemyData().at(type);
 }
 
-std::vector<Enemy> Enemy::generateEnemies(int index, int totalWeight, GLFWwindow *window) {
+std::vector<Enemy> Enemy::generateEnemies(int index, int totalWeight) {
+    auto window = Game::getInstance() -> window;
+
     int screenWidth, screenHeight;
     glfwGetFramebufferSize(window, &screenWidth, &screenHeight);
 

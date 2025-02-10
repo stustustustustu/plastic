@@ -33,7 +33,7 @@ class Enemy : public Entity {
         void setType(EnemyType type) const;
         EnemyType getType() const;
 
-        static std::vector<Enemy> generateEnemies(int index, int totalWeight, GLFWwindow *window);
+        static std::vector<Enemy> generateEnemies(int index, int totalWeight);
 
         static bool isPositionValid(float x, float y, int halfWidth, int halfHeight, int border, int screenWidth, int screenHeight);
         static bool isPositionValidWithOthers(float x, float y, int halfWidth, int halfHeight, int border, int screenWidth, int screenHeight, const std::vector<Enemy>& enemies, float minDistance);

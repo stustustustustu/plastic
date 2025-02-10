@@ -2,16 +2,27 @@
 
 #include <glm/ext/matrix_clip_space.hpp>
 
-Game::Game(float width, float height) : state(ACTIVE), width(width), height(height), window(NULL), shader(NULL), texture(NULL), renderer(NULL), wave(NULL), upgrade(NULL), inventory(NULL), generator(NULL), player({width/2, height/2}) {}
+Game *Game::instance = NULL;
+
+Game::Game(float width, float height) : state(ACTIVE), width(width), height(height), window(NULL), shader(NULL), texture(NULL), renderer(NULL), batch(NULL), wave(NULL), upgrade(NULL), inventory(NULL), generator(NULL), player({width/2, height/2}) {}
 
 Game::~Game() {
     delete shader;
     delete texture;
     delete renderer;
+    delete batch;
     delete wave;
     delete upgrade;
     delete inventory;
     delete generator;
+}
+
+Game *Game::getInstance(float width, float height) {
+    if (!instance) {
+        instance = new Game(width, height);
+    }
+
+    return instance;
 }
 
 std::vector<float> Game::getSize() {
@@ -31,6 +42,7 @@ bool Game::Init() {
     );
 
     renderer = new Renderer(*shader);
+    batch = new BatchRenderer(100000);
     wave = new WaveManager();
     inventory = new Inventory(player);
     upgrade = new UpgradeManager(*inventory);
@@ -49,7 +61,7 @@ bool Game::Init() {
     turrets.push_back(Turret({width/2 + 100, height/2 - 100}, TurretType::RIFLE));
     turrets.push_back(Turret({width/2 + 100, height/2 + 100}, TurretType::BOMB));
 
-    wave -> startNextWave(window);
+    wave -> startNextWave();
 
     return true;
 }
@@ -57,10 +69,10 @@ bool Game::Init() {
 void Game::Update() {
     enemies = wave -> getCurrentEnemies();
 
-    Player::Movement(renderer, player, window, *enemies); // Player movement
+    Player::Movement(); // Player movement
 
     for (auto& turret : turrets) { // Turret shooting
-        turret.findTarget(*enemies);
+        turret.findTarget();
         turret.shoot();
     }
 
@@ -72,7 +84,7 @@ void Game::Update() {
             player.takeCoins((*enemies)[i], 1.0f);
             enemies -> erase(enemies -> begin() + i);
             if (enemies -> empty()) {
-                wave -> startNextWave(window);
+                wave -> startNextWave();
                 wave -> updateWaveStatus();
                 enemies = wave -> getCurrentEnemies();
             }
@@ -100,17 +112,17 @@ void Game::Render() const {
     //generator -> render(renderer, texture);
 
     if (player.getHealth() > 0) {
-        player.drawEntity(*renderer, texture, -1);
+        player.drawEntity(texture);
     }
 
     for (auto& turret : turrets) {
-        turret.render(*renderer, texture);
+        turret.render(texture);
     }
 
     if (wave) {
         for (const auto& enemy : *enemies) {
             if (enemy.getHealth() > 0) {
-                enemy.drawEntity(*renderer, texture, 0);
+                enemy.drawEntity(texture);
             }
         }
     }

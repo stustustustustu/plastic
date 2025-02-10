@@ -16,8 +16,8 @@ class WaveManager {
     public:
         WaveManager();
 
-        void startNextWave(GLFWwindow* window);
-        void forceNextWave(GLFWwindow* window);
+        void startNextWave();
+        void forceNextWave();
 
         void updateWaveStatus();
         void removeCompletedWaves();

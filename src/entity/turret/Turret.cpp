@@ -1,4 +1,7 @@
 #include "Turret.h"
+#include "../src/Game.h"
+
+const auto game = Game::getInstance();
 
 Turret::Turret(std::vector<float> position, TurretType type) : Entity(position), type(type), target(NULL), currentAngle(0.0f), timeSinceLastShot(0.0f), lastUpdateTime(std::chrono::steady_clock::now()) {
     switch (type) {
@@ -19,11 +22,11 @@ Turret::Turret(std::vector<float> position, TurretType type) : Entity(position),
     rotationSpeed = 90.0f;
 }
 
-void Turret::findTarget(const std::vector<Enemy>& enemies) {
+void Turret::findTarget() {
     float minDistance = std::numeric_limits<float>::max();
     target = NULL;
 
-    for (const auto& enemy : enemies) {
+    for (const auto &enemy : *game -> enemies) {
         float distance = calculateDistance(getPosition(), enemy.getPosition());
         if (distance < minDistance) {
             minDistance = distance;
@@ -71,15 +74,7 @@ void Turret::shoot() {
 
 }
 
-void Turret::drawTargetLine(Renderer &renderer) const {
-    if (!target || target -> getPosition().empty()) return;
-
-    if (target -> getPosition().size() > 0) {
-        Entity::drawTargetLine(renderer, *target, 2.0f, 0xFF0000);
-    }
-}
-
-void Turret::render(Renderer &renderer, Texture *texture) const {
+void Turret::render(Texture *texture) const {
     int hex;
     switch (type) {
         case TurretType::LASER:
@@ -93,7 +88,7 @@ void Turret::render(Renderer &renderer, Texture *texture) const {
             break;
     }
 
-    renderer.DrawSpriteSheet(*texture, glm::vec2(getRenderPosition().at(0), getRenderPosition().at(1)), 1, 16, 16);
+    game -> renderer -> DrawSpriteSheet(*texture, glm::vec2(getRenderPosition().at(0), getRenderPosition().at(1)), 1, 16, 16);
 }
 
 float Turret::calculateDistance(const std::vector<float>& a, const std::vector<float>& b) {

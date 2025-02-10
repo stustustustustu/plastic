@@ -1,8 +1,7 @@
 #include "Entity.h"
-#include "../src/config.h"
-#include "../utils/render/Renderer.h"
 #include "../Game.h"
-#include "../utils/math/color/color.h"
+
+const auto game = Game::getInstance();
 
 /**
  * @brief Constructor to initialize the Entity's attributes.
@@ -31,16 +30,18 @@ Entity::Entity(
     int coins,
 
     int targets,
-    int maxTargets
-) : position(position), speed(speed), damage(damage), health(health), maxHealth(maxHealth), shield(shield), maxShield(maxShield), level(level), coins(coins), targets(targets), maxTargets(maxTargets) {}
+    int maxTargets,
+
+    const std::vector<std::vector<float>> bounds
+) : position(position), speed(speed), damage(damage), health(health), maxHealth(maxHealth), shield(shield), maxShield(maxShield), level(level), coins(coins), targets(targets), maxTargets(maxTargets), bounds(bounds) {}
 
 /**
  * @brief Draws the Entity on screen and the health bar of the said Entity.
  *
  * @param hex The color of the entity to draw.
  */
-void Entity::drawEntity(Renderer &renderer, Texture *texture, int hex) const {
-    renderer.DrawSpriteSheet(*texture, glm::vec2(getRenderPosition().at(0), getRenderPosition().at(1)), 0, 16, 16);
+void Entity::drawEntity(Texture *texture) const {
+    game -> renderer -> DrawSpriteSheet(*texture, glm::vec2(getRenderPosition().at(0), getRenderPosition().at(1)), 0, 16, 16);
 }
 
 /**
@@ -48,8 +49,27 @@ void Entity::drawEntity(Renderer &renderer, Texture *texture, int hex) const {
  *
  * @param hex The color of the line to draw.
  */
-void Entity::drawTargetLine(Renderer &renderer, Entity target, float thickness, int hex) const {
-    renderer.DrawLine(this -> getRenderPosition().at(0) + 16, this -> getRenderPosition().at(1) + 16, target.getRenderPosition().at(0) + 16, target.getRenderPosition().at(1) + 16, thickness, HEXtoRGB(hex));
+void Entity::drawTargetLine(Entity target, float thickness, int hex) const {
+    game -> renderer -> DrawLine(this -> getRenderPosition().at(0) + 16, this -> getRenderPosition().at(1) + 16, target.getRenderPosition().at(0) + 16, target.getRenderPosition().at(1) + 16, thickness, HEXtoRGB(hex));
+}
+
+std::vector<std::vector<float>> Entity::getBounds() const {
+    return this -> bounds;
+}
+
+void Entity::setBounds(const std::vector<std::vector<float>> &bounds) {
+    this -> bounds = bounds;
+}
+
+bool Entity::checkCollision(const Entity &other) const {
+    return Collision::satCollision(bounds, other.getBounds());
+}
+
+void Entity::updateBounds() {
+    for (auto& vertex : bounds) {
+        vertex.at(0) += position.at(0);
+        vertex.at(1) += position.at(1);
+    }
 }
 
 /**

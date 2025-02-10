@@ -24,15 +24,13 @@ class Turret : public Entity {
     public:
         Turret(std::vector<float> position, TurretType type);
 
-        void findTarget(const std::vector<Enemy>& enemies);
+        void findTarget();
 
         void rotateTowardsTarget();
 
         void shoot();
 
-        void drawTargetLine(Renderer &renderer) const;
-
-        void render(Renderer &renderer, Texture *texture) const;
+        void render(Texture *texture) const;
 
     private:
         static float calculateDistance(const std::vector<float>& a, const std::vector<float>& b);

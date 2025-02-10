@@ -1,12 +1,14 @@
 #include "Game.h"
-Game game(1280, 1280 * 3/4); // 4:3 format
+Game *game = Game::getInstance(1280, 1280 * 3/4); // 4:3 format
 
 int main() {
-    if (!game.Init()) {
+    if (!game -> Init()) {
         return -1;
     }
 
-    game.Loop();
+    game -> Loop();
+
+    delete game;
 
     return 0;
 }

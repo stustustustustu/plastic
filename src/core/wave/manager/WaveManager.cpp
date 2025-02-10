@@ -2,7 +2,7 @@
 
 WaveManager::WaveManager() : currentWaveIndex(0), forcable(false) {}
 
-void WaveManager::startNextWave(GLFWwindow *window) {
+void WaveManager::startNextWave() {
     currentWaveIndex++;
     int weight = 100 + currentWaveIndex * 10;
     bool bossfight = false;
@@ -14,7 +14,7 @@ void WaveManager::startNextWave(GLFWwindow *window) {
     }
 
     Wave wave(currentWaveIndex, weight, bossfight);
-    std::vector<Enemy> generated = Enemy::generateEnemies(wave.getIndex(), wave.getWeight(), window);
+    std::vector<Enemy> generated = Enemy::generateEnemies(wave.getIndex(), wave.getWeight());
     wave.addEnemies(generated);
 
     activeWaves.push_back(std::make_shared<Wave>(wave));
@@ -22,7 +22,7 @@ void WaveManager::startNextWave(GLFWwindow *window) {
     std::cout << "Starting wave " << wave.getIndex() << " with " << wave.getEnemies().size() << " enemies." << std::endl;
 }
 
-void WaveManager::forceNextWave(GLFWwindow *window) {
+void WaveManager::forceNextWave() {
     if (!forcable) return;
 
     Wave &currentWave = *activeWaves.front();
@@ -30,7 +30,7 @@ void WaveManager::forceNextWave(GLFWwindow *window) {
     int killedEnemies = std::count_if(currentWave.getEnemies().begin(), currentWave.getEnemies().end(), [](const Enemy& enemy) { return enemy.getHealth() <= 0; });
 
     if (static_cast<float>(killedEnemies) / enemyCount >= 0.2f) {
-        startNextWave(window);
+        startNextWave();
         forcable = false;
     } else {
         std::cerr << "Can't force next wave! Kill more enemies." << std::endl;
@@ -45,7 +45,7 @@ void WaveManager::updateWaveStatus() {
         activeWaves.pop_front();
         if (activeWaves.empty()) {
             std::this_thread::sleep_for(std::chrono::seconds(1));
-            startNextWave(NULL);
+            startNextWave();
         }
     }
 

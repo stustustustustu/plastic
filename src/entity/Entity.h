@@ -3,6 +3,9 @@
 
 #include "../src/config.h"
 #include "../utils/render/Renderer.h"
+#include "../utils/math/collision/Collision.h"
+#include "../utils/math/color/color.h"
+
 
 class Entity {
     private:
@@ -24,6 +27,7 @@ class Entity {
 
         int targets;
         int maxTargets;
+        std::vector<std::vector<float>> bounds;
 
     public:
         Entity(
@@ -42,12 +46,19 @@ class Entity {
             int coins = 100,
 
             int targets = 0,
-            int maxTargets = 1
+            int maxTargets = 1,
+
+            std::vector<std::vector<float>> bounds = {{0, 0}, {32, 0}, {32, 32}, {0, 32}}
         );
 
-        void drawEntity(Renderer &renderer, Texture *texture, int hex) const;
+        void drawEntity(Texture *texture) const;
 
-        void drawTargetLine(Renderer &renderer, Entity target, float thickness, int hex) const;
+        void drawTargetLine(Entity target, float thickness, int hex) const;
+
+        std::vector<std::vector<float>> getBounds() const;
+        void setBounds(const std::vector<std::vector<float>>&);
+        bool checkCollision(const Entity&) const;
+        void updateBounds();
 
         std::vector<float> getPosition() const;
         std::vector<int> getRenderPosition() const;

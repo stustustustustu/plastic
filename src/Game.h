@@ -13,6 +13,7 @@
 #include "entity/Entity.h"
 #include "entity/player/Player.h"
 #include "entity/turret/Turret.h"
+#include "utils/render/batch/BatchRenderer.h"
 
 enum GameState {
     ACTIVE,
@@ -31,8 +32,10 @@ enum Difficulty {
 
 class Game {
     private:
+        static Game *instance;
+
         GameState state;
-        float width, height; // window dimensions;
+        float width, height; // window dimensions
         Difficulty difficulty;
 
     public:
@@ -41,6 +44,7 @@ class Game {
         ShaderUtils *shader;
         Texture *texture;
         Renderer *renderer;
+        BatchRenderer *batch;
 
         // core systems
         WaveManager *wave;
@@ -50,12 +54,15 @@ class Game {
         // island generation
         Island *generator;
 
+        // entities
         Entity player;
         std::vector<Turret> turrets;
         std::vector<Enemy> *enemies;
 
         Game(float, float);
         ~Game();
+
+        static Game *getInstance(float width = 1280.0f, float height = 960.0f);
 
         std::vector<float> getSize();
 
