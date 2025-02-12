@@ -88,7 +88,7 @@ void Turret::render(Texture *texture) const {
             break;
     }
 
-    game -> renderer -> DrawSpriteSheet(*texture, glm::vec2(getRenderPosition().at(0), getRenderPosition().at(1)), 2, 64, 64);
+    game -> renderer -> DrawSpriteSheet(*texture, glm::vec2(getRenderPosition().at(0), getRenderPosition().at(1)), 1, 32, 32);
 }
 
 float Turret::calculateDistance(const std::vector<float>& a, const std::vector<float>& b) {

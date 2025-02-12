@@ -10,6 +10,12 @@ void Camera::Update() {
         position = targetPosition;
         zoom = targetZoom;
     }
+
+    if (glm::distance(position, glm::vec2(0.0f, 0.0f)) < 0.5f &&
+        glm::abs(zoom - 1.0f) < 0.01f) {
+        targetPosition = glm::vec2(0.0f, 0.0f);
+        targetZoom = 1.0f;
+    }
 }
 
 void Camera::Move(glm::vec2 delta) {

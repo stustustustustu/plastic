@@ -4,6 +4,7 @@
 #include "../../config.h"
 #include "sprites/Texture.h"
 #include "../shader/ShaderUtils.h"
+#include <stb/stb_truetype.h>
 
 class Renderer {
     private:
@@ -53,4 +54,3 @@ class Renderer {
 };
 
 #endif
-

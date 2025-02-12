@@ -33,6 +33,7 @@ add_executable(
 
         dependencies/stb/stb_image.cpp
         dependencies/stb/stb_perlin.cpp
+        dependencies/stb/stb_truetype.cpp
 
         src/Game.cpp
         src/Game.h
@@ -62,6 +63,18 @@ add_executable(
         src/utils/render/batch/BatchRenderer.h
 
         dependencies/noise/FastNoise.cpp
+        src/core/UI/elements/button/Button.cpp
+        src/core/UI/elements/button/Button.h
+        src/core/UI/elements/slider/Slider.cpp
+        src/core/UI/elements/slider/Slider.h
+        src/core/UI/elements/textbox/Textbox.cpp
+        src/core/UI/elements/textbox/Textbox.h
+        src/core/UI/elements/toggle/Toggle.cpp
+        src/core/UI/elements/toggle/Toggle.h
+        src/core/UI/elements/dropdown/Dropdown.cpp
+        src/core/UI/elements/dropdown/Dropdown.h
+        src/core/UI/elements/container/Container.cpp
+        src/core/UI/elements/container/Container.h
 )
 
 target_include_directories(plastic PRIVATE dependencies) # Includes location

@@ -55,6 +55,13 @@ bool Game::Init() {
         return false;
     }
 
+    glm::mat4 projection = glm::ortho(0.0f, getSize().at(0), getSize().at(1), 0.0f, -1.0f, 1.0f);
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            batch -> mMvp[i][j] = projection[i][j];
+        }
+    }
+
     texture -> Bind();
 
     turrets.push_back(Turret({width/2 - 100, height/2 - 100}, TurretType::LASER));
@@ -107,7 +114,7 @@ void Game::Render() const {
         lastUpdateTime = currentTime;
     }
 
-    renderer -> DrawBackground(currentFrame);
+    //renderer -> DrawBackground(currentFrame);
 
     generator -> render(*texture);
 
@@ -130,6 +137,7 @@ void Game::Render() const {
     glUseProgram(shader -> ID);
     glfwSwapBuffers(window);
     glfwPollEvents();
+    batch -> flush();
 }
 
 void Game::Loop() {

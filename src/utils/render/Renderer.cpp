@@ -5,7 +5,7 @@
 #include <../dependencies/glm/ext/matrix_transform.hpp>
 
 Renderer::Renderer(ShaderUtils &shader) : shader(shader), quadVAO(0), pixel(Texture::Create("../src/assets/sprites/pixel.png", true)), background(Texture::Create("../src/assets/sprites/background.png", true)){
-    initRenderData();
+	initRenderData();
 }
 
 Renderer::~Renderer() {
@@ -57,14 +57,15 @@ void Renderer::initRenderData() {
 }
 
 void Renderer::DrawSprite(Texture &texture, glm::vec2 position, float u1, float v1, float u2, float v2, glm::vec2 size, float rotate, glm::vec3 color) const {
-	Game::getInstance() -> batch -> pushObject(texture, position, {u1, v1, u2, v2}, size, color);
-
-	this -> shader.Use();
+	//Game::getInstance() -> batch -> pushObject(texture, {position, rotate}, {u1, v1, u2, v2}, size, {color, 1.0f});
+	//return;
 
 	int width, height;
 	glfwGetFramebufferSize(glfwGetCurrentContext(), &width, &height);
 
 	glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(width), static_cast<float>(height), 0.0f, -1.0f, 1.0f);
+
+	this -> shader.Use();
 
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, glm::vec3(position, 0.0f));
