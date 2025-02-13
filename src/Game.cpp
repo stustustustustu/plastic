@@ -4,13 +4,14 @@
 
 Game *Game::instance = NULL;
 
-Game::Game(float width, float height) : state(ACTIVE), width(width), height(height), window(NULL), shader(NULL), texture(NULL), renderer(NULL), batch(NULL), wave(NULL), upgrade(NULL), inventory(NULL), generator(NULL), player({width/2, height/2}) {}
+Game::Game(float width, float height) : state(ACTIVE), width(width), height(height), window(NULL), shader(NULL), texture(NULL), renderer(NULL), batch(NULL), text(NULL), wave(NULL), upgrade(NULL), inventory(NULL), generator(NULL), player({width/2, height/2}) {}
 
 Game::~Game() {
     delete shader;
     delete texture;
     delete renderer;
     delete batch;
+    delete text;
     delete wave;
     delete upgrade;
     delete inventory;
@@ -41,8 +42,15 @@ bool Game::Init() {
         "../src/utils/shader/shaders/sprite/fragment.glsl"
     );
 
+    auto t_shader = new ShaderUtils(
+        "../src/utils/shader/shaders/text/vertex.glsl",
+        "../src/utils/shader/shaders/text/fragment.glsl"
+    );
+
     renderer = new Renderer(*shader);
     batch = new BatchRenderer(100000);
+    text = new TextRenderer(*t_shader, "../src/assets/font/ThaleahFat.ttf" , 32);
+
     wave = new WaveManager();
     inventory = new Inventory(player);
     upgrade = new UpgradeManager(*inventory);
@@ -104,17 +112,7 @@ void Game::Update() {
 void Game::Render() const {
     glClear(GL_COLOR_BUFFER_BIT);
 
-    static int currentFrame = 0;
-    static std::chrono::steady_clock::time_point lastUpdateTime = std::chrono::steady_clock::now();
-    auto currentTime = std::chrono::steady_clock::now();
-    auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - lastUpdateTime).count();
-
-    if (elapsedTime >= 400) {
-        currentFrame = (currentFrame + 1) % 4;
-        lastUpdateTime = currentTime;
-    }
-
-    //renderer -> DrawBackground(currentFrame);
+    renderer -> DrawText("test", {50, 50}, 50.0f);
 
     generator -> render(*texture);
 

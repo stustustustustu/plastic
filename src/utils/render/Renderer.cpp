@@ -4,15 +4,21 @@
 #include <../dependencies/glm/ext/matrix_clip_space.hpp>
 #include <../dependencies/glm/ext/matrix_transform.hpp>
 
+const auto game = Game::getInstance();
+
 Renderer::Renderer(ShaderUtils &shader) : shader(shader), quadVAO(0), pixel(Texture::Create("../src/assets/sprites/pixel.png", true)), background(Texture::Create("../src/assets/sprites/background.png", true)){
-	initRenderData();
+	initRenderer();
 }
 
 Renderer::~Renderer() {
     glDeleteVertexArrays(1, &quadVAO);
 }
 
-void Renderer::initRenderData() {
+void Renderer::DrawText(const std::string &text, glm::vec2 position, int size, float rotate, glm::vec3 color) const {
+	game -> text -> DrawText(text, position, size, rotate, color);
+}
+
+void Renderer::initRenderer() {
 	GLuint posVBO, texVBO;
 	// pos VBO
 	GLfloat posCoords[] = {

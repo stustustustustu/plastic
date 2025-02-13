@@ -3,9 +3,7 @@ project(plastic VERSION 0.1)
 
 # todo: add font renderer using FreeType
 
-find_package(
-        OpenGL REQUIRED
-)
+find_package(OpenGL REQUIRED)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -63,6 +61,7 @@ add_executable(
         src/utils/render/batch/BatchRenderer.h
 
         dependencies/noise/FastNoise.cpp
+
         src/core/UI/elements/button/Button.cpp
         src/core/UI/elements/button/Button.h
         src/core/UI/elements/slider/Slider.cpp
@@ -75,6 +74,9 @@ add_executable(
         src/core/UI/elements/dropdown/Dropdown.h
         src/core/UI/elements/container/Container.cpp
         src/core/UI/elements/container/Container.h
+
+        src/utils/render/text/TextRenderer.cpp
+        src/utils/render/text/TextRenderer.h
 )
 
 target_include_directories(plastic PRIVATE dependencies) # Includes location

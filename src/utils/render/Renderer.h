@@ -4,11 +4,10 @@
 #include "../../config.h"
 #include "sprites/Texture.h"
 #include "../shader/ShaderUtils.h"
-#include <stb/stb_truetype.h>
 
 class Renderer {
     private:
-        void initRenderData();
+        void initRenderer();
         ShaderUtils &shader;
         unsigned int quadVAO;
 
@@ -18,6 +17,14 @@ class Renderer {
     public:
         Renderer(ShaderUtils &shader);
         ~Renderer();
+
+        void DrawText(
+            const std::string &text,
+            glm::vec2 position,
+            int size,
+            float rotate = 0.0f,
+            glm::vec3 color = glm::vec3(1.0f)
+        ) const;
 
         void DrawSprite(
             Texture &texture,

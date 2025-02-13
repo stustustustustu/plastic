@@ -14,6 +14,7 @@
 #include "entity/player/Player.h"
 #include "entity/turret/Turret.h"
 #include "utils/render/batch/BatchRenderer.h"
+#include "utils/render/text/TextRenderer.h"
 
 enum GameState {
     ACTIVE,
@@ -45,6 +46,7 @@ class Game {
         Texture *texture;
         Renderer *renderer;
         BatchRenderer *batch;
+        TextRenderer *text;
 
         // core systems
         WaveManager *wave;
