@@ -2,7 +2,7 @@
 
 #include <glm/ext/matrix_clip_space.hpp>
 
-TextRenderer::TextRenderer(ShaderUtils &t_shader, const std::string &fontPath, int fontSize) : t_shader(t_shader), fontPath(fontPath), fontSize(fontSize) {
+TextRenderer::TextRenderer(ShaderUtils &t_t_shader, const std::string &fontPath, int fontSize) : t_shader(t_t_shader), fontPath(fontPath), fontSize(fontSize) {
     InitTextRenderer();
     LoadFont();
 }
@@ -83,41 +83,38 @@ void TextRenderer::LoadFont() {
 void TextRenderer::DrawText(const std::string &text, glm::vec2 position, int size, float rotate, glm::vec3 color) const {
     int width, height;
     glfwGetFramebufferSize(glfwGetCurrentContext(), &width, &height);
-
     glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(width), static_cast<float>(height), 0.0f, -1.0f, 1.0f);
 
-
     t_shader.Use();
-    t_shader.SetMat4("projection", projection);
     t_shader.SetVec3("textColor", color);
+    t_shader.SetMat4("projection", projection);
 
-    glActiveTexture(GL_TEXTURE0);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     glBindVertexArray(VAO);
 
-    for (std::string::const_iterator c = text.begin(); c != text.end(); c++) {
-        if (Characters.find(*c) == Characters.end()) {
-            std::cerr << "ERROR: Character not found: " << *c << std::endl;
-            continue;
-        }
+    float scale = static_cast<float>(size) / fontSize;
 
+    for (auto c = text.begin(); c != text.end(); c++) {
         Character ch = Characters.at(*c);
 
-        GLfloat xpos = position.x + ch.bearing.x * size;
-        GLfloat ypos = position.y - (ch.size.y - ch.bearing.y) * size;
-
-        GLfloat w = ch.size.x * size;
-        GLfloat h = ch.size.y * size;
+        float xpos = position.x + ch.bearing.x * scale;
+        float ypos = position.y - (ch.size.y - ch.bearing.y) * scale;
+        float w = ch.size.x * scale;
+        float h = ch.size.y * scale;
 
         GLfloat vertices[6][4] = {
-            { xpos,     ypos + h,   0.0, 0.0 },
-            { xpos,     ypos,       0.0, 1.0 },
-            { xpos + w, ypos,       1.0, 1.0 },
+            { xpos,     ypos + h,   0.0, 1.0 }, // Bottom-left
+            { xpos,     ypos,       0.0, 0.0 }, // Top-left
+            { xpos + w, ypos,       1.0, 0.0 }, // Top-right
 
-            { xpos,     ypos + h,   0.0, 0.0 },
-            { xpos + w, ypos,       1.0, 1.0 },
-            { xpos + w, ypos + h,   1.0, 0.0 }
+            { xpos,     ypos + h,   0.0, 1.0 }, // Bottom-left
+            { xpos + w, ypos,       1.0, 0.0 }, // Top-right
+            { xpos + w, ypos + h,   1.0, 1.0 }  // Bottom-right
         };
 
+        glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, ch.textureID);
 
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -126,9 +123,11 @@ void TextRenderer::DrawText(const std::string &text, glm::vec2 position, int siz
 
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
-        position.x += (ch.advance >> 6) * size;
+        position.x += (ch.advance + 1) * scale;
     }
 
     glBindVertexArray(0);
+
     glBindTexture(GL_TEXTURE_2D, 0);
+    glDisable(GL_BLEND);
 }

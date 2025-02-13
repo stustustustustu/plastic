@@ -4,6 +4,10 @@
 #include "../src/config.h"
 #include "../../Element.h"
 
+#include "../src/Game.h"
+
+const auto game = Game::getInstance();
+
 class Button : public Element {
     private:
         std::string label;

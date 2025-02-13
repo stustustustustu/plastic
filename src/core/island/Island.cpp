@@ -85,7 +85,7 @@ void Island::classifyTile(int x, int y, float treshold) {
 }
 
 int Island::getTileVariant(int x, int y) {
-    int bitmask = 1;
+    int bitmask = 4;
 
     return bitmask;
 }

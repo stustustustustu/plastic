@@ -2,6 +2,9 @@
 
 #include <glm/ext/matrix_clip_space.hpp>
 
+#include "core/UI/elements/button/Button.h"
+#include "core/UI/elements/toggle/Toggle.h"
+
 Game *Game::instance = NULL;
 
 Game::Game(float width, float height) : state(ACTIVE), width(width), height(height), window(NULL), shader(NULL), texture(NULL), renderer(NULL), batch(NULL), text(NULL), wave(NULL), upgrade(NULL), inventory(NULL), generator(NULL), player({width/2, height/2}) {}
@@ -49,7 +52,7 @@ bool Game::Init() {
 
     renderer = new Renderer(*shader);
     batch = new BatchRenderer(100000);
-    text = new TextRenderer(*t_shader, "../src/assets/font/ThaleahFat.ttf" , 32);
+    text = new TextRenderer(*t_shader, "../src/assets/font/ThaleahFat.ttf" , 200);
 
     wave = new WaveManager();
     inventory = new Inventory(player);
@@ -81,7 +84,13 @@ bool Game::Init() {
     return true;
 }
 
+Button *button = new Button({50, 50}, {50, 25}, "PLAY");
+Toggle *toggle = new Toggle({50, 80}, {50, 25});
+
 void Game::Update() {
+    button -> update();
+    toggle -> update();
+
     enemies = wave -> getCurrentEnemies();
 
     Player::Movement(); // Player movement
@@ -112,9 +121,12 @@ void Game::Update() {
 void Game::Render() const {
     glClear(GL_COLOR_BUFFER_BIT);
 
-    renderer -> DrawText("test", {50, 50}, 50.0f);
-
     generator -> render(*texture);
+
+    game -> renderer -> DrawText("WAVE", glm::vec2(200, 100), 50.0f);
+
+    button -> render();
+    toggle -> render();
 
     if (player.getHealth() > 0) {
         player.drawEntity(texture);

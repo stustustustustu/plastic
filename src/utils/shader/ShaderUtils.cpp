@@ -1,4 +1,3 @@
-
 #include "ShaderUtils.h"
 
 ShaderUtils::ShaderUtils(const char* vertexPath, const char* fragmentPath) {

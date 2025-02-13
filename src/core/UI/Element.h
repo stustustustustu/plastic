@@ -19,6 +19,9 @@ class Element {
 
         void setSize(glm::vec2);
         glm::vec2 getSize() const;
+
+        bool isHovering() const;
+        bool isClicked() const;
 };
 
 #endif //ELEMENT_H
