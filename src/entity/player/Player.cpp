@@ -7,16 +7,16 @@ void Player::Movement() {
     std::vector<float> delta {0, 0};
 
     // Movement logic
-    if (isKeyPressed(GLFW_KEY_W)) {
+    if (game -> input -> getActionManager().getActionState("UP")) {
         delta.at(1) -= 1; // Up
     }
-    if (isKeyPressed(GLFW_KEY_S)) {
+    if (game -> input -> getActionManager().getActionState("DOWN")) {
         delta.at(1) += 1; // Down
     }
-    if (isKeyPressed(GLFW_KEY_A)) {
+    if (game -> input -> getActionManager().getActionState("LEFT")) {
         delta.at(0) -= 1; // Left
     }
-    if (isKeyPressed(GLFW_KEY_D)) {
+    if (game -> input -> getActionManager().getActionState("RIGHT")) {
         delta.at(0) += 1; // Right
     }
 
@@ -27,7 +27,7 @@ void Player::Movement() {
     }
 
     // Shooting
-    if (isMousePressed(GLFW_MOUSE_BUTTON_1)) {
+    if (game -> input -> getActionManager().getActionState("SHOOT")) {
         for (auto it = game -> enemies -> begin(); it != game -> enemies -> end();) {
             Entity& enemy = *it;
             if (isMouseOver(enemy.getPosition().at(0), enemy.getPosition().at(1))) {

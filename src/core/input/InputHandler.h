@@ -10,6 +10,11 @@ class InputHandler {
         ActionManager actionManager;
 
     public:
+        InputHandler();
+
+        void InitBindings();
+        void RegisterActions();
+
         void bindKeyCombo(const std::vector<int>& keys, const std::string& actionName);
 
         void processInput();

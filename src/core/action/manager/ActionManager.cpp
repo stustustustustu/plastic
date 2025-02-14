@@ -9,3 +9,14 @@ void ActionManager::executeAction(const std::string &name) {
         actions[name].execute();
     }
 }
+
+bool ActionManager::getActionState(const std::string& name) const {
+    if (states.find(name) != states.end()) {
+        return states.at(name);
+    }
+    return false;
+}
+
+void ActionManager::setActionState(const std::string& name, bool state) {
+    states[name] = state;
+}

@@ -4,6 +4,34 @@
 
 const auto game = Game::getInstance();
 
+InputHandler::InputHandler() {
+    InitBindings();
+    RegisterActions();
+
+    std::cout << "init of input handler done" << std::endl;
+}
+
+void InputHandler::InitBindings() {
+    // player movement
+    bindKeyCombo( {GLFW_KEY_W}, "UP");
+    bindKeyCombo( {GLFW_KEY_S}, "DOWN");
+    bindKeyCombo( {GLFW_KEY_A}, "LEFT");
+    bindKeyCombo( {GLFW_KEY_D}, "RIGHT");
+    bindKeyCombo( {GLFW_MOUSE_BUTTON_1}, "SHOOT");
+
+    std::cout << "bound all key combinations" << std::endl;
+}
+
+void InputHandler::RegisterActions() {
+    getActionManager().registerAction("UP",[](){  });
+    getActionManager().registerAction("DOWN", [](){  });
+    getActionManager().registerAction("LEFT", [](){  });
+    getActionManager().registerAction("RIGHT", [](){  });
+    getActionManager().registerAction("SHOOT", [](){  });
+
+    std::cout << "registered all actions" << std::endl;
+}
+
 void InputHandler::bindKeyCombo(const std::vector<int>& keys, const std::string& actionName) {
     for (const auto& binding : bindings) {
         if (binding.first == keys) {
@@ -35,6 +63,8 @@ void InputHandler::processInput() {
         if (allPressed) {
             actionManager.executeAction(binding.second);
         }
+
+        actionManager.setActionState(binding.second, allPressed);
     }
 }
 

@@ -2,6 +2,7 @@
 #define GAME_H
 
 #include "config.h"
+#include "core/input/InputHandler.h"
 #include "core/wave/manager/WaveManager.h"
 #include "core/upgrades/manager/UpgradeManager.h"
 #include "core/inventory/Inventory.h"
@@ -49,6 +50,7 @@ class Game {
         TextRenderer *text;
 
         // core systems
+        InputHandler *input;
         WaveManager *wave;
         UpgradeManager *upgrade;
         Inventory *inventory;
