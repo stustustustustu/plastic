@@ -7,7 +7,12 @@
 
 Game *Game::instance = NULL;
 
-Game::Game(float width, float height) : state(ACTIVE), width(width), height(height), window(NULL), shader(NULL), texture(NULL), renderer(NULL), batch(NULL), text(NULL), input(NULL), wave(NULL), upgrade(NULL), inventory(NULL), generator(NULL), player({width/2, height/2}) {}
+Game::Game(float width, float height) : state(ACTIVE), width(width), height(height),
+                                        window(NULL), shader(NULL), texture(NULL), renderer(NULL), batch(NULL), text(NULL),
+                                        camera(new Camera(width, height)),
+                                        input(NULL), wave(NULL), upgrade(NULL), inventory(NULL),
+                                        generator(NULL),
+                                        player({width/2, height/2}) {}
 
 Game::~Game() {
     delete shader;
@@ -15,6 +20,8 @@ Game::~Game() {
     delete renderer;
     delete batch;
     delete text;
+
+    delete camera;
 
     delete input;
     delete wave;
@@ -65,17 +72,8 @@ bool Game::Init() {
 
     texture = Texture::Create("../src/assets/sprites/sheet.png", true);
 
-    if (!texture) {
-        std::cerr << "ERROR: Failed to load texture!" << std::endl;
-        return false;
-    }
-
-    glm::mat4 projection = glm::ortho(0.0f, getSize().at(0), getSize().at(1), 0.0f, -1.0f, 1.0f);
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 4; j++) {
-            batch -> mMvp[i][j] = projection[i][j];
-        }
-    }
+    renderer -> SetProjection(camera -> getStaticProjection());
+    camera -> returnToDefault();
 
     texture -> Bind();
 
@@ -88,16 +86,11 @@ bool Game::Init() {
     return true;
 }
 
-Button *button = new Button({50, 50}, {50, 25}, "PLAY");
-Toggle *toggle = new Toggle({50, 80}, {50, 25});
-
 void Game::Update() {
-    input -> processInput();
-
-    button -> update();
-    toggle -> update();
-
     enemies = wave -> getCurrentEnemies();
+
+    input -> processInput();
+    camera -> Update();
 
     Player::Movement(); // Player movement
 
@@ -129,11 +122,10 @@ void Game::Render() const {
 
     generator -> render(*texture);
 
-    game -> renderer -> DrawText("SKIBIDI SIGMA OHIO", glm::vec2(200, 100), 50.0f);
+    renderer -> SetProjection(camera -> getStaticProjection());
+    game -> renderer -> DrawText("sigma", glm::vec2(5, 50), 50.0f);
 
-    button -> render();
-    toggle -> render();
-
+    renderer -> SetProjection(camera -> getCameraProjection());
     if (player.getHealth() > 0) {
         player.drawEntity(texture);
     }

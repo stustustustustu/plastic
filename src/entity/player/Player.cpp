@@ -37,10 +37,6 @@ void Player::Movement() {
         }
     }
 
-    if (isMousePressed(GLFW_MOUSE_BUTTON_2)) {
-        // temporary
-    }
-
     if (canMove(delta)) {
         game -> player.move(delta);
     }
@@ -74,16 +70,6 @@ bool Player::canMove(std::vector<float>& delta) {
     }
 
     return true;
-}
-
-bool Player::isKeyPressed(int key) {
-    int state = glfwGetKey(game -> window, key);
-    return state == GLFW_PRESS;
-}
-
-bool Player::isMousePressed(int key) {
-    int state = glfwGetMouseButton(game -> window, key);
-    return state == GLFW_PRESS;
 }
 
 bool Player::isMouseOver(double x, double y) {

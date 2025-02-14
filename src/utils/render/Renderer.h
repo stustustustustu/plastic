@@ -14,9 +14,14 @@ class Renderer {
         Texture *pixel;
         Texture *background;
 
+        glm::mat4 projection;
+
     public:
         Renderer(ShaderUtils &shader);
         ~Renderer();
+
+        void SetProjection(const glm::mat4 &projection);
+        glm::mat4 GetProjection() const;
 
         void DrawText(
             const std::string &text,

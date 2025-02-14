@@ -4,7 +4,6 @@
 #include "../src/config.h"
 #include <glm/ext/matrix_clip_space.hpp>
 
-
 class Camera {
     private:
         glm::vec2 position;
@@ -16,11 +15,15 @@ class Camera {
         float screenWidth, screenHeight;
 
         const float minZoom = 0.5f;
-        const float maxZoom = 1.0f;
+        const float maxZoom = 2.0f;
 
         bool smoothMovement = true;
 
         void ApplyConstraints();
+
+    public:
+        bool panning = false;
+        glm::dvec2 initialMousePos;
 
     public:
         Camera(float screenWidth, float screenHeight);
@@ -29,7 +32,14 @@ class Camera {
         void Move(glm::vec2 delta);
         void Zoom(float amount);
 
-        glm::mat4 getProjectionMatrix() const;
+        glm::mat4 getCameraProjection() const;
+        glm::mat4 getStaticProjection() const;
+        void projectionMatrixToText(glm::mat4 projection) const;
+
+        // panning
+        void handlePanning(double mouseX, double mouseY, float sensitivity);
+        void startPanning(double mouseX, double mouseY);
+        void stopPanning();
 
         glm::vec2 getPosition() const;
         void setPosition(const glm::vec2& position);
@@ -37,7 +47,11 @@ class Camera {
         float getZoom() const;
         void setZoom(float zoom);
 
+        glm::vec2 getScreen() const;
+
         void setSmoothMovement(bool);
+
+        void returnToDefault();
 };
 
 

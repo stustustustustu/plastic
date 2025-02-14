@@ -1,6 +1,9 @@
 #include "TextRenderer.h"
+#include "../src/Game.h"
 
 #include <glm/ext/matrix_clip_space.hpp>
+
+const auto game = Game::getInstance();
 
 TextRenderer::TextRenderer(ShaderUtils &t_t_shader, const std::string &fontPath, int fontSize) : t_shader(t_t_shader), fontPath(fontPath), fontSize(fontSize) {
     InitTextRenderer();
@@ -81,13 +84,9 @@ void TextRenderer::LoadFont() {
 }
 
 void TextRenderer::DrawText(const std::string &text, glm::vec2 position, int size, float rotate, glm::vec3 color) const {
-    int width, height;
-    glfwGetFramebufferSize(glfwGetCurrentContext(), &width, &height);
-    glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(width), static_cast<float>(height), 0.0f, -1.0f, 1.0f);
-
     t_shader.Use();
     t_shader.SetVec3("textColor", color);
-    t_shader.SetMat4("projection", projection);
+    t_shader.SetMat4("projection", game -> renderer -> GetProjection());
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

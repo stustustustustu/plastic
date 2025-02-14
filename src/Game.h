@@ -2,6 +2,7 @@
 #define GAME_H
 
 #include "config.h"
+#include "core/camera/Camera.h"
 #include "core/input/InputHandler.h"
 #include "core/wave/manager/WaveManager.h"
 #include "core/upgrades/manager/UpgradeManager.h"
@@ -48,6 +49,9 @@ class Game {
         Renderer *renderer;
         BatchRenderer *batch;
         TextRenderer *text;
+
+        // camera
+        Camera *camera;
 
         // core systems
         InputHandler *input;

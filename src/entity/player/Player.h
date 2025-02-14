@@ -12,8 +12,6 @@ class Player : public Entity {
 
         static void drawTargetLine(std::vector<Enemy>& enemies);
 
-        static bool isKeyPressed(int key);
-        static bool isMousePressed(int key);
         static bool isMouseOver(double mouseX, double mouseY);
 };
 

@@ -14,8 +14,12 @@ Renderer::~Renderer() {
     glDeleteVertexArrays(1, &quadVAO);
 }
 
-void Renderer::DrawText(const std::string &text, glm::vec2 position, int size, float rotate, glm::vec3 color) const {
-	game -> text -> DrawText(text, position, size, rotate, color);
+void Renderer::SetProjection(const glm::mat4 &projection) {
+	this -> projection = projection;
+}
+
+glm::mat4 Renderer::GetProjection() const {
+	return this -> projection;
 }
 
 void Renderer::initRenderer() {
@@ -62,14 +66,13 @@ void Renderer::initRenderer() {
     glBindVertexArray(0);
 }
 
+void Renderer::DrawText(const std::string &text, glm::vec2 position, int size, float rotate, glm::vec3 color) const {
+	game -> text -> DrawText(text, position, size, rotate, color);
+}
+
 void Renderer::DrawSprite(Texture &texture, glm::vec2 position, float u1, float v1, float u2, float v2, glm::vec2 size, float rotate, glm::vec3 color) const {
 	//Game::getInstance() -> batch -> pushObject(texture, {position, rotate}, {u1, v1, u2, v2}, size, {color, 1.0f});
 	//return;
-
-	int width, height;
-	glfwGetFramebufferSize(glfwGetCurrentContext(), &width, &height);
-
-	glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(width), static_cast<float>(height), 0.0f, -1.0f, 1.0f);
 
 	this -> shader.Use();
 

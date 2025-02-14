@@ -1,5 +1,4 @@
 #include "InputHandler.h"
-
 #include "../../Game.h"
 
 const auto game = Game::getInstance();
@@ -7,8 +6,6 @@ const auto game = Game::getInstance();
 InputHandler::InputHandler() {
     InitBindings();
     RegisterActions();
-
-    std::cout << "init of input handler done" << std::endl;
 }
 
 void InputHandler::InitBindings() {
@@ -19,17 +16,40 @@ void InputHandler::InitBindings() {
     bindKeyCombo( {GLFW_KEY_D}, "RIGHT");
     bindKeyCombo( {GLFW_MOUSE_BUTTON_1}, "SHOOT");
 
-    std::cout << "bound all key combinations" << std::endl;
+    bindKeyCombo( {GLFW_MOUSE_BUTTON_3}, "CAMERA_PAN");
+    bindKeyCombo( {GLFW_KEY_LEFT_CONTROL, GLFW_KEY_UP}, "CAMERA_ZOOM_IN");
+    bindKeyCombo( {GLFW_KEY_LEFT_CONTROL, GLFW_KEY_DOWN}, "CAMERA_ZOOM_OUT");
+    bindKeyCombo( {GLFW_KEY_ESCAPE}, "CAMERA_RESET");
 }
 
 void InputHandler::RegisterActions() {
+    // player movement
     getActionManager().registerAction("UP",[](){  });
     getActionManager().registerAction("DOWN", [](){  });
     getActionManager().registerAction("LEFT", [](){  });
     getActionManager().registerAction("RIGHT", [](){  });
     getActionManager().registerAction("SHOOT", [](){  });
 
-    std::cout << "registered all actions" << std::endl;
+    // camera
+    getActionManager().registerAction("CAMERA_PAN", []() {
+        if (!game -> camera -> panning) {
+            double mouseX, mouseY;
+            glfwGetCursorPos(game -> window, &mouseX, &mouseY);
+            game -> camera -> startPanning(mouseX, mouseY);
+        }
+    });
+
+    getActionManager().registerAction("CAMERA_ZOOM_IN", []() {
+        game -> camera -> Zoom(-0.01f);
+    });
+
+    getActionManager().registerAction("CAMERA_ZOOM_OUT", []() {
+        game -> camera -> Zoom(0.01f);
+    });
+
+    getActionManager().registerAction("CAMERA_RESET", []() {
+        game -> camera -> returnToDefault();
+    });
 }
 
 void InputHandler::bindKeyCombo(const std::vector<int>& keys, const std::string& actionName) {
@@ -65,6 +85,11 @@ void InputHandler::processInput() {
         }
 
         actionManager.setActionState(binding.second, allPressed);
+    }
+
+    // camera panning
+    if (game -> camera -> panning && glfwGetMouseButton(game -> window, GLFW_MOUSE_BUTTON_3) != GLFW_PRESS) {
+        game -> camera -> stopPanning();
     }
 }
 
