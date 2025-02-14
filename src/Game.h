@@ -15,6 +15,7 @@
 #include "entity/Entity.h"
 #include "entity/player/Player.h"
 #include "entity/turret/Turret.h"
+#include "entity/turret/manager/TurretManager.h"
 #include "utils/render/batch/BatchRenderer.h"
 #include "utils/render/text/TextRenderer.h"
 
@@ -49,6 +50,9 @@ class Game {
         Renderer *renderer;
         BatchRenderer *batch;
         TextRenderer *text;
+
+        // entity managers
+        TurretManager *turret;
 
         // camera
         Camera *camera;

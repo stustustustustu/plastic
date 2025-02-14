@@ -2,13 +2,11 @@
 
 #include <glm/ext/matrix_clip_space.hpp>
 
-#include "core/UI/elements/button/Button.h"
-#include "core/UI/elements/toggle/Toggle.h"
-
 Game *Game::instance = NULL;
 
 Game::Game(float width, float height) : state(ACTIVE), width(width), height(height),
                                         window(NULL), shader(NULL), texture(NULL), renderer(NULL), batch(NULL), text(NULL),
+                                        turret(new TurretManager()),
                                         camera(new Camera(width, height)),
                                         input(NULL), wave(NULL), upgrade(NULL), inventory(NULL),
                                         generator(NULL),
@@ -20,6 +18,8 @@ Game::~Game() {
     delete renderer;
     delete batch;
     delete text;
+
+    delete turret;
 
     delete camera;
 
@@ -64,6 +64,8 @@ bool Game::Init() {
     batch = new BatchRenderer(100000);
     text = new TextRenderer(*t_shader, "../src/assets/font/ThaleahFat.ttf" , 200);
 
+    turret = new TurretManager();
+
     input = new InputHandler();
     wave = new WaveManager();
     inventory = new Inventory(player);
@@ -77,11 +79,12 @@ bool Game::Init() {
 
     texture -> Bind();
 
-    turrets.push_back(Turret({width/2 - 100, height/2 - 100}, TurretType::LASER));
-    turrets.push_back(Turret({width/2 + 100, height/2 - 100}, TurretType::RIFLE));
-    turrets.push_back(Turret({width/2 + 100, height/2 + 100}, TurretType::BOMB));
-
     wave -> startNextWave();
+
+    turret -> placeTurret(TurretType::LASER, {width/2 - 100, height/2 - 100});
+    turret -> placeTurret(TurretType::RIFLE, {width/2 + 100, height/2 - 100});
+    turret -> placeTurret(TurretType::RIFLE, {width/2 - 100, height/2 + 100});
+    turret -> placeTurret(TurretType::BOMB, {width/2 + 100, height/2 + 100});
 
     return true;
 }
@@ -94,10 +97,7 @@ void Game::Update() {
 
     Player::Movement(); // Player movement
 
-    for (auto& turret : turrets) { // Turret shooting
-        turret.findTarget();
-        turret.shoot();
-    }
+    turret -> update();
 
     for (int i = 0; i < enemies -> size();) {
         (*enemies)[i].moveTowards(player);
@@ -123,16 +123,14 @@ void Game::Render() const {
 
     renderer -> SetProjection(camera -> getStaticProjection());
 
-    game -> renderer -> DrawText("sigma", glm::vec2(5, 50), 50.0f);
+    renderer -> DrawText("sigma", glm::vec2(5, 50), 50.0f);
 
     renderer -> SetProjection(camera -> getCameraProjection());
     if (player.getHealth() > 0) {
         player.drawEntity(texture);
     }
 
-    for (auto& turret : turrets) {
-        turret.render(texture);
-    }
+    turret -> render();
 
     if (wave) {
         for (const auto& enemy : *enemies) {

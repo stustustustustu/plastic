@@ -1,7 +1,9 @@
 #include "Enemy.h"
 #include "../src/Game.h"
 
-Enemy::Enemy(EnemyType type, const std::vector<float>& position, float health, float damage, float speed): Entity(position, speed * 0.5f, damage, health), type(type) {}
+Enemy::Enemy(EnemyType type, const std::vector<float>& position, float health, float damage, float speed): Entity(position, speed * 0.5f, damage, health), type(type) {
+    this -> setCoins(std::max(5, rand() % static_cast<int>(health)));
+}
 
 std::vector<Enemy> Enemy::generateEnemies(int index, int totalWeight) {
     auto window = Game::getInstance() -> window;

@@ -20,11 +20,6 @@ void WaveManager::startNextWave() {
     activeWaves.push_back(std::make_shared<Wave>(wave));
     lastWaveSpawnTime = std::chrono::steady_clock::now();
     std::cout << "Starting wave " << wave.getIndex() << " with " << wave.getEnemies().size() << " enemies." << std::endl;
-
-    for (const auto& enemy : wave.getEnemies()) {
-        std::cout << "Health: " << enemy.getHealth()
-                  << ", Speed: " << enemy.getSpeed() << std::endl;
-    }
 }
 
 void WaveManager::forceNextWave() {
