@@ -30,7 +30,6 @@ class Camera {
         void Zoom(float amount);
 
         glm::mat4 getProjectionMatrix() const;
-        void SetProjectionMatrix(glm::mat4 projectionMatrix);
 
         glm::vec2 getPosition() const;
         void setPosition(const glm::vec2& position);

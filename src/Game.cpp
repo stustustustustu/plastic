@@ -123,7 +123,7 @@ void Game::Render() const {
 
     generator -> render(*texture);
 
-    game -> renderer -> DrawText("WAVE", glm::vec2(200, 100), 50.0f);
+    game -> renderer -> DrawText("SKIBIDI SIGMA OHIO", glm::vec2(200, 100), 50.0f);
 
     button -> render();
     toggle -> render();

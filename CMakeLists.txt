@@ -77,6 +77,12 @@ add_executable(
 
         src/utils/render/text/TextRenderer.cpp
         src/utils/render/text/TextRenderer.h
+        src/core/input/InputHandler.cpp
+        src/core/input/InputHandler.h
+        src/core/action/Action.cpp
+        src/core/action/Action.h
+        src/core/action/manager/ActionManager.cpp
+        src/core/action/manager/ActionManager.h
 )
 
 target_include_directories(plastic PRIVATE dependencies) # Includes location

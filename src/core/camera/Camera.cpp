@@ -47,8 +47,18 @@ glm::vec2 Camera::getPosition() const {
     return this -> position;
 }
 
+void Camera::setPosition(const glm::vec2& position) {
+    this -> position = position;
+    ApplyConstraints();
+}
+
 float Camera::getZoom() const {
     return this -> zoom;
+}
+
+void Camera::setZoom(float zoom) {
+    this -> zoom = zoom;
+    ApplyConstraints();
 }
 
 void Camera::setSmoothMovement(bool enabled) {
