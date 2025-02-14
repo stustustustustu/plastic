@@ -3,7 +3,7 @@
 
 const auto game = Game::getInstance();
 
-Camera::Camera(float screenWidth, float screenHeight) : screenWidth(screenWidth), screenHeight(screenHeight), position(screenWidth, screenHeight), zoom(1.0f), targetZoom(1.0f), initialMousePos(0, 0) {}
+Camera::Camera(float screenWidth, float screenHeight) : screenWidth(screenWidth), screenHeight(screenHeight), position(screenWidth / 2.0f, screenHeight / 2.0f), zoom(1.0f), targetZoom(1.0f), initialMousePos(0, 0) {}
 
 void Camera::Update() {
     double mouseX, mouseY;
@@ -24,7 +24,7 @@ void Camera::Update() {
         targetZoom = 1.0f;
     }
 
-    // quick reset back to original position if camera isnt being interacted with (too fast to use)
+    // quick reset back to original position if camera isn't being interacted with (too fast to use)
     /*if (!(panning || game -> input -> getActionManager().getActionState("CAMERA_ZOOM_IN") || game -> input -> getActionManager().getActionState("CAMERA_ZOOM_OUT"))) {
         returnToDefault();
     }*/
@@ -41,7 +41,7 @@ void Camera::Zoom(float amount) {
 }
 
 void Camera::ApplyConstraints() {
-    float maxMovement = (screenWidth);
+    float maxMovement = screenWidth;
     targetPosition.x = glm::clamp(targetPosition.x, -maxMovement, maxMovement);
     targetPosition.y = glm::clamp(targetPosition.y, -maxMovement, maxMovement);
 }

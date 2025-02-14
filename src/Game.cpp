@@ -101,7 +101,6 @@ void Game::Update() {
 
     for (int i = 0; i < enemies -> size();) {
         (*enemies)[i].moveTowards(player);
-        (*enemies)[i].setSpeed(0.25f);
 
         if ((*enemies)[i].getHealth() <= 0) {
             player.takeCoins((*enemies)[i], 1.0f);
@@ -123,6 +122,7 @@ void Game::Render() const {
     generator -> render(*texture);
 
     renderer -> SetProjection(camera -> getStaticProjection());
+
     game -> renderer -> DrawText("sigma", glm::vec2(5, 50), 50.0f);
 
     renderer -> SetProjection(camera -> getCameraProjection());
@@ -142,7 +142,6 @@ void Game::Render() const {
         }
     }
 
-    glUseProgram(shader -> ID);
     glfwSwapBuffers(window);
     glfwPollEvents();
     batch -> flush();

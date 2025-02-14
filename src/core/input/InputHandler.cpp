@@ -16,9 +16,10 @@ void InputHandler::InitBindings() {
     bindKeyCombo( {GLFW_KEY_D}, "RIGHT");
     bindKeyCombo( {GLFW_MOUSE_BUTTON_1}, "SHOOT");
 
+    // camera
     bindKeyCombo( {GLFW_MOUSE_BUTTON_3}, "CAMERA_PAN");
-    bindKeyCombo( {GLFW_KEY_LEFT_CONTROL, GLFW_KEY_UP}, "CAMERA_ZOOM_IN");
-    bindKeyCombo( {GLFW_KEY_LEFT_CONTROL, GLFW_KEY_DOWN}, "CAMERA_ZOOM_OUT");
+    bindKeyCombo( {GLFW_KEY_UP}, "CAMERA_ZOOM_IN");
+    bindKeyCombo( {GLFW_KEY_DOWN}, "CAMERA_ZOOM_OUT");
     bindKeyCombo( {GLFW_KEY_ESCAPE}, "CAMERA_RESET");
 }
 

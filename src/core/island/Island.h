@@ -6,8 +6,10 @@
 #include "../src/utils/render/sprites/Texture.h"
 
 class Island {
-    private:
+    public:
         static constexpr int TILE_SIZE = 32;
+
+    private:
         int MAP_WIDTH;
         int MAP_HEIGHT;
 

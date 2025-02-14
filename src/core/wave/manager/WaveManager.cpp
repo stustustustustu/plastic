@@ -4,7 +4,7 @@ WaveManager::WaveManager() : currentWaveIndex(0), forcable(false) {}
 
 void WaveManager::startNextWave() {
     currentWaveIndex++;
-    int weight = 100 + currentWaveIndex * 10;
+    int weight = 100 * std::pow(1.2f, currentWaveIndex);
     bool bossfight = false;
 
     if (currentWaveIndex > 0 && rand() % (100 - (currentWaveIndex * 2)) == 0) {
@@ -20,6 +20,11 @@ void WaveManager::startNextWave() {
     activeWaves.push_back(std::make_shared<Wave>(wave));
     lastWaveSpawnTime = std::chrono::steady_clock::now();
     std::cout << "Starting wave " << wave.getIndex() << " with " << wave.getEnemies().size() << " enemies." << std::endl;
+
+    for (const auto& enemy : wave.getEnemies()) {
+        std::cout << "Health: " << enemy.getHealth()
+                  << ", Speed: " << enemy.getSpeed() << std::endl;
+    }
 }
 
 void WaveManager::forceNextWave() {

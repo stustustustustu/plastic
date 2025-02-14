@@ -24,7 +24,7 @@ class Enemy : public Entity {
         EnemyType type;
 
     public:
-        Enemy(EnemyType type, const std::vector<float>& position);
+        Enemy(EnemyType type, const std::vector<float>& position, float health, float damage, float speed);
         void moveTowards(const std::vector<float>& targetPos);
         void moveTowards(Entity& player);
 
