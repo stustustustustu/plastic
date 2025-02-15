@@ -7,6 +7,7 @@ class Element {
     protected:
         glm::vec2 position;
         glm::vec2 size; // width & height
+
     public:
         Element(glm::vec2 position, glm::vec2 size) : position(position), size(size) {}
         virtual ~Element() = default;

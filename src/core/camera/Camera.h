@@ -19,8 +19,6 @@ class Camera {
 
         bool smoothMovement = true;
 
-        void ApplyConstraints();
-
     public:
         bool panning = false;
         glm::dvec2 initialMousePos;

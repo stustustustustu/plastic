@@ -1,33 +1,30 @@
 #include "Enemy.h"
 #include "../src/Game.h"
 
-Enemy::Enemy(EnemyType type, const std::vector<float>& position, float health, float damage, float speed): Entity(position, speed * 0.5f, damage, health), type(type) {
-    this -> setCoins(std::max(5, rand() % static_cast<int>(health)));
+Enemy::Enemy(EnemyType type, const std::vector<float>& position, float health, float damage, float speed) : Entity(position, speed * 0.5f, damage, health), type(type) {
+    this -> setCoins(std::max(5, rand() % static_cast<int>(health) / 10));
 }
 
 std::vector<Enemy> Enemy::generateEnemies(int index, int totalWeight) {
-    auto window = Game::getInstance() -> window;
-
+    auto window = Game::getInstance()->window;
     int screenWidth, screenHeight;
     glfwGetFramebufferSize(window, &screenWidth, &screenHeight);
 
-    const int halfWidth = 16;
-    const int halfHeight = 16;
-    const int border = 4;
-    const float minDistance = 50;
+    // Minimum safe distance from the player
+    const float minDist = 300; // Increased spawn distance
 
     std::vector<Enemy> enemies;
     auto enemyData = getEnemyData();
-
     std::vector<EnemyType> validTypes;
 
+    // Filter enemy types based on weight
     for (const auto &[type, data] : enemyData) {
         if (std::get<0>(data) <= totalWeight) {
             validTypes.push_back(type);
         }
     }
 
-    std::mt19937 rng(std::random_device{}()); // source: www.stackoverflow.com -> someone said its better than rand() for this case
+    std::mt19937 rng(std::random_device{}()); // Random number generator
     std::uniform_real_distribution<> dist(0.0, 1.0);
 
     while (totalWeight > 0 && !validTypes.empty()) {
@@ -38,11 +35,11 @@ std::vector<Enemy> Enemy::generateEnemies(int index, int totalWeight) {
         if (weight > totalWeight) continue;
 
         float x, y;
-
         do {
-            x = rand() % (screenWidth - 2 * (halfWidth + border)) + border;
-            y = rand() % (screenHeight - 2 * (halfHeight + border)) + border;
-        } while (!isPositionValidWithOthers(x, y, halfWidth, halfHeight, border, screenWidth, screenHeight, enemies, minDistance));
+            x = screenWidth / 2 + (rand() % (screenWidth * 2)) - screenWidth;
+            y = screenHeight / 2 + (rand() % (screenHeight * 2)) - screenHeight;
+
+        } while (calculateDistance({x, y}, {static_cast<float>(screenWidth / 2), static_cast<float>(screenHeight / 2)}) < minDist);
 
         enemies.emplace_back(type, std::vector<float>{x, y}, health, damage, speed);
         totalWeight -= weight;
@@ -53,65 +50,41 @@ std::vector<Enemy> Enemy::generateEnemies(int index, int totalWeight) {
 
 std::map<EnemyType, std::tuple<float, float, float, float>> Enemy::getEnemyData() {
     return {
-            {EnemyType::ABANDONED_SHIP, {100, 200, 50, 0.4f}},   // Slow but tanky
-            {EnemyType::SHIPPING_CONTAINER, {75, 150, 40, 0.5f}}, // Slightly faster, less health
-            {EnemyType::OIL_BARREL, {50, 100, 30, 0.6f}},        // Balanced health and speed
-            {EnemyType::BUOY_SYSTEM, {30, 80, 20, 0.7f}},         // Faster, lower health
-            {EnemyType::PLASTIC_CANOE, {20, 60, 15, 0.8f}},       // Even faster, fragile
-            {EnemyType::INDUSTRIAL_PACKAGING, {15, 50, 10, 0.9f}}, // Close to player speed, low health
-            {EnemyType::FISHERMANS_BARREL, {10, 40, 5, 1.0f}},    // Matches player speed, very low health
-            {EnemyType::FLOATING_PLATFORM, {8, 30, 3, 1.1f}},     // Slightly faster than player, fragile
-            {EnemyType::WATER_TANK, {6, 20, 2, 1.2f}},            // Fast, very low health
-            {EnemyType::FISHING_GEAR, {4, 15, 1, 1.3f}},          // Very fast, extremely fragile
-            {EnemyType::PLASTIC_BAG, {2, 10, 0.5f, 1.4f}},        // Extremely fast, almost no health
-            {EnemyType::TIRE, {1, 5, 0.2f, 1.5f}},                // Fastest, almost no health
-            {EnemyType::PLASTIC_BOTTLE, {0.5f, 3, 0.1f, 1.6f}}    // Fastest, almost no health
+        {EnemyType::ABANDONED_SHIP, {100, 200, 50, 0.4f}},   // Slow but tanky
+        {EnemyType::SHIPPING_CONTAINER, {75, 150, 40, 0.5f}}, // Slightly faster, less health
+        {EnemyType::OIL_BARREL, {50, 100, 30, 0.6f}},        // Balanced health and speed
+        {EnemyType::BUOY_SYSTEM, {30, 80, 20, 0.7f}},         // Faster, lower health
+        {EnemyType::PLASTIC_CANOE, {20, 60, 15, 0.8f}},       // Even faster, fragile
+        {EnemyType::INDUSTRIAL_PACKAGING, {15, 50, 10, 0.9f}}, // Close to player speed, low health
+        {EnemyType::FISHERMANS_BARREL, {10, 40, 5, 1.0f}},    // Matches player speed, very low health
+        {EnemyType::FLOATING_PLATFORM, {8, 30, 3, 1.1f}},     // Slightly faster than player, fragile
+        {EnemyType::WATER_TANK, {6, 20, 2, 1.2f}},            // Fast, very low health
+        {EnemyType::FISHING_GEAR, {4, 15, 1, 1.3f}},          // Very fast, extremely fragile
+        {EnemyType::PLASTIC_BAG, {2, 10, 0.5f, 1.4f}},        // Extremely fast, almost no health
+        {EnemyType::TIRE, {1, 5, 0.2f, 1.5f}},                // Fastest, almost no health
+        {EnemyType::PLASTIC_BOTTLE, {0.5f, 3, 0.1f, 1.6f}}    // Fastest, almost no health
     };
 }
 
 void Enemy::moveTowards(const std::vector<float>& targetPos) {
-    auto currentPos = this -> getPosition();
+    auto currentPos = this->getPosition();
     std::vector<float> direction = {
         targetPos[0] - currentPos[0],
         targetPos[1] - currentPos[1]
     };
 
     float magnitude = std::sqrt(direction[0] * direction[0] + direction[1] * direction[1]);
-
     if (magnitude > 0) {
         direction[0] /= magnitude;
         direction[1] /= magnitude;
+
         std::vector<float> delta = {
             direction[0] * getSpeed(),
             direction[1] * getSpeed()
         };
-        this -> move(delta);
-    }
-}
 
-void Enemy::moveTowards(Entity& player) {
-    std::vector<float> targetPos = player.getPosition();
-    moveTowards(targetPos);
-}
-
-bool Enemy::isPositionValid(float x, float y, int halfWidth, int halfHeight, int border, int screenWidth, int screenHeight) {
-    return x - halfWidth >= border &&
-           x + halfWidth <= screenWidth - border &&
-           y - halfHeight >= border &&
-           y + halfHeight <= screenHeight - border;
-}
-
-bool Enemy::isPositionValidWithOthers(float x, float y, int halfWidth, int halfHeight, int border, int screenWidth, int screenHeight, const std::vector<Enemy>& enemies, float minDistance) {
-    if (!isPositionValid(x, y, halfWidth, halfHeight, border, screenWidth, screenHeight)) {
-        return false;
+        this->move(delta);
     }
-    for (const auto& enemy : enemies) {
-        float distance = calculateDistance({x, y}, enemy.getPosition());
-        if (distance < minDistance) {
-            return false;
-        }
-    }
-    return true;
 }
 
 float Enemy::calculateDistance(const std::vector<float>& pos1, const std::vector<float>& pos2) {

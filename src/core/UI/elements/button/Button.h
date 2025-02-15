@@ -4,17 +4,11 @@
 #include "../src/config.h"
 #include "../../Element.h"
 
-#include "../src/Game.h"
-
-const auto game = Game::getInstance();
-
 class Button : public Element {
     private:
         std::string label;
         bool hovered = false;
         bool clicked = false;
-
-
 
     public:
         Button(glm::vec2 position, glm::vec2 size, const std::string& label) : Element(position, size), label(label) {}

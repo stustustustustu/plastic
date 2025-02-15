@@ -100,12 +100,13 @@ void Game::Update() {
     turret -> update();
 
     for (int i = 0; i < enemies -> size();) {
-        (*enemies)[i].moveTowards(player);
+        (*enemies)[i].moveTowards(player.getPosition());
 
         if ((*enemies)[i].getHealth() <= 0) {
             player.takeCoins((*enemies)[i], 1.0f);
             enemies -> erase(enemies -> begin() + i);
             if (enemies -> empty()) {
+                std::cout << "Player has: " << player.getCoins() << std::endl;
                 wave -> startNextWave();
                 wave -> updateWaveStatus();
                 enemies = wave -> getCurrentEnemies();
@@ -119,18 +120,13 @@ void Game::Update() {
 void Game::Render() const {
     glClear(GL_COLOR_BUFFER_BIT);
 
+    renderer -> SetProjection(camera -> getCameraProjection());
+
     generator -> render(*texture);
 
-    renderer -> SetProjection(camera -> getStaticProjection());
-
-    renderer -> DrawText("sigma", glm::vec2(5, 50), 50.0f);
-
-    renderer -> SetProjection(camera -> getCameraProjection());
     if (player.getHealth() > 0) {
         player.drawEntity(texture);
     }
-
-    turret -> render();
 
     if (wave) {
         for (const auto& enemy : *enemies) {
@@ -139,6 +135,12 @@ void Game::Render() const {
             }
         }
     }
+
+    renderer -> SetProjection(camera -> getStaticProjection());
+
+    renderer -> DrawText("ENEMIES: " + std::to_string(enemies -> size()), glm::vec2(5, 55), 50.0f);
+
+    turret -> render();
 
     glfwSwapBuffers(window);
     glfwPollEvents();

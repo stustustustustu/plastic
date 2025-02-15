@@ -13,6 +13,9 @@ class Textbox : public Element{
 
         void render() override;
         void update() override {}
+
+        void setText(const std::string& text);
+        std::string getText() const;
 };
 
 

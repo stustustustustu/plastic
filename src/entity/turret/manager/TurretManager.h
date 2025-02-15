@@ -1,8 +1,11 @@
 #ifndef TURRETMANAGER_H
 #define TURRETMANAGER_H
 
-#include "../Turret.h"
 #include "../../../core/upgrades/manager/UpgradeManager.h"
+
+#include "../Turret.h"
+#include "shop/Shop.h"
+#include "Upgrades.h"
 
 class TurretManager {
     private:
@@ -12,6 +15,9 @@ class TurretManager {
         bool showUpgrades = false;
 
         std::shared_ptr<Turret> selectedTurret;
+
+    private:
+        TurretShop *shop = new TurretShop(glm::vec2(5, 55), glm::vec2(170, 500));
 
     public:
         void update();

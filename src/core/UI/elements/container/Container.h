@@ -5,7 +5,7 @@
 #include "../../Element.h"
 
 class Container : public Element {
-    private:
+    protected:
         std::vector<Element*> elements;
 
     public:

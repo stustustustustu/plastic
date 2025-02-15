@@ -18,6 +18,8 @@ class Slider : public Element {
 
         void render() override;
         void update() override;
+
+        float getValue() const;
 };
 
 #endif //SLIDER_H

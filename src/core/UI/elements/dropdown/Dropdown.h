@@ -15,6 +15,8 @@ class Dropdown : public Element {
         void render() override;
         void update() override;
 
+        void toggle();
+
         void addElement(Element* element);
 };
 

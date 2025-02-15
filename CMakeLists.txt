@@ -85,6 +85,9 @@ add_executable(
         src/core/action/manager/ActionManager.h
         src/entity/turret/manager/TurretManager.cpp
         src/entity/turret/manager/TurretManager.h
+        src/entity/turret/manager/shop/Shop.h
+        src/entity/turret/manager/Upgrades.h
+        src/entity/turret/manager/shop/Shop.cpp
 )
 
 target_include_directories(plastic PRIVATE dependencies) # Includes location

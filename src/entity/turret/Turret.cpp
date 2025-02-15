@@ -39,7 +39,7 @@ void Turret::rotateTowardsTarget() {
     if (!target) return;
 
     auto pos = getPosition();
-    auto targetPos = target->getPosition();
+    auto targetPos = target -> getPosition();
     float targetAngle = std::atan2(targetPos[1] - pos[1], targetPos[0] - pos[0]) * 180.0f / M_PI;
 
     float angleDiff = targetAngle - currentAngle;

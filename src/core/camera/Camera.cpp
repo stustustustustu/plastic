@@ -11,7 +11,7 @@ void Camera::Update() {
     handlePanning(mouseX, mouseY, 1.0f);
 
     if (smoothMovement) {
-        position = glm::mix(position, targetPosition, 0.1f);
+        position = glm::mix(position, targetPosition, 0.025f);
         zoom = glm::mix(zoom, targetZoom, 0.015f);
     } else {
         position = targetPosition;
@@ -25,25 +25,18 @@ void Camera::Update() {
     }
 
     // quick reset back to original position if camera isn't being interacted with (too fast to use)
-    /*if (!(panning || game -> input -> getActionManager().getActionState("CAMERA_ZOOM_IN") || game -> input -> getActionManager().getActionState("CAMERA_ZOOM_OUT"))) {
+    if (!(panning || game -> input -> getActionManager().getActionState("CAMERA_ZOOM_IN") || game -> input -> getActionManager().getActionState("CAMERA_ZOOM_OUT"))) {
         returnToDefault();
-    }*/
+    }
 }
 
 void Camera::Move(glm::vec2 delta) {
     targetPosition += delta;
-    ApplyConstraints();
 }
 
 void Camera::Zoom(float amount) {
     targetZoom += amount;
     targetZoom = glm::clamp(targetZoom, minZoom, maxZoom);
-}
-
-void Camera::ApplyConstraints() {
-    float maxMovement = screenWidth;
-    targetPosition.x = glm::clamp(targetPosition.x, -maxMovement, maxMovement);
-    targetPosition.y = glm::clamp(targetPosition.y, -maxMovement, maxMovement);
 }
 
 glm::mat4 Camera::getCameraProjection() const {
@@ -94,7 +87,6 @@ glm::vec2 Camera::getPosition() const {
 
 void Camera::setPosition(const glm::vec2& position) {
     this -> position = position;
-    ApplyConstraints();
 }
 
 float Camera::getZoom() const {
@@ -103,7 +95,6 @@ float Camera::getZoom() const {
 
 void Camera::setZoom(float zoom) {
     this -> zoom = zoom;
-    ApplyConstraints();
 }
 
 glm::vec2 Camera::getScreen() const {

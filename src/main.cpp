@@ -1,5 +1,5 @@
 #include "Game.h"
-Game *game = Game::getInstance(1280, 1280 * 3/4); // 4:3 format
+auto *game = Game::getInstance(1280, 1280 * 3/4); // 4:3 format
 
 int main() {
     if (!game -> Init()) {
