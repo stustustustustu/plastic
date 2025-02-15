@@ -138,7 +138,7 @@ void Game::Render() const {
 
     renderer -> SetProjection(camera -> getStaticProjection());
 
-    renderer -> DrawText("ENEMIES: " + std::to_string(enemies -> size()), glm::vec2(5, 55), 50.0f);
+    renderer -> DrawText("ENEMIES " + std::to_string(enemies -> size()), glm::vec2(5, 55), 50.0f);
 
     turret -> render();
 
