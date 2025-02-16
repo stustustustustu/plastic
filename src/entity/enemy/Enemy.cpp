@@ -1,6 +1,8 @@
 #include "Enemy.h"
 #include "../src/Game.h"
 
+auto const game = Game::getInstance();
+
 Enemy::Enemy(EnemyType type, const std::vector<float>& position, float health, float damage, float speed) : Entity(position, speed * 0.5f, damage, health), type(type) {
     this -> setCoins(std::max(5, rand() % static_cast<int>(health) / 10));
 }
@@ -10,8 +12,7 @@ std::vector<Enemy> Enemy::generateEnemies(int index, int totalWeight) {
     int screenWidth, screenHeight;
     glfwGetFramebufferSize(window, &screenWidth, &screenHeight);
 
-    // Minimum safe distance from the player
-    const float minDist = 300; // Increased spawn distance
+    const float minDist = 150;
 
     std::vector<Enemy> enemies;
     auto enemyData = getEnemyData();
@@ -24,7 +25,7 @@ std::vector<Enemy> Enemy::generateEnemies(int index, int totalWeight) {
         }
     }
 
-    std::mt19937 rng(std::random_device{}()); // Random number generator
+    std::mt19937 rng(std::random_device{}());
     std::uniform_real_distribution<> dist(0.0, 1.0);
 
     while (totalWeight > 0 && !validTypes.empty()) {
@@ -39,7 +40,7 @@ std::vector<Enemy> Enemy::generateEnemies(int index, int totalWeight) {
             x = screenWidth / 2 + (rand() % (screenWidth * 2)) - screenWidth;
             y = screenHeight / 2 + (rand() % (screenHeight * 2)) - screenHeight;
 
-        } while (calculateDistance({x, y}, {static_cast<float>(screenWidth / 2), static_cast<float>(screenHeight / 2)}) < minDist);
+        } while (game -> generator -> distanceToNearestLand(x, y) < minDist);
 
         enemies.emplace_back(type, std::vector<float>{x, y}, health, damage, speed);
         totalWeight -= weight;
@@ -50,19 +51,19 @@ std::vector<Enemy> Enemy::generateEnemies(int index, int totalWeight) {
 
 std::map<EnemyType, std::tuple<float, float, float, float>> Enemy::getEnemyData() {
     return {
-        {EnemyType::ABANDONED_SHIP, {100, 200, 50, 0.4f}},   // Slow but tanky
-        {EnemyType::SHIPPING_CONTAINER, {75, 150, 40, 0.5f}}, // Slightly faster, less health
-        {EnemyType::OIL_BARREL, {50, 100, 30, 0.6f}},        // Balanced health and speed
-        {EnemyType::BUOY_SYSTEM, {30, 80, 20, 0.7f}},         // Faster, lower health
-        {EnemyType::PLASTIC_CANOE, {20, 60, 15, 0.8f}},       // Even faster, fragile
-        {EnemyType::INDUSTRIAL_PACKAGING, {15, 50, 10, 0.9f}}, // Close to player speed, low health
-        {EnemyType::FISHERMANS_BARREL, {10, 40, 5, 1.0f}},    // Matches player speed, very low health
-        {EnemyType::FLOATING_PLATFORM, {8, 30, 3, 1.1f}},     // Slightly faster than player, fragile
-        {EnemyType::WATER_TANK, {6, 20, 2, 1.2f}},            // Fast, very low health
-        {EnemyType::FISHING_GEAR, {4, 15, 1, 1.3f}},          // Very fast, extremely fragile
-        {EnemyType::PLASTIC_BAG, {2, 10, 0.5f, 1.4f}},        // Extremely fast, almost no health
-        {EnemyType::TIRE, {1, 5, 0.2f, 1.5f}},                // Fastest, almost no health
-        {EnemyType::PLASTIC_BOTTLE, {0.5f, 3, 0.1f, 1.6f}}    // Fastest, almost no health
+        {EnemyType::ABANDONED_SHIP, {100, 200, 50, 0.4f}},      // Slow but tanky
+        {EnemyType::SHIPPING_CONTAINER, {75, 150, 40, 0.5f}},   // Slightly faster, less health
+        {EnemyType::OIL_BARREL, {50, 100, 30, 0.6f}},           // Balanced health and speed
+        {EnemyType::BUOY_SYSTEM, {30, 80, 20, 0.7f}},           // Faster, lower health
+        {EnemyType::PLASTIC_CANOE, {20, 60, 15, 0.8f}},         // Even faster, fragile
+        {EnemyType::INDUSTRIAL_PACKAGING, {15, 50, 10, 0.9f}},  // Close to player speed, low health
+        {EnemyType::FISHERMANS_BARREL, {10, 40, 5, 1.0f}},      // Matches player speed, very low health
+        {EnemyType::FLOATING_PLATFORM, {8, 30, 3, 1.1f}},       // Slightly faster than player, fragile
+        {EnemyType::WATER_TANK, {6, 20, 2, 1.2f}},              // Fast, very low health
+        {EnemyType::FISHING_GEAR, {4, 15, 1, 1.3f}},            // Very fast, extremely fragile
+        {EnemyType::PLASTIC_BAG, {2, 10, 0.5f, 1.4f}},          // Extremely fast, almost no health
+        {EnemyType::TIRE, {1, 5, 0.2f, 1.5f}},                  // Fastest, almost no health
+        {EnemyType::PLASTIC_BOTTLE, {0.5f, 3, 0.1f, 1.6f}}      // Fastest, almost no health
     };
 }
 

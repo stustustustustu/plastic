@@ -43,33 +43,52 @@ void Player::Movement() {
 }
 
 bool Player::canMove(std::vector<float>& delta) {
-    int screenWidth, screenHeight;
-    glfwGetFramebufferSize(game -> window, &screenWidth, &screenHeight);
-
-    const int halfWidth = 16;
-    const int halfHeight = 16;
-    const int border = 4;
-
     std::vector<float> position = game -> player.getPosition();
+    const float speed = game -> player.getSpeed();
 
-    float newX = position[0] + delta[0] * game -> player.getSpeed();
-    float newY = position[1] + delta[1] * game -> player.getSpeed();
+    const float newX = position[0] + delta[0] * speed;
+    const float newY = position[1] + delta[1] * speed;
 
-    // Horizontal check
-    if (newX < border) {
-        delta[0] = std::max(0.0f, delta[0]); // Left
-    } else if (newX + 2 * halfWidth + border > screenWidth) {
-        delta[0] = std::min(0.0f, delta[0]); // Right
+    auto checkPosition = [&](float x, float y) {
+        int tileX = static_cast<int>(x) / Island::TILE_SIZE;
+        int tileY = static_cast<int>(y) / Island::TILE_SIZE;
+        if (!game -> generator -> isLand(tileX, tileY)) {
+            return false;
+        }
+
+        bool beach = game -> generator -> isWater(tileX - 1, tileY) || game -> generator -> isWater(tileX + 1, tileY) ||
+                     game -> generator -> isWater(tileX, tileY - 1) || game -> generator -> isWater(tileX, tileY + 1);
+
+        if (!beach) return true;
+
+        float posInTileX = x - tileX * Island::TILE_SIZE;
+        float posInTileY = y - tileY * Island::TILE_SIZE;
+
+        bool valid = true;
+        if (game -> generator -> isWater(tileX - 1, tileY)) valid &= (posInTileX >= 16);
+        if (game -> generator -> isWater(tileX + 1, tileY)) valid &= (posInTileX <= 16);
+        if (game -> generator -> isWater(tileX, tileY - 1)) valid &= (posInTileY >= 16);
+        if (game -> generator -> isWater(tileX, tileY + 1)) valid &= (posInTileY <= 16);
+
+        return valid;
+    };
+
+    bool xValid = true;
+    if (delta[0] != 0) {
+        xValid = checkPosition(newX, position[1]) && checkPosition(newX, position[1] + 31) &&
+                 checkPosition(newX + 31, position[1]) && checkPosition(newX + 31, position[1] + 31);
     }
 
-    // Vertical check
-    if (newY < border) {
-        delta[1] = std::max(0.0f, delta[1]); // Up
-    } else if (newY + 2 * halfHeight + border > screenHeight) {
-        delta[1] = std::min(0.0f, delta[1]); // Down
+    bool yValid = true;
+    if (delta[1] != 0) {
+        yValid = checkPosition(position[0], newY) && checkPosition(position[0] + 31, newY) &&
+                 checkPosition(position[0], newY + 31) && checkPosition(position[0] + 31, newY + 31);
     }
 
-    return true;
+    if (!xValid) delta[0] = 0;
+    if (!yValid) delta[1] = 0;
+
+    return xValid || yValid;
 }
 
 bool Player::isMouseOver(double x, double y) {

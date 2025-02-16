@@ -29,11 +29,10 @@ enum class Tile {
 class Island {
     public:
         static constexpr int TILE_SIZE = 32;
-
-    private:
         int MAP_WIDTH;
         int MAP_HEIGHT;
 
+    private:
         unsigned int seed;
 
         FastNoise noise;
@@ -59,7 +58,11 @@ class Island {
 
         void render(Texture& tileTexture);
 
-        Tile getBeachTileVariant(int x, int y);
+        Tile getBeachTileVariant(int x, int y) const;
+
+        std::pair<int, int> findNearestLandTile(float screenX, float screenY) const;
+
+        float distanceToNearestLand(float worldX, float worldY) const;
 
         bool isLand(int x, int y) const;
 

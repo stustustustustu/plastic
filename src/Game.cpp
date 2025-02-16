@@ -72,6 +72,25 @@ bool Game::Init() {
     upgrade = new UpgradeManager(*inventory);
     generator = new Island(std::pow(rand(), 2));
 
+    // player spawning
+    auto [tileX, tileY] = generator -> findNearestLandTile(width / 2, height / 2);
+
+    if (generator -> isWater(tileX - 1, tileY) || generator -> isWater(tileX + 1, tileY) || generator -> isWater(tileX, tileY - 1) || generator -> isWater(tileX, tileY + 1)) {
+        int centerX = generator -> MAP_WIDTH / 2;
+        int centerY = generator -> MAP_HEIGHT / 2;
+        tileX += (tileX < centerX) ? 1 : (tileX > centerX) ? -1 : 0;
+        tileY += (tileY < centerY) ? 1 : (tileY > centerY) ? -1 : 0;
+    }
+
+    if (!generator -> isLand(tileX, tileY)) {
+        std::tie(tileX, tileY) = generator -> findNearestLandTile(width / 2, height / 2);
+    }
+
+    player.setPosition({
+        static_cast<float>(tileX * Island::TILE_SIZE + Island::TILE_SIZE / 2),
+        static_cast<float>(tileY * Island::TILE_SIZE + Island::TILE_SIZE / 2)
+    });
+
     texture = Texture::Create("../src/assets/sprites/sheet.png", true);
 
     renderer -> SetProjection(camera -> getStaticProjection());
@@ -102,11 +121,18 @@ void Game::Update() {
     for (int i = 0; i < enemies -> size();) {
         (*enemies)[i].moveTowards(player.getPosition());
 
+        if (generator -> isLand(static_cast<int>((*enemies)[i].getPosition().at(0)) / Island::TILE_SIZE, static_cast<int>((*enemies)[i].getPosition().at(1)) / Island::TILE_SIZE)) {
+            player.hit((*enemies)[i].getDamage(), false);
+            std::cout << "Hit for: " << (*enemies)[i].getDamage() << "." << std::endl;
+            enemies -> erase(enemies -> begin() + i);
+        }
+
         if ((*enemies)[i].getHealth() <= 0) {
             player.takeCoins((*enemies)[i], 1.0f);
             enemies -> erase(enemies -> begin() + i);
+
             if (enemies -> empty()) {
-                std::cout << "Player has: " << player.getCoins() << std::endl;
+                std::cout << "Player has " << player.getHealth() << " health and " << player.getCoins() << " coins." << std::endl;
                 wave -> startNextWave();
                 wave -> updateWaveStatus();
                 enemies = wave -> getCurrentEnemies();

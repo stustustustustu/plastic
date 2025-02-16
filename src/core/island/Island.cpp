@@ -7,10 +7,9 @@
 const auto game = Game::getInstance();
 
 Island::Island(unsigned int seed) : MAP_WIDTH(game->getInstance()->getSize().at(0) / TILE_SIZE), MAP_HEIGHT(game->getInstance()->getSize().at(1) / TILE_SIZE) {
-    noise.SetSeed(seed);
+    this -> seed = seed;
+    noise.SetSeed(179024400);
     noise.SetNoiseType(FastNoise::Simplex);
-
-    std::cout << seed << std::endl;
 
     noiseMap.resize(MAP_HEIGHT * TILE_SIZE, std::vector<float>(MAP_WIDTH * TILE_SIZE, 0.0f));
     tileMap.resize(MAP_HEIGHT, std::vector<int>(MAP_WIDTH, static_cast<int>(Tile::WATER))); // Initialize all tiles as water
@@ -20,7 +19,6 @@ Island::Island(unsigned int seed) : MAP_WIDTH(game->getInstance()->getSize().at(
 }
 
 void Island::generate() {
-    // Step 1: Generate the initial island
     for (int y = 0; y < MAP_HEIGHT * TILE_SIZE; ++y) {
         for (int x = 0; x < MAP_WIDTH * TILE_SIZE; ++x) {
             float value = simplexNoise(x / 10.0f, y / 10.0f);
@@ -30,7 +28,6 @@ void Island::generate() {
         }
     }
 
-    // Step 2: Classify tiles as land or water
     std::vector<float> values;
     for (int y = 0; y < MAP_HEIGHT; ++y) {
         for (int x = 0; x < MAP_WIDTH; ++x) {
@@ -48,7 +45,7 @@ void Island::generate() {
     }
 
     std::sort(values.begin(), values.end());
-    float threshold = values[static_cast<int>(values.size() * 0.70f)]; // 30% land
+    float threshold = values[static_cast<int>(values.size() * 0.70f)];
 
     for (int y = 0; y < MAP_HEIGHT; ++y) {
         for (int x = 0; x < MAP_WIDTH; ++x) {
@@ -63,14 +60,13 @@ void Island::generate() {
             avg /= std::pow(TILE_SIZE, 2);
 
             if (avg < threshold) {
-                tileMap[y][x] = static_cast<int>(Tile::WATER); // Water
+                tileMap[y][x] = static_cast<int>(Tile::WATER);
             } else {
-                tileMap[y][x] = static_cast<int>(Tile::CENTER); // Land (will be updated later)
+                tileMap[y][x] = static_cast<int>(Tile::CENTER);
             }
         }
     }
 
-    // Step 3: Trace the island edge and place beach tiles
     traceIslandEdge();
 
     std::cout << "Generated an island with the seed of: " << seed << ", using threshold: " << threshold << std::endl;
@@ -79,12 +75,8 @@ void Island::generate() {
 void Island::traceIslandEdge() {
     for (int y = 0; y < MAP_HEIGHT; ++y) {
         for (int x = 0; x < MAP_WIDTH; ++x) {
-            // Skip water tiles
-            if (tileMap[y][x] == static_cast<int>(Tile::WATER)) {
-                continue;
-            }
+            if (tileMap[y][x] == static_cast<int>(Tile::WATER)) continue;
 
-            // Check if this tile is on the edge of the island
             bool isEdgeTile = false;
             if (isWater(x, y - 1) || isWater(x + 1, y) || isWater(x, y + 1) || isWater(x - 1, y) ||
                 isWater(x - 1, y - 1) || isWater(x + 1, y + 1) || isWater(x + 1, y - 1) || isWater(x - 1, y + 1)) {
@@ -92,18 +84,20 @@ void Island::traceIslandEdge() {
             }
 
             if (isEdgeTile) {
-                // Determine the correct beach tile variant
-                tileMap[y][x] = static_cast<int>(getBeachTileVariant(x, y));
+                Tile variant = getBeachTileVariant(x, y);
+                if (variant == Tile::EMPTY) {
+                    tileMap[y][x] = static_cast<int>(Tile::WATER);
+                } else {
+                    tileMap[y][x] = static_cast<int>(variant);
+                }
             } else {
-                // This tile is fully enclosed by land
                 tileMap[y][x] = static_cast<int>(Tile::CENTER);
             }
         }
     }
 }
 
-Tile Island::getBeachTileVariant(int x, int y) {
-    // Create an 8-bit bitmask for neighboring water tiles
+Tile Island::getBeachTileVariant(int x, int y) const {
     int bitmask = 0;
     bitmask |= isWater(x - 1, y - 1) ? 0b00000001 : 0; // Top-left
     bitmask |= isWater(x, y - 1) ? 0b00000010 : 0;     // Top
@@ -200,12 +194,16 @@ Tile Island::getBeachTileVariant(int x, int y) {
         case 0b01110100:
         case 0b01011100:
         case 0b00110100:
+        case 0b01100100:
             return Tile::REVERSE_BOTTOM_RIGHT;
 
         case 0b00110001:
         case 0b11010001:
         case 0b01110001:
         case 0b01100001:
+        case 0b10010000:
+        case 0b10100000:
+        case 0b10110000:
             return Tile::REVERSE_BOTTOM_LEFT;
 
         case 0b00010111:
@@ -213,6 +211,8 @@ Tile Island::getBeachTileVariant(int x, int y) {
         case 0b00010011:
         case 0b00010110:
         case 0b00011001:
+        case 0b00001001:
+        case 0b00001011:
             return Tile::REVERSE_TOP_RIGHT;
 
         case 0b01010001:
@@ -225,6 +225,55 @@ Tile Island::getBeachTileVariant(int x, int y) {
     }
 
     return Tile::EMPTY;
+}
+
+std::pair<int, int> Island::findNearestLandTile(float screenX, float screenY) const {
+    int centerX = static_cast<int>(screenX) / TILE_SIZE;
+    int centerY = static_cast<int>(screenY) / TILE_SIZE;
+
+    centerX = std::clamp(centerX, 0, MAP_WIDTH - 1);
+    centerY = std::clamp(centerY, 0, MAP_HEIGHT - 1);
+
+    if (isLand(centerX, centerY)) {
+        return {centerX, centerY};
+    }
+
+    int maxRadius = std::max(MAP_WIDTH, MAP_HEIGHT);
+    for (int radius = 1; radius < maxRadius; ++radius) {
+        for (int dx = -radius; dx <= radius; ++dx) {
+            for (int dy = -radius; dy <= radius; ++dy) {
+                if (abs(dx) != radius && abs(dy) != radius) continue;
+
+                int x = centerX + dx;
+                int y = centerY + dy;
+                if (x >= 0 && x < MAP_WIDTH && y >= 0 && y < MAP_HEIGHT) {
+                    if (isLand(x, y)) {
+                        return {x, y};
+                    }
+                }
+            }
+        }
+    }
+
+    return {centerX, centerY};
+}
+
+float Island::distanceToNearestLand(float worldX, float worldY) const {
+    float minDistance = FLT_MAX;
+
+    for (int y = 0; y < MAP_HEIGHT; ++y) {
+        for (int x = 0; x < MAP_WIDTH; ++x) {
+            if (isLand(x, y)) {
+                float dx = (x * TILE_SIZE + TILE_SIZE/2) - worldX;
+                float dy = (y * TILE_SIZE + TILE_SIZE/2) - worldY;
+                float distance = std::sqrt(dx*dx + dy*dy);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                }
+            }
+        }
+    }
+    return minDistance;
 }
 
 bool Island::isLand(int x, int y) const {
@@ -246,19 +295,15 @@ float Island::simplexNoise(float x, float y) {
 }
 
 float Island::gradientMask(float x, float y) {
-    // Normalize coordinates to the range [-1, 1]
     float nx = (x - MAP_WIDTH * TILE_SIZE / 2.0f) / (MAP_WIDTH * TILE_SIZE / 2.0f);
     float ny = (y - MAP_HEIGHT * TILE_SIZE / 2.0f) / (MAP_HEIGHT * TILE_SIZE / 2.0f);
 
-    // Calculate distance from the center
     float distance = std::sqrt(nx * nx + ny * ny);
 
-    // Apply a circular falloff
-    float falloff = 1.0f - distance; // Linear falloff
-    falloff = std::clamp(falloff, 0.0f, 1.0f); // Clamp to [0, 1]
+    float falloff = 1.0f - distance;
+    falloff = std::clamp(falloff, 0.0f, 1.0f);
 
-    // Apply a stronger falloff near the edges
-    falloff = std::pow(falloff, 2.0f); // Quadratic falloff for a smoother transition
+    falloff = std::pow(falloff, 2.0f);
 
     return falloff;
 }
@@ -266,10 +311,10 @@ float Island::gradientMask(float x, float y) {
 void Island::render(Texture &texture) {
     for (int y = 0; y < MAP_HEIGHT; ++y) {
         for (int x = 0; x < MAP_WIDTH; ++x) {
-            int variant = tileMap[y][x]; // Use tileMap directly for rendering
+            int variant = tileMap[y][x];
 
             if (tileMap[y][x] != static_cast<int>(Tile::WATER)) {
-                game->renderer->DrawSpriteSheet(texture, glm::vec2(x * TILE_SIZE, y * TILE_SIZE), variant, 32, 32, glm::vec2(TILE_SIZE, TILE_SIZE));
+                game -> renderer -> DrawSpriteSheet(texture, glm::vec2(x * TILE_SIZE, y * TILE_SIZE), variant, 32, 32, glm::vec2(TILE_SIZE, TILE_SIZE));
             }
         }
     }
