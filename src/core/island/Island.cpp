@@ -146,10 +146,26 @@ Tile Island::getBeachTileVariant(int x, int y) {
 
     // outter corners
     switch (bitmask) {
-        case 0b00001110: return Tile::REVERSE_TOP_RIGHT;
-        case 0b10000011: return Tile::REVERSE_TOP_LEFT;
-        case 0b00111000: return Tile::REVERSE_BOTTOM_RIGHT;
-        case 0b11100000: return Tile::REVERSE_BOTTOM_LEFT;
+        case 0b00001110:
+        case 0b00001111:
+        case 0b00011110:
+        case 0b00011111:
+            return Tile::REVERSE_TOP_RIGHT;
+        case 0b10000011:
+        case 0b10000111:
+        case 0b11000011:
+        case 0b11000111:
+            return Tile::REVERSE_TOP_LEFT;
+        case 0b00111000:
+        case 0b01111000:
+        case 0b00111100:
+        case 0b01111100:
+            return Tile::REVERSE_BOTTOM_RIGHT;
+        case 0b11100000:
+        case 0b11110000:
+        case 0b11100001:
+        case 0b11110001:
+            return Tile::REVERSE_BOTTOM_LEFT;
         default: break;
     }
 
