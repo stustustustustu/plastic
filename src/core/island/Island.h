@@ -6,6 +6,7 @@
 #include "../src/utils/render/sprites/Texture.h"
 
 enum class Tile {
+    EMPTY = 1000,                   // empty tile
     WATER = 3,                      // Water tile
     ISOLATED = 2,                   // Isolated land tile
     CENTER = 4,                     // Full land tile
@@ -21,6 +22,8 @@ enum class Tile {
     REVERSE_TOP_LEFT = 14,
     REVERSE_BOTTOM_RIGHT = 15,
     REVERSE_BOTTOM_LEFT = 16,
+    DIAGONAL_TR_BL = 17,              // water op top right and bottom left
+    DIAGONAL_TL_BR = 18              // water op top left and bottom right
 };
 
 class Island {

@@ -10,6 +10,8 @@ Island::Island(unsigned int seed) : MAP_WIDTH(game->getInstance()->getSize().at(
     noise.SetSeed(seed);
     noise.SetNoiseType(FastNoise::Simplex);
 
+    std::cout << seed << std::endl;
+
     noiseMap.resize(MAP_HEIGHT * TILE_SIZE, std::vector<float>(MAP_WIDTH * TILE_SIZE, 0.0f));
     tileMap.resize(MAP_HEIGHT, std::vector<int>(MAP_WIDTH, static_cast<int>(Tile::WATER))); // Initialize all tiles as water
     tileVariants.resize(MAP_HEIGHT, std::vector<Tile>(MAP_WIDTH, Tile::WATER)); // Initialize variants
@@ -118,33 +120,44 @@ Tile Island::getBeachTileVariant(int x, int y) {
         case 0b00000110:
         case 0b00000011:
         case 0b00000111:
+        case 0b00000101:
             return Tile::TOP;
         case 0b00001000:
         case 0b00001100:
         case 0b00011000:
         case 0b00011100:
+        case 0b00010100:
             return Tile::RIGHT;
         case 0b00100000:
         case 0b00110000:
         case 0b01100000:
         case 0b01110000:
+        case 0b01010000:
             return Tile::BOTTOM;
         case 0b10000000:
         case 0b11000000:
         case 0b10000001:
         case 0b11000001:
+        case 0b01000001:
             return Tile::LEFT;
         default: break;
     }
 
     // inner corners
     switch (bitmask) {
-
+        case 0b00000100:
+            return Tile::TOP_RIGHT;
+        case 0b00000001:
+            return Tile::TOP_LEFT;
+        case 0b00010000:
+            return Tile::BOTTOM_RIGHT;
+        case 0b01000000:
+            return Tile::BOTTOM_LEFT;
 
         default: break;
     }
 
-    // outter corners
+    // outer corners
     switch (bitmask) {
         case 0b00001110:
         case 0b00001111:
@@ -169,7 +182,49 @@ Tile Island::getBeachTileVariant(int x, int y) {
         default: break;
     }
 
-    return Tile::ISOLATED;
+    // diagonals
+    switch (bitmask) {
+        case 0b01000100:
+            return Tile::DIAGONAL_TR_BL;
+        case 0b00010001:
+            return Tile::DIAGONAL_TL_BR;
+
+        default: break;
+    }
+
+    // edge cases
+    switch (bitmask) {
+        case 0b01001100:
+        case 0b01011000:
+        case 0b01010100:
+        case 0b01110100:
+        case 0b01011100:
+        case 0b00110100:
+            return Tile::REVERSE_BOTTOM_RIGHT;
+
+        case 0b00110001:
+        case 0b11010001:
+        case 0b01110001:
+        case 0b01100001:
+            return Tile::REVERSE_BOTTOM_LEFT;
+
+        case 0b00010111:
+        case 0b00011101:
+        case 0b00010011:
+        case 0b00010110:
+        case 0b00011001:
+            return Tile::REVERSE_TOP_RIGHT;
+
+        case 0b01010001:
+        case 0b01000111:
+        case 0b11000101:
+        case 0b01000011:
+        case 0b11000100:
+            return Tile::REVERSE_TOP_LEFT;
+        default: break;
+    }
+
+    return Tile::EMPTY;
 }
 
 bool Island::isLand(int x, int y) const {
