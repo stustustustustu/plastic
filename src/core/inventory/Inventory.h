@@ -2,19 +2,16 @@
 #define INVENTORY_H
 
 #include "../../config.h"
-#include "../../entity/Entity.h"
+#include "../../entity/player/Player.h"
 
 class Inventory {
     public:
-        explicit Inventory(Entity& player);
+        explicit Inventory() = default;
 
         int getCoins() const;
         bool hasEnoughCoins(int amount) const;
         bool spendCoins(int amount) const;
         void addCoins(int amount);
-
-    private:
-        Entity &player;
 };
 
 #endif //INVENTORY_H

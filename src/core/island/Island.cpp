@@ -8,7 +8,7 @@ const auto game = Game::getInstance();
 
 Island::Island(unsigned int seed) : MAP_WIDTH(game->getInstance()->getSize().at(0) / TILE_SIZE), MAP_HEIGHT(game->getInstance()->getSize().at(1) / TILE_SIZE) {
     this -> seed = seed;
-    noise.SetSeed(179024400);
+    noise.SetSeed(seed);
     noise.SetNoiseType(FastNoise::Simplex);
 
     noiseMap.resize(MAP_HEIGHT * TILE_SIZE, std::vector<float>(MAP_WIDTH * TILE_SIZE, 0.0f));

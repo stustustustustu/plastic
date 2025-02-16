@@ -67,7 +67,7 @@ class Game {
         Island *generator;
 
         // entities
-        Entity player;
+        Player *player;
         std::vector<Turret> turrets;
         std::vector<Enemy> *enemies;
 

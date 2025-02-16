@@ -7,6 +7,10 @@
 
 class Player : public Entity {
     public:
+        Player();
+
+        std::pair<int, int> calculateSpawnTile();
+
         static void Movement();
         static bool canMove(std::vector<float> &delta);
 

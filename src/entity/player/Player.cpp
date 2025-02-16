@@ -3,6 +3,92 @@
 
 const auto game = Game::getInstance();
 
+Player::Player() : Entity({
+    static_cast<float>(calculateSpawnTile().first * Island::TILE_SIZE + Island::TILE_SIZE / 2),
+    static_cast<float>(calculateSpawnTile().second * Island::TILE_SIZE + Island::TILE_SIZE / 2)}
+    ) {}
+
+std::pair<int, int> Player::calculateSpawnTile() {
+    // Get the center of the screen in world coordinates
+    int screenCenterX = game -> getSize().at(0) / 2;
+    int screenCenterY = game -> getSize().at(1) / 2;
+
+    // Find the nearest land tile to the center of the screen
+    auto [tileX, tileY] = game -> generator -> findNearestLandTile(screenCenterX, screenCenterY);
+
+    // Check if the initial tile is fully enclosed by land
+    bool isFullyEnclosed = true;
+    for (int dx = -1; dx <= 1; ++dx) {
+        for (int dy = -1; dy <= 1; ++dy) {
+            if (dx == 0 && dy == 0) continue; // Skip the current tile
+
+            int neighborX = tileX + dx;
+            int neighborY = tileY + dy;
+
+            if (neighborX < 0 || neighborX >= game -> generator -> MAP_WIDTH ||
+                neighborY < 0 || neighborY >= game -> generator -> MAP_HEIGHT ||
+                !game -> generator -> isLand(neighborX, neighborY)) {
+                isFullyEnclosed = false;
+                break;
+            }
+        }
+        if (!isFullyEnclosed) break;
+    }
+
+    // If the initial tile is fully enclosed, use it
+    if (isFullyEnclosed) {
+        return {tileX, tileY};
+    }
+
+    // Otherwise, search for a fully enclosed tile in a spiral pattern around the initial tile
+    int searchRadius = 1;
+    int maxSearchRadius = std::max(game -> generator -> MAP_WIDTH, game -> generator -> MAP_HEIGHT);
+
+    while (searchRadius < maxSearchRadius) {
+        for (int dx = -searchRadius; dx <= searchRadius; ++dx) {
+            for (int dy = -searchRadius; dy <= searchRadius; ++dy) {
+                if (dx == 0 && dy == 0) continue; // Skip the current tile
+
+                int newTileX = tileX + dx;
+                int newTileY = tileY + dy;
+
+                if (newTileX >= 0 && newTileX < game->generator -> MAP_WIDTH &&
+                    newTileY >= 0 && newTileY < game -> generator -> MAP_HEIGHT &&
+                    game -> generator -> isLand(newTileX, newTileY)) {
+                    // Check if the new tile is fully enclosed by land
+                    bool isNewTileFullyEnclosed = true;
+                    for (int nx = -1; nx <= 1; ++nx) {
+                        for (int ny = -1; ny <= 1; ++ny) {
+                            if (nx == 0 && ny == 0) continue; // Skip the current tile
+
+                            int neighborX = newTileX + nx;
+                            int neighborY = newTileY + ny;
+
+                            if (neighborX < 0 || neighborX >= game -> generator -> MAP_WIDTH ||
+                                neighborY < 0 || neighborY >= game -> generator -> MAP_HEIGHT ||
+                                !game -> generator -> isLand(neighborX, neighborY)) {
+                                isNewTileFullyEnclosed = false;
+                                break;
+                            }
+                        }
+                        if (!isNewTileFullyEnclosed) break;
+                    }
+
+                    // If the new tile is fully enclosed, use it
+                    if (isNewTileFullyEnclosed) {
+                        return {newTileX, newTileY};
+                    }
+                }
+            }
+        }
+
+        searchRadius++;
+    }
+
+    // If no fully enclosed tile is found, fall back to the initial tile
+    return {tileX, tileY};
+}
+
 void Player::Movement() {
     std::vector<float> delta {0, 0};
 
@@ -31,20 +117,20 @@ void Player::Movement() {
         for (auto it = game -> enemies -> begin(); it != game -> enemies -> end();) {
             Entity& enemy = *it;
             if (isMouseOver(enemy.getPosition().at(0), enemy.getPosition().at(1))) {
-                enemy.hit(game -> player.getDamage(), false);
+                enemy.hit(game -> player -> getDamage(), false);
             }
             ++it;
         }
     }
 
     if (canMove(delta)) {
-        game -> player.move(delta);
+        game -> player -> move(delta);
     }
 }
 
 bool Player::canMove(std::vector<float>& delta) {
-    std::vector<float> position = game -> player.getPosition();
-    const float speed = game -> player.getSpeed();
+    std::vector<float> position = game -> player -> getPosition();
+    const float speed = game -> player -> getSpeed();
 
     const float newX = position[0] + delta[0] * speed;
     const float newY = position[1] + delta[1] * speed;

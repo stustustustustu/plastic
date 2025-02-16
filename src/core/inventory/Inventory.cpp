@@ -1,19 +1,20 @@
 #include "Inventory.h"
+#include "../src/Game.h"
 
-Inventory::Inventory(Entity &player) : player(player) {}
+const auto game = Game::getInstance();
 
 int Inventory::getCoins() const {
-    return player.getCoins();
+    return game -> player -> getCoins();
 }
 
 bool Inventory::hasEnoughCoins(int amount) const {
-    return player.getCoins() >= amount;
+    return game -> player -> getCoins() >= amount;
 }
 
 bool Inventory::spendCoins(int amount) const {
-    return player.spendCoins(amount);
+    return game -> player -> spendCoins(amount);
 }
 
 void Inventory::addCoins(int amount) {
-    player.addCoins(amount);
+    game -> player -> addCoins(amount);
 }
