@@ -20,7 +20,6 @@ void InputHandler::InitBindings() {
     bindKeyCombo( {GLFW_MOUSE_BUTTON_3}, "CAMERA_PAN");
     bindKeyCombo( {GLFW_KEY_UP}, "CAMERA_ZOOM_IN");
     bindKeyCombo( {GLFW_KEY_DOWN}, "CAMERA_ZOOM_OUT");
-    bindKeyCombo( {GLFW_KEY_ESCAPE}, "CAMERA_RESET");
 }
 
 void InputHandler::RegisterActions() {
@@ -46,10 +45,6 @@ void InputHandler::RegisterActions() {
 
     getActionManager().registerAction("CAMERA_ZOOM_OUT", []() {
         game -> camera -> Zoom(0.01f);
-    });
-
-    getActionManager().registerAction("CAMERA_RESET", []() {
-        game -> camera -> returnToDefault();
     });
 }
 

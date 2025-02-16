@@ -17,14 +17,10 @@ enum class Tile {
     BOTTOM_RIGHT = 10,              // Land with water on bottom and right
     BOTTOM_LEFT = 11,               // Land with water on bottom and left
     TOP_LEFT = 12,                  // Land with water on top and left
-    REVERSE_TOP_RIGHT = 2,         // Reverse indented corner (top-right)
-    REVERSE_TOP_LEFT = 2,          // Reverse indented corner (top-left)
-    REVERSE_BOTTOM_RIGHT = 2,      // Reverse indented corner (bottom-right)
-    REVERSE_BOTTOM_LEFT = 2,       // Reverse indented corner (bottom-left)
-    TRANSITION_TOP_LEFT = 2,       // Transition tile with land only in top-left
-    TRANSITION_TOP_RIGHT = 2,      // Transition tile with land only in top-right
-    TRANSITION_BOTTOM_LEFT = 2,    // Transition tile with land only in bottom-left
-    TRANSITION_BOTTOM_RIGHT = 2    // Transition tile with land only in bottom-right
+    REVERSE_TOP_RIGHT = 13,
+    REVERSE_TOP_LEFT = 14,
+    REVERSE_BOTTOM_RIGHT = 15,
+    REVERSE_BOTTOM_LEFT = 16,
 };
 
 class Island {

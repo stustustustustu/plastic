@@ -112,30 +112,48 @@ Tile Island::getBeachTileVariant(int x, int y) {
     bitmask |= isWater(x - 1, y + 1) ? 0b01000000 : 0; // Bottom-left
     bitmask |= isWater(x - 1, y) ? 0b10000000 : 0;     // Left
 
-    // Check for straight tiles
-    if ((bitmask & 0b00000010) == 0b00000010 && (bitmask & 0b11101101) == 0b00000000) {
-        return Tile::TOP; // Water only on top
-    } else if ((bitmask & 0b00001000) == 0b00001000 && (bitmask & 0b11110111) == 0b00000000) {
-        return Tile::RIGHT; // Water only on right
-    } else if ((bitmask & 0b00100000) == 0b00100000 && (bitmask & 0b11011111) == 0b00000000) {
-        return Tile::BOTTOM; // Water only on bottom
-    } else if ((bitmask & 0b10000000) == 0b10000000 && (bitmask & 0b01111111) == 0b00000000) {
-        return Tile::LEFT; // Water only on left
+    // straights
+    switch (bitmask) {
+        case 0b00000010:
+        case 0b00000110:
+        case 0b00000011:
+        case 0b00000111:
+            return Tile::TOP;
+        case 0b00001000:
+        case 0b00001100:
+        case 0b00011000:
+        case 0b00011100:
+            return Tile::RIGHT;
+        case 0b00100000:
+        case 0b00110000:
+        case 0b01100000:
+        case 0b01110000:
+            return Tile::BOTTOM;
+        case 0b10000000:
+        case 0b11000000:
+        case 0b10000001:
+        case 0b11000001:
+            return Tile::LEFT;
+        default: break;
     }
 
-    // Check for corners
-    if ((bitmask & 0b00001110) == 0b00001110) {
-        return Tile::TOP_RIGHT; // Water on top and right
-    } else if ((bitmask & 0b10000010) == 0b10000010) {
-        return Tile::TOP_LEFT; // Water on top and left
-    } else if ((bitmask & 0b00111000) == 0b00111000) {
-        return Tile::BOTTOM_RIGHT; // Water on bottom and right
-    } else if ((bitmask & 0b11100000) == 0b11100000) {
-        return Tile::BOTTOM_LEFT; // Water on bottom and left
+    // inner corners
+    switch (bitmask) {
+
+
+        default: break;
     }
 
-    // Default to fully enclosed land tile
-    return Tile::CENTER;
+    // outter corners
+    switch (bitmask) {
+        case 0b00001110: return Tile::REVERSE_TOP_RIGHT;
+        case 0b10000011: return Tile::REVERSE_TOP_LEFT;
+        case 0b00111000: return Tile::REVERSE_BOTTOM_RIGHT;
+        case 0b11100000: return Tile::REVERSE_BOTTOM_LEFT;
+        default: break;
+    }
+
+    return Tile::ISOLATED;
 }
 
 bool Island::isLand(int x, int y) const {
