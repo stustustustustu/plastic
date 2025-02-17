@@ -17,7 +17,7 @@ void Dropdown::render() {
 }
 
 void Dropdown::update() {
-    if (isClicked()) {
+    if (isClicked() && debounce(0.25f)) {
         toggle();
     }
 

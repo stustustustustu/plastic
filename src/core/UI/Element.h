@@ -8,6 +8,8 @@ class Element {
         glm::vec2 position;
         glm::vec2 size; // width & height
 
+        std::chrono::time_point<std::chrono::high_resolution_clock> lastActionTime; // debouncing
+
     public:
         Element(glm::vec2 position, glm::vec2 size) : position(position), size(size) {}
         virtual ~Element() = default;
@@ -23,6 +25,8 @@ class Element {
 
         bool isHovering() const;
         bool isClicked() const;
+
+        bool debounce(float debounce);
 };
 
 #endif //ELEMENT_H

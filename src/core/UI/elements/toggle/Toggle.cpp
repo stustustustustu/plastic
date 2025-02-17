@@ -9,6 +9,9 @@ void Toggle::render() {
 }
 
 void Toggle::update() {
-    toggled = isClicked() ? !toggled : toggled;
     hovered = isHovering();
+
+    if (isClicked() && debounce(0.25f)) {
+        toggled = !toggled;
+    }
 }

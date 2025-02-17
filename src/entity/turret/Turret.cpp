@@ -71,7 +71,6 @@ void Turret::shoot() {
     timeSinceLastShot = 0.0f;
 
     target -> hit(this -> getDamage(), false);
-
 }
 
 void Turret::render(Texture *texture) const {

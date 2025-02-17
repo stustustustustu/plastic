@@ -2,6 +2,8 @@
 
 #include <glm/ext/matrix_clip_space.hpp>
 
+#include "core/UI/elements/toggle/Toggle.h"
+
 Game *Game::instance = NULL;
 
 Game::Game(float width, float height) : state(ACTIVE), width(width), height(height),
@@ -23,6 +25,7 @@ Game::~Game() {
 
     delete camera;
 
+    delete player;
     delete input;
     delete wave;
     delete upgrade;
@@ -91,8 +94,14 @@ bool Game::Init() {
     return true;
 }
 
+Button *button = new Button(glm::vec2(200, 200), glm::vec2(100, 30), "Sigma");
+Toggle *toggle = new Toggle(glm::vec2(200, 250), glm::vec2(100, 30));
+
 void Game::Update() {
     enemies = wave -> getCurrentEnemies();
+
+    button -> update();
+    toggle -> update();
 
     input -> processInput();
     camera -> Update();
@@ -133,6 +142,9 @@ void Game::Render() const {
 
     generator -> render(*texture);
 
+    button -> render();
+    toggle -> render();
+
     if (player -> getHealth() > 0) {
         player -> drawEntity(texture);
     }
@@ -153,7 +165,7 @@ void Game::Render() const {
 
     glfwSwapBuffers(window);
     glfwPollEvents();
-    batch -> flush();
+    //batch -> flush();
 }
 
 void Game::Loop() {
