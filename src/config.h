@@ -19,3 +19,4 @@
 #include <chrono>
 #include <random>
 #include <deque>
+#include <functional>

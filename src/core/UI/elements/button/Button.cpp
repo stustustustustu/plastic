@@ -9,6 +9,11 @@ void Button::render() {
 }
 
 void Button::update() {
-    clicked = isClicked();
     hovered = isHovering();
+
+    if (isClicked() && debounce(0.25f)) {
+        clicked = true;
+    } else {
+        clicked = false;
+    }
 }
