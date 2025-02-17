@@ -13,6 +13,7 @@ void Button::update() {
 
     if (isClicked() && debounce(0.25f)) {
         clicked = true;
+        executeAction();
     } else {
         clicked = false;
     }

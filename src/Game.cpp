@@ -11,7 +11,7 @@ Game::Game(float width, float height) : state(ACTIVE), width(width), height(heig
                                         turret(new TurretManager()),
                                         camera(new Camera(width, height)),
                                         input(NULL), wave(NULL), upgrade(NULL), inventory(NULL),
-                                        generator(NULL),
+                                        generator(NULL), scenes(NULL),
                                         player(NULL) {}
 
 Game::~Game() {
@@ -29,6 +29,7 @@ Game::~Game() {
     delete input;
     delete wave;
     delete upgrade;
+    delete scenes;
 
     delete inventory;
     delete generator;
@@ -72,6 +73,7 @@ bool Game::Init() {
     inventory = new Inventory();
     upgrade = new UpgradeManager(*inventory);
     generator = new Island(std::pow(rand(), 2));
+    scenes = new SceneManager();
 
     player = new Player();
 
@@ -94,14 +96,8 @@ bool Game::Init() {
     return true;
 }
 
-Button *button = new Button(glm::vec2(200, 200), glm::vec2(100, 30), "Sigma");
-Toggle *toggle = new Toggle(glm::vec2(200, 250), glm::vec2(100, 30));
-
 void Game::Update() {
     enemies = wave -> getCurrentEnemies();
-
-    button -> update();
-    toggle -> update();
 
     input -> processInput();
     camera -> Update();
@@ -141,9 +137,6 @@ void Game::Render() const {
     renderer -> SetProjection(camera -> getCameraProjection());
 
     generator -> render(*texture);
-
-    button -> render();
-    toggle -> render();
 
     if (player -> getHealth() > 0) {
         player -> drawEntity(texture);

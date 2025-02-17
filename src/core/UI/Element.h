@@ -1,12 +1,15 @@
 #ifndef ELEMENT_H
 #define ELEMENT_H
 
+#include "../action/Action.h"
 #include "../src/config.h"
 
 class Element {
     protected:
         glm::vec2 position;
         glm::vec2 size; // width & height
+
+        Action action;
 
         std::chrono::time_point<std::chrono::high_resolution_clock> lastActionTime; // debouncing
 
@@ -27,6 +30,9 @@ class Element {
         bool isClicked() const;
 
         bool debounce(float debounce);
+
+        void addCallback(const Action::Callback &callback);
+        void executeAction();
 };
 
 #endif //ELEMENT_H

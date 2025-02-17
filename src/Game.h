@@ -8,6 +8,7 @@
 #include "core/upgrades/manager/UpgradeManager.h"
 #include "core/inventory/Inventory.h"
 #include "core/island/Island.h"
+#include "core/UI/scene/manager/SceneManager.h"
 #include "utils/render/Renderer.h"
 #include "utils/render/sprites/Texture.h"
 #include "utils/shader/ShaderUtils.h"
@@ -22,7 +23,6 @@
 enum GameState {
     ACTIVE,
     PAUSED,
-    MENU,
     NONE
 };
 
@@ -62,6 +62,7 @@ class Game {
         WaveManager *wave;
         UpgradeManager *upgrade;
         Inventory *inventory;
+        SceneManager *scenes;
 
         // island generation
         Island *generator;

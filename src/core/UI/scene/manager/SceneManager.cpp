@@ -1,9 +1,11 @@
 #include "SceneManager.h"
 
-#include "../../UI/elements/button/Button.h"
-
 void SceneManager::initScene() {
     if (!currentScene) return;
+
+    currentScene -> setElementAction(0, []() {
+        std::cout << "Button clicked!" << std::endl;
+    });
 }
 
 void SceneManager::addScene(SceneType type, std::unique_ptr<Scene> scene) {

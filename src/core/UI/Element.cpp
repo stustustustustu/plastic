@@ -39,3 +39,11 @@ bool Element::debounce(float debounce) {
     }
     return false;
 }
+
+void Element::addCallback(const Action::Callback &callback) {
+    action.addCallback(callback);
+}
+
+void Element::executeAction() {
+    action.execute();
+}

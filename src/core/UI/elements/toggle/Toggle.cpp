@@ -13,5 +13,8 @@ void Toggle::update() {
 
     if (isClicked() && debounce(0.25f)) {
         toggled = !toggled;
+        if (toggled) {
+            executeAction();
+        }
     }
 }

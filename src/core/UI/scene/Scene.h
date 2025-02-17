@@ -2,11 +2,11 @@
 #define SCENE_H
 
 #include "../src/config.h"
-#include "../UI/Element.h"
+#include "../Element.h"
 
 enum SceneType {
-    MENU,
     GAME,
+    MENU,
     GAME_OVER,
     REPLAY
 };
@@ -27,10 +27,10 @@ class Scene {
         void setType(SceneType type);
 
         void addElement(std::unique_ptr<Element> element);
-
         void removeElement(const Element* element);
 
         const std::vector<std::unique_ptr<Element>>& getElements() const;
+        void setElementAction(int index, const Action::Callback &callback) const;
 };
 
 #endif //SCENE_H
