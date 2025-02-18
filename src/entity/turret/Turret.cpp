@@ -70,7 +70,24 @@ void Turret::shoot() {
 
     timeSinceLastShot = 0.0f;
 
-    target -> hit(this -> getDamage(), false);
+    // Spawn a new projectile
+    std::shared_ptr<Enemy> sharedTarget = std::make_shared<Enemy>(*target);
+    std::unique_ptr<Projectile> newProjectile = nullptr;
+    switch (type) {
+        case TurretType::LASER:
+            newProjectile = std::make_unique<Projectile>(getPosition(), LASER, sharedTarget);
+        break;
+        case TurretType::RIFLE:
+            newProjectile = std::make_unique<Projectile>(getPosition(), AMMO, sharedTarget);
+        break;
+        case TurretType::BOMB:
+            newProjectile = std::make_unique<Projectile>(getPosition(), BOMB, sharedTarget);
+        break;
+    }
+
+    if (newProjectile) {
+        game -> projectiles.push_back(std::move(newProjectile));
+    }
 }
 
 void Turret::render(Texture *texture) const {

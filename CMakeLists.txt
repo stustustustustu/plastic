@@ -93,6 +93,8 @@ add_executable(
         src/core/UI/scene/Scene.cpp
         src/core/UI/scene/manager/SceneManager.h
         src/core/UI/scene/manager/SceneManager.cpp
+        src/entity/projectile/Projectile.cpp
+        src/entity/projectile/Projectile.h
 
 )
 

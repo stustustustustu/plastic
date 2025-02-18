@@ -43,6 +43,8 @@ class Game {
         Difficulty difficulty;
 
     public:
+        std::vector<std::unique_ptr<Projectile>> projectiles;
+
         // rendering
         GLFWwindow *window;
         ShaderUtils *shader;

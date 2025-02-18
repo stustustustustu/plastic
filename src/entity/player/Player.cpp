@@ -9,18 +9,15 @@ Player::Player() : Entity({
     ) {}
 
 std::pair<int, int> Player::calculateSpawnTile() {
-    // Get the center of the screen in world coordinates
     int screenCenterX = game -> getSize().at(0) / 2;
     int screenCenterY = game -> getSize().at(1) / 2;
 
-    // Find the nearest land tile to the center of the screen
     auto [tileX, tileY] = game -> generator -> findNearestLandTile(screenCenterX, screenCenterY);
 
-    // Check if the initial tile is fully enclosed by land
     bool isFullyEnclosed = true;
     for (int dx = -1; dx <= 1; ++dx) {
         for (int dy = -1; dy <= 1; ++dy) {
-            if (dx == 0 && dy == 0) continue; // Skip the current tile
+            if (dx == 0 && dy == 0) continue;
 
             int neighborX = tileX + dx;
             int neighborY = tileY + dy;
@@ -35,19 +32,17 @@ std::pair<int, int> Player::calculateSpawnTile() {
         if (!isFullyEnclosed) break;
     }
 
-    // If the initial tile is fully enclosed, use it
     if (isFullyEnclosed) {
         return {tileX, tileY};
     }
 
-    // Otherwise, search for a fully enclosed tile in a spiral pattern around the initial tile
     int searchRadius = 1;
     int maxSearchRadius = std::max(game -> generator -> MAP_WIDTH, game -> generator -> MAP_HEIGHT);
 
     while (searchRadius < maxSearchRadius) {
         for (int dx = -searchRadius; dx <= searchRadius; ++dx) {
             for (int dy = -searchRadius; dy <= searchRadius; ++dy) {
-                if (dx == 0 && dy == 0) continue; // Skip the current tile
+                if (dx == 0 && dy == 0) continue;
 
                 int newTileX = tileX + dx;
                 int newTileY = tileY + dy;
@@ -55,11 +50,10 @@ std::pair<int, int> Player::calculateSpawnTile() {
                 if (newTileX >= 0 && newTileX < game->generator -> MAP_WIDTH &&
                     newTileY >= 0 && newTileY < game -> generator -> MAP_HEIGHT &&
                     game -> generator -> isLand(newTileX, newTileY)) {
-                    // Check if the new tile is fully enclosed by land
                     bool isNewTileFullyEnclosed = true;
                     for (int nx = -1; nx <= 1; ++nx) {
                         for (int ny = -1; ny <= 1; ++ny) {
-                            if (nx == 0 && ny == 0) continue; // Skip the current tile
+                            if (nx == 0 && ny == 0) continue;
 
                             int neighborX = newTileX + nx;
                             int neighborY = newTileY + ny;
@@ -74,7 +68,6 @@ std::pair<int, int> Player::calculateSpawnTile() {
                         if (!isNewTileFullyEnclosed) break;
                     }
 
-                    // If the new tile is fully enclosed, use it
                     if (isNewTileFullyEnclosed) {
                         return {newTileX, newTileY};
                     }
@@ -85,7 +78,6 @@ std::pair<int, int> Player::calculateSpawnTile() {
         searchRadius++;
     }
 
-    // If no fully enclosed tile is found, fall back to the initial tile
     return {tileX, tileY};
 }
 
@@ -114,18 +106,27 @@ void Player::Movement() {
 
     // Shooting
     if (game -> input -> getActionManager().getActionState("SHOOT")) {
-        for (auto it = game -> enemies -> begin(); it != game -> enemies -> end();) {
-            Entity& enemy = *it;
-            if (isMouseOver(enemy.getPosition().at(0), enemy.getPosition().at(1))) {
-                enemy.hit(game -> player -> getDamage(), false);
-            }
-            ++it;
-        }
+        shoot();
     }
 
     if (canMove(delta)) {
         game -> player -> move(delta);
     }
+}
+
+void Player::shoot() {
+    if (game -> projectiles.size() >= Projectile::MAX_PROJECTILES) return;
+
+    double mouseX, mouseY;
+    glfwGetCursorPos(game->window, &mouseX, &mouseY);
+
+    std::vector<float> targetPos = {
+        static_cast<float>(mouseX),
+        static_cast<float>(mouseY)
+    };
+
+        std::unique_ptr<Projectile> newProjectile = std::make_unique<Projectile>(game->player->getPosition(), AMMO, targetPos);
+    game -> projectiles.push_back(std::move(newProjectile));
 }
 
 bool Player::canMove(std::vector<float>& delta) {

@@ -4,6 +4,7 @@
 #include "../src/config.h"
 #include "../Entity.h"
 #include "../enemy/Enemy.h"
+#include "../projectile/Projectile.h"
 
 class Player : public Entity {
     public:
@@ -12,9 +13,9 @@ class Player : public Entity {
         std::pair<int, int> calculateSpawnTile();
 
         static void Movement();
-        static bool canMove(std::vector<float> &delta);
+        static void shoot();
 
-        static void drawTargetLine(std::vector<Enemy>& enemies);
+        static bool canMove(std::vector<float> &delta);
 
         static bool isMouseOver(double mouseX, double mouseY);
 };

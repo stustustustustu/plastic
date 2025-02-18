@@ -45,11 +45,21 @@ bool Collision::satCollision(const std::vector<std::vector<float>> &A, const std
     axes.insert(axes.end(), getAxes(B).begin(), getAxes(B).end());
 
     for (const auto& axis : axes) {
-        if (!projectAndCheckOverlap(A, B, axis)) {
+        float minA, maxA, minB, maxB;
+        projectPolygon(A, axis, minA, maxA);
+        projectPolygon(B, axis, minB, maxB);
+
+        std::cout << "Axis: (" << axis[0] << ", " << axis[1] << ")\n";
+        std::cout << "A: min=" << minA << ", max=" << maxA << "\n";
+        std::cout << "B: min=" << minB << ", max=" << maxB << "\n";
+
+        if (!(minA <= maxB && minB <= maxA)) {
+            std::cout << "No overlap on this axis. No collision.\n";
             return false;
         }
     }
 
+    std::cout << "Collision detected.\n";
     return true;
 }
 
