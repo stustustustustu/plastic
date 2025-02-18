@@ -89,9 +89,9 @@ bool Game::Init() {
     wave -> startNextWave();
 
     turret -> placeTurret(TurretType::LASER, {width/2 - 100, height/2 - 100});
-    turret -> placeTurret(TurretType::RIFLE, {width/2 + 100, height/2 - 100});
-    turret -> placeTurret(TurretType::RIFLE, {width/2 - 100, height/2 + 100});
-    turret -> placeTurret(TurretType::BOMB, {width/2 + 100, height/2 + 100});
+    //turret -> placeTurret(TurretType::RIFLE, {width/2 + 100, height/2 - 100});
+    //turret -> placeTurret(TurretType::RIFLE, {width/2 - 100, height/2 + 100});
+    //turret -> placeTurret(TurretType::BOMB, {width/2 + 100, height/2 + 100});
 
     return true;
 }

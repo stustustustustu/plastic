@@ -6,7 +6,8 @@ const auto game = Game::getInstance();
 int Projectile::ACTIVE_PROJECTILES = 0;
 
 Projectile::Projectile(std::vector<float> position, ProjectileType type, std::vector<float> direction, float damage)
-    : Entity(position), type(type), direction(direction), active(true) {
+    : Entity(position), type(type), direction(direction) {
+
     if (type != LASER) {
         creationTime = std::chrono::steady_clock::now();
         ACTIVE_PROJECTILES++;
@@ -14,50 +15,50 @@ Projectile::Projectile(std::vector<float> position, ProjectileType type, std::ve
 
     switch (type) {
         case LASER:
-            this -> setSpeed(0.0f); // Instant, no movement
             break;
         case AMMO:
-            this -> setSpeed(10.0f); // Fast-moving projectile
+            this -> setSpeed(7.5f);
             break;
         case HOMING_MISSILE:
-            this -> setSpeed(2.0f); // Slow-moving projectile
-            splashRadius = 25.0f; // Splash damage radius
+            this -> setSpeed(1.0f);
+            splashRadius = 5.0f;
             break;
         case BOMB:
-            this -> setSpeed(5.0f); // Medium speed
-            splashRadius = 35.0f; // Splash damage radius
+            this -> setSpeed(2.5f);
+            splashRadius = 10.0f;
             break;
     }
+
     this -> setDamage(damage);
     updateBounds();
 }
 
 Projectile::Projectile(std::vector<float> position, ProjectileType type, std::shared_ptr<Enemy> target, float damage)
-    : Entity(position), type(type), target(target), active(true) {
+    : Entity(position), type(type), target(target) {
+
     if (type != LASER) {
         creationTime = std::chrono::steady_clock::now();
         ACTIVE_PROJECTILES++;
     }
 
     direction = {
-        (target->getPosition()[0] + 16) - (getPosition()[0] + 16),
-        (target->getPosition()[1] + 16) - (getPosition()[1] + 16)
+        (target -> getPosition()[0] + 16) - (getPosition()[0] + 16),
+        (target -> getPosition()[1] + 16) - (getPosition()[1] + 16)
     };
 
     switch (type) {
         case LASER:
-            this -> setSpeed(0.0f); // Instant, no movement
             break;
         case AMMO:
-            this -> setSpeed(10.0f); // Fast-moving projectile
+            this -> setSpeed(10.0f);
             break;
         case HOMING_MISSILE:
-            this -> setSpeed(2.0f); // Slow-moving projectile
-            splashRadius = 25.0f; // Splash damage radius
+            this -> setSpeed(2.0f);
+            splashRadius = 25.0f;
             break;
         case BOMB:
-            this -> setSpeed(5.0f); // Medium speed
-            splashRadius = 35.0f; // Splash damage radius
+            this -> setSpeed(5.0f);
+            splashRadius = 35.0f;
             break;
     }
 
@@ -68,35 +69,32 @@ Projectile::Projectile(std::vector<float> position, ProjectileType type, std::sh
 void Projectile::update() {
     if (!active || marked) return;
 
-    // Move the projectile
     move();
 
-    // Check for collisions with enemies
-    if (type != LASER) { // Lasers don't need collision checks (they deal damage over time)
-        for (auto& enemy : *game->enemies) {
-            if (checkAABBCollision(getBounds(), enemy.getBounds())) {
-                // Hit the enemy
+    for (auto &enemy : *game -> enemies) {
+        if (type != LASER) {
+            if (Collision::AABBCollision(getBounds(), enemy.getBounds())) {
                 enemy.hit(getDamage(), false);
 
-                // Handle splash damage for bombs and homing missiles
                 if ((type == BOMB || type == HOMING_MISSILE) && splashRadius > 0) {
                     createSplash(getDamage(), splashRadius);
                 }
 
-                // Mark the projectile for removal
                 mark();
                 ACTIVE_PROJECTILES--;
 
-                return; // Exit after the first collision
+                return;
             }
+        } else if (target) {
+            std::cout << "Laser dealing damage to target: " << target << std::endl;
+            target -> hit(getDamage(), false);
         }
     }
 
-    // Check if the projectile has expired
     auto currentTime = std::chrono::steady_clock::now();
     std::chrono::duration<float> elapsedTime = currentTime - creationTime;
 
-    if (elapsedTime.count() > 5.0f) { // Projectile expires after 5 seconds
+    if (elapsedTime.count() > 1.5f || !target) {
         mark();
         ACTIVE_PROJECTILES--;
     }
@@ -108,13 +106,6 @@ void Projectile::render() {
     int hex;
     switch (type) {
         case LASER:
-            if (target) {
-                game -> renderer -> DrawLine(
-                    glm::vec2(getRenderPosition().at(0) + 16, getRenderPosition().at(1) + 16),
-                    glm::vec2(target -> getRenderPosition().at(0) + 16, target -> getRenderPosition().at(1) + 16),
-                    2.0f, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)
-                );
-            }
             break;
         case AMMO:
             hex = 0x00FF00;
@@ -128,12 +119,8 @@ void Projectile::render() {
     }
 
     if (type != LASER) {
-        game -> renderer -> DrawSpriteSheet(*game->texture, glm::vec2(getRenderPosition().at(0), getRenderPosition().at(1)), 0, 32, 32, glm::vec2(16.0f), 0, HEXtoRGB(hex));
+        game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(getRenderPosition().at(0), getRenderPosition().at(1)), 0, 32, 32, glm::vec2(16.0f), 0, HEXtoRGB(hex));
     }
-}
-
-bool Projectile::isExpired() const {
-    return !active;
 }
 
 void Projectile::move() {
@@ -141,8 +128,8 @@ void Projectile::move() {
 
     if (type == HOMING_MISSILE && target) {
         direction = {
-            (target->getPosition()[0] + 16) - (getPosition()[0] + 16),
-            (target->getPosition()[1] + 16) - (getPosition()[1] + 16)
+            (target -> getPosition()[0] + 16) - (getPosition()[0] + 16),
+            (target -> getPosition()[1] + 16) - (getPosition()[1] + 16)
         };
     }
 
@@ -163,32 +150,13 @@ void Projectile::move() {
 }
 
 void Projectile::createSplash(float damage, float radius) {
-    for (auto& enemy : *game->enemies) {
+    for (auto& enemy : *game -> enemies) {
         float distance = std::sqrt(std::pow(enemy.getPosition()[0] - getPosition()[0], 2) +
                          std::pow(enemy.getPosition()[1] - getPosition()[1], 2));
         if (distance <= radius) {
-            enemy.hit(damage * (1.0f - distance / radius), false); // Damage decreases with distance
+            enemy.hit(damage * (1.0f - distance / radius), false); // damage falloff over distance
         }
     }
-}
-
-bool Projectile::checkAABBCollision(const std::vector<std::vector<float>>& boundsA, const std::vector<std::vector<float>>& boundsB) {
-    if (boundsA.empty() || boundsB.empty()) return false; // Early return if bounds are invalid
-
-    // Get the min and max coordinates for each bounding box
-    float minA_x = boundsA[0][0];
-    float minA_y = boundsA[0][1];
-    float maxA_x = boundsA[1][0];
-    float maxA_y = boundsA[1][1];
-
-    float minB_x = boundsB[0][0];
-    float minB_y = boundsB[0][1];
-    float maxB_x = boundsB[1][0];
-    float maxB_y = boundsB[1][1];
-
-    // Check for overlap
-    return (minA_x <= maxB_x && maxA_x >= minB_x &&
-            minA_y <= maxB_y && maxA_y >= minB_y);
 }
 
 void Projectile::updateBounds() {

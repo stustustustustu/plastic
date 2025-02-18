@@ -15,7 +15,7 @@ class Camera {
         float screenWidth, screenHeight;
 
         const float minZoom = 0.5f;
-        const float maxZoom = 2.0f;
+        const float maxZoom = 2.0f; // to be changed
 
         bool smoothMovement = true;
 
@@ -33,6 +33,8 @@ class Camera {
         glm::mat4 getCameraProjection() const;
         glm::mat4 getStaticProjection() const;
         void projectionMatrixToText(glm::mat4 projection) const;
+
+        glm::vec2 screenToWorld(glm::vec2 screenPos) const;
 
         // panning
         void handlePanning(double mouseX, double mouseY, float sensitivity);

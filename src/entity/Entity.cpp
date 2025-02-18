@@ -83,6 +83,9 @@ void Entity::updateBounds() {
  * @return A vector of floats representing the Entity's position.
  */
 std::vector<float> Entity::getPosition() const {
+    if (position.size() < 2) {
+        return {0, 0};
+    }
     return this -> position;
 }
 
@@ -92,6 +95,9 @@ std::vector<float> Entity::getPosition() const {
  * @return A vector of integers representing the Entity's render position.
  */
 std::vector<int> Entity::getRenderPosition() const {
+    if (position.size() < 2) {
+        return {0, 0};
+    }
     return {static_cast<int>(std::round(position[0])), static_cast<int>(std::round(position[1]))};
 }
 

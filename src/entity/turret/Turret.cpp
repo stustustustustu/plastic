@@ -6,16 +6,16 @@ const auto game = Game::getInstance();
 Turret::Turret(std::vector<float> position, TurretType type) : Entity(position), type(type), target(NULL), currentAngle(0.0f), timeSinceLastShot(0.0f), lastUpdateTime(std::chrono::steady_clock::now()) {
     switch (type) {
         case TurretType::LASER:
-            fireRate = 50.0f;
+            fireRate = 50.0f; // instant
             setDamage(2.0f);
             break;
         case TurretType::RIFLE:
-            fireRate = 25.0f;
+            fireRate = 20.0f;
             setDamage(5.0f);
             break;
         case TurretType::BOMB:
-            fireRate = 15.0f;
-            setDamage(10.0f);
+            fireRate = 5.0f;
+            setDamage(15.0f);
             break;
     }
 
@@ -46,7 +46,8 @@ void Turret::rotateTowardsTarget() {
     if (angleDiff > 180.0f) angleDiff -= 360.0f;
     if (angleDiff < -180.0f) angleDiff += 360.0f;
 
-        float angleStep = rotationSpeed;
+    float angleStep = rotationSpeed;
+
     if (std::abs(angleDiff) < angleStep)
         currentAngle = targetAngle;
     else
@@ -93,7 +94,8 @@ void Turret::render(Texture *texture) const {
     int hex;
     switch (type) {
         case TurretType::LASER:
-            //game -> renderer -> DrawLine(glm::vec2(getRenderPosition().at(0) + 16, getRenderPosition().at(1) + 16), glm::vec2(target -> getRenderPosition().at(0) + 16, target -> getRenderPosition().at(1) + 16), 2.0f, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+            if (target && target -> getRenderPosition().size() > 0 && target -> getRenderPosition().capacity() > 0)
+                game -> renderer -> DrawLine(glm::vec2(getRenderPosition().at(0) + 16, getRenderPosition().at(1) + 16), glm::vec2(target -> getRenderPosition().at(0) + 16, target -> getRenderPosition().at(1) + 16), 2.0f, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
             hex = 0xFF5733;
             break;
         case TurretType::RIFLE:

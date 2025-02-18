@@ -41,7 +41,6 @@ bool Collision::isPointInRectangle(const std::vector<float> &p, const std::vecto
 }
 
 bool Collision::satCollision(const std::vector<std::vector<float>> &A, const std::vector<std::vector<float>> &B) {
-    // Early return if either polygon is empty
     if (A.empty() || B.empty()) {
         return false;
     }
@@ -62,6 +61,24 @@ bool Collision::satCollision(const std::vector<std::vector<float>> &A, const std
 
     return true;
 }
+
+bool Collision::AABBCollision(const std::vector<std::vector<float>>& A, const std::vector<std::vector<float>>& B) {
+    if (A.empty() || B.empty()) return false;
+
+    float minA_x = A[0][0];
+    float minA_y = A[0][1];
+    float maxA_x = A[1][0];
+    float maxA_y = A[1][1];
+
+    float minB_x = B[0][0];
+    float minB_y = B[0][1];
+    float maxB_x = B[1][0];
+    float maxB_y = B[1][1];
+
+    return (minA_x <= maxB_x && maxA_x >= minB_x && minA_y <= maxB_y && maxA_y >= minB_y);
+}
+
+
 
 std::vector<std::vector<float>> Collision::getAxes(const std::vector<std::vector<float>> &polygon) {
     std::vector<std::vector<float>> axes;

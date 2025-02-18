@@ -20,6 +20,8 @@ class Collision {
         static float distance(const std::vector<float>& p1, const std::vector<float>& p2);
         static bool isPointInRectangle(const std::vector<float>& p, const std::vector<float>& center, const std::vector<float>& halfDimensions);
         static bool satCollision(const std::vector<std::vector<float>>& A, const std::vector<std::vector<float>>& B);
+        static bool AABBCollision(const std::vector<std::vector<float>> &A, const std::vector<std::vector<float>> &B);
+
 
     private:
         // helpers

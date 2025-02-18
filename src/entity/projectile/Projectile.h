@@ -24,7 +24,7 @@ class Projectile : public Entity {
         std::chrono::steady_clock::time_point creationTime;
 
     public:
-        static constexpr int MAX_PROJECTILES = 1000;
+        static constexpr int MAX_PROJECTILES = 100;
         static int ACTIVE_PROJECTILES;
 
     public:
@@ -34,8 +34,6 @@ class Projectile : public Entity {
         void update();
         void render();
 
-        bool isExpired() const;
-
         bool isMarked() const { return this -> marked; }
 
         void mark() { this -> marked = true; }
@@ -43,7 +41,6 @@ class Projectile : public Entity {
     private:
         void move(); // based on type
         void createSplash(float damage, float radius); // for homing missiles and bombs
-        bool checkAABBCollision(const std::vector<std::vector<float>> &boundsA, const std::vector<std::vector<float>> &boundsB);
         void updateBounds();
 };
 
