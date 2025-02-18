@@ -102,6 +102,19 @@ void Game::Update() {
     input -> processInput();
     camera -> Update();
 
+    for (auto &projectile : projectiles) {
+        projectile -> update();
+    }
+
+    projectiles.erase(
+        std::remove_if(projectiles.begin(), projectiles.end(),
+            [](const std::unique_ptr<Projectile>& projectile) {
+                return projectile -> isMarked();
+            }),
+        projectiles.end()
+    );
+
+
     Player::Movement(); // Player movement
 
     turret -> update();
@@ -137,6 +150,10 @@ void Game::Render() const {
     renderer -> SetProjection(camera -> getCameraProjection());
 
     generator -> render(*texture);
+
+    for (auto &projectile : projectiles) {
+        projectile->render();
+    }
 
     if (player -> getHealth() > 0) {
         player -> drawEntity(texture);

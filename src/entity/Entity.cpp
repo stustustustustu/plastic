@@ -66,10 +66,15 @@ bool Entity::checkCollision(const Entity &other) const {
 }
 
 void Entity::updateBounds() {
-    for (auto& vertex : bounds) {
-        vertex.at(0) += position.at(0);
-        vertex.at(1) += position.at(1);
-    }
+    if (bounds.empty()) return; // No bounds to update
+
+    float halfWidth = (bounds[1][0] - bounds[0][0]) / 2.0f;
+    float halfHeight = (bounds[1][1] - bounds[0][1]) / 2.0f;
+
+    bounds = {
+        {getPosition()[0] - halfWidth, getPosition()[1] - halfHeight}, // Min bounds
+        {getPosition()[0] + halfWidth, getPosition()[1] + halfHeight}  // Max bounds
+    };
 }
 
 /**

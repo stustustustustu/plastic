@@ -125,7 +125,7 @@ void Player::shoot() {
         static_cast<float>(mouseY)
     };
 
-        std::unique_ptr<Projectile> newProjectile = std::make_unique<Projectile>(game->player->getPosition(), AMMO, targetPos);
+    std::unique_ptr<Projectile> newProjectile = std::make_unique<Projectile>(game->player->getPosition(), AMMO, targetPos, game -> player -> getDamage());
     game -> projectiles.push_back(std::move(newProjectile));
 }
 

@@ -24,7 +24,6 @@ class Collision {
     private:
         // helpers
         static std::vector<std::vector<float>> getAxes(const std::vector<std::vector<float>>& polygon);
-        static bool projectAndCheckOverlap(const std::vector<std::vector<float>>& A, const std::vector<std::vector<float>>& B, const std::vector<float>& axis);
         static void projectPolygon(const std::vector<std::vector<float>>& polygon, const std::vector<float>& axis, float& minProj, float& maxProj);
 };
 

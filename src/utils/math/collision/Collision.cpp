@@ -41,25 +41,25 @@ bool Collision::isPointInRectangle(const std::vector<float> &p, const std::vecto
 }
 
 bool Collision::satCollision(const std::vector<std::vector<float>> &A, const std::vector<std::vector<float>> &B) {
+    // Early return if either polygon is empty
+    if (A.empty() || B.empty()) {
+        return false;
+    }
+
     std::vector<std::vector<float>> axes = getAxes(A);
-    axes.insert(axes.end(), getAxes(B).begin(), getAxes(B).end());
+    std::vector<std::vector<float>> axesB = getAxes(B);
+    axes.insert(axes.end(), axesB.begin(), axesB.end());
 
     for (const auto& axis : axes) {
         float minA, maxA, minB, maxB;
         projectPolygon(A, axis, minA, maxA);
         projectPolygon(B, axis, minB, maxB);
 
-        std::cout << "Axis: (" << axis[0] << ", " << axis[1] << ")\n";
-        std::cout << "A: min=" << minA << ", max=" << maxA << "\n";
-        std::cout << "B: min=" << minB << ", max=" << maxB << "\n";
-
         if (!(minA <= maxB && minB <= maxA)) {
-            std::cout << "No overlap on this axis. No collision.\n";
             return false;
         }
     }
 
-    std::cout << "Collision detected.\n";
     return true;
 }
 
@@ -69,21 +69,21 @@ std::vector<std::vector<float>> Collision::getAxes(const std::vector<std::vector
     for (size_t i = 0; i < polygon.size(); i++) {
         std::vector<float> edge = subtractVectors(polygon[(i + 1) % polygon.size()], polygon[i]);
         std::vector<float> normal = normalize({-edge[1], edge[0]});
-        axes.push_back(normal);
+        if (magnitude(normal) > 0) { // Ensure the normal is valid
+            axes.push_back(normal);
+        }
     }
 
     return axes;
 }
 
-bool Collision::projectAndCheckOverlap(const std::vector<std::vector<float>> &A, const std::vector<std::vector<float>> &B, const std::vector<float> &axis) {
-    float minA, maxA, minB, maxB;
-    projectPolygon(A, axis, minA, maxA);
-    projectPolygon(B, axis, minB, maxB);
-
-    return !(minA < maxB || minB < maxA);
-}
-
 void Collision::projectPolygon(const std::vector<std::vector<float>> &polygon, const std::vector<float> &axis, float &minProj, float &maxProj) {
+    if (polygon.empty()) {
+        minProj = 0;
+        maxProj = 0;
+        return;
+    }
+
     float minDot = std::numeric_limits<float>::max();
     float maxDot = std::numeric_limits<float>::lowest();
 

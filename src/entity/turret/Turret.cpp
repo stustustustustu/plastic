@@ -70,18 +70,17 @@ void Turret::shoot() {
 
     timeSinceLastShot = 0.0f;
 
-    // Spawn a new projectile
     std::shared_ptr<Enemy> sharedTarget = std::make_shared<Enemy>(*target);
     std::unique_ptr<Projectile> newProjectile = nullptr;
     switch (type) {
         case TurretType::LASER:
-            newProjectile = std::make_unique<Projectile>(getPosition(), LASER, sharedTarget);
+            newProjectile = std::make_unique<Projectile>(getPosition(), LASER, sharedTarget, getDamage());
         break;
         case TurretType::RIFLE:
-            newProjectile = std::make_unique<Projectile>(getPosition(), AMMO, sharedTarget);
+            newProjectile = std::make_unique<Projectile>(getPosition(), AMMO, sharedTarget, getDamage());
         break;
         case TurretType::BOMB:
-            newProjectile = std::make_unique<Projectile>(getPosition(), BOMB, sharedTarget);
+            newProjectile = std::make_unique<Projectile>(getPosition(), BOMB, sharedTarget, getDamage());
         break;
     }
 
@@ -94,6 +93,7 @@ void Turret::render(Texture *texture) const {
     int hex;
     switch (type) {
         case TurretType::LASER:
+            //game -> renderer -> DrawLine(glm::vec2(getRenderPosition().at(0) + 16, getRenderPosition().at(1) + 16), glm::vec2(target -> getRenderPosition().at(0) + 16, target -> getRenderPosition().at(1) + 16), 2.0f, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
             hex = 0xFF5733;
             break;
         case TurretType::RIFLE:

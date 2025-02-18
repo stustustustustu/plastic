@@ -86,6 +86,8 @@ void Enemy::moveTowards(const std::vector<float>& targetPos) {
 
         this->move(delta);
     }
+
+    updateBounds();
 }
 
 float Enemy::calculateDistance(const std::vector<float>& pos1, const std::vector<float>& pos2) {
