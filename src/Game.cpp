@@ -7,12 +7,14 @@
 Game *Game::instance = NULL;
 
 Game::Game(float width, float height) : state(ACTIVE), width(width), height(height),
-                                        window(NULL), shader(NULL), texture(NULL), renderer(NULL), batch(NULL), text(NULL),
+                                        window(NULL), shader(NULL), texture(NULL), renderer(NULL), batch(NULL),
+                                        text(NULL),
                                         turret(new TurretManager()),
                                         camera(new Camera(width, height)),
                                         input(NULL), wave(NULL), upgrade(NULL), inventory(NULL),
                                         generator(NULL), scenes(NULL),
-                                        player(NULL) {}
+                                        player(NULL), enemies(NULL) {
+}
 
 Game::~Game() {
     delete shader;
@@ -66,7 +68,7 @@ bool Game::Init() {
 
     renderer = new Renderer(*shader);
     batch = new BatchRenderer(100000);
-    text = new TextRenderer(*t_shader, "../src/assets/font/ThaleahFat.ttf" , 200);
+    //text = new TextRenderer(*t_shader, "../src/assets/font/ThaleahFat.ttf" , 200);
 
     input = new InputHandler();
     wave = new WaveManager();
@@ -89,9 +91,9 @@ bool Game::Init() {
     wave -> startNextWave();
 
     turret -> placeTurret(TurretType::LASER, {width/2 - 100, height/2 - 100});
-    //turret -> placeTurret(TurretType::RIFLE, {width/2 + 100, height/2 - 100});
-    //turret -> placeTurret(TurretType::RIFLE, {width/2 - 100, height/2 + 100});
-    //turret -> placeTurret(TurretType::BOMB, {width/2 + 100, height/2 + 100});
+    turret -> placeTurret(TurretType::RIFLE, {width/2 + 100, height/2 - 100});
+    turret -> placeTurret(TurretType::RIFLE, {width/2 - 100, height/2 + 100});
+    turret -> placeTurret(TurretType::BOMB, {width/2 + 100, height/2 + 100});
 
     return true;
 }
@@ -113,7 +115,6 @@ void Game::Update() {
             }),
         projectiles.end()
     );
-
 
     Player::Movement(); // Player movement
 
@@ -169,7 +170,7 @@ void Game::Render() const {
 
     renderer -> SetProjection(camera -> getStaticProjection());
 
-    renderer -> DrawText("ENEMIES " + std::to_string(enemies -> size()), glm::vec2(5, 55), 50.0f);
+    //renderer -> DrawText("ENEMIES " + std::to_string(enemies -> size()), glm::vec2(5, 55), 50.0f);
 
     turret -> render();
 

@@ -40,7 +40,7 @@ class Projectile : public Entity {
 
     private:
         void move(); // based on type
-        void createSplash(float damage, float radius); // for homing missiles and bombs
+        void createSplash(float damage, float radius) const; // for homing missiles and bombs
         void updateBounds();
 };
 

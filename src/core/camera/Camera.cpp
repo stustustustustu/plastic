@@ -61,15 +61,6 @@ void Camera::projectionMatrixToText(glm::mat4 projection) const {
     }
 }
 
-glm::vec2 Camera::screenToWorld(glm::vec2 screenPos) const {
-    float ndcX = (2.0f * screenPos.x) / screenWidth - 1.0f;
-    float ndcY = 1.0f - (2.0f * screenPos.y) / screenHeight;
-
-    glm::vec4 worldPos = glm::inverse(getCameraProjection()) * glm::vec4(ndcX, ndcY, 0.0f, 1.0f);
-
-    return glm::vec2(worldPos.x, worldPos.y);
-}
-
 void Camera::startPanning(double mouseX, double mouseY) {
     panning = true;
     initialMousePos = glm::dvec2(mouseX, mouseY);

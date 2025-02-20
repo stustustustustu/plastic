@@ -6,8 +6,8 @@ const auto game = Game::getInstance();
 Turret::Turret(std::vector<float> position, TurretType type) : Entity(position), type(type), target(NULL), currentAngle(0.0f), timeSinceLastShot(0.0f), lastUpdateTime(std::chrono::steady_clock::now()) {
     switch (type) {
         case TurretType::LASER:
-            fireRate = 50.0f; // instant
-            setDamage(2.0f);
+            fireRate = 10.0f;
+            setDamage(1.0f);
             break;
         case TurretType::RIFLE:
             fireRate = 20.0f;
@@ -71,22 +71,25 @@ void Turret::shoot() {
 
     timeSinceLastShot = 0.0f;
 
-    std::shared_ptr<Enemy> sharedTarget = std::make_shared<Enemy>(*target);
-    std::unique_ptr<Projectile> newProjectile = nullptr;
-    switch (type) {
-        case TurretType::LASER:
-            newProjectile = std::make_unique<Projectile>(getPosition(), LASER, sharedTarget, getDamage());
-        break;
-        case TurretType::RIFLE:
-            newProjectile = std::make_unique<Projectile>(getPosition(), AMMO, sharedTarget, getDamage());
-        break;
-        case TurretType::BOMB:
-            newProjectile = std::make_unique<Projectile>(getPosition(), BOMB, sharedTarget, getDamage());
-        break;
-    }
+    if (type == TurretType::LASER) {
+        target -> hit(getDamage(), false);
+    } else {
+        std::shared_ptr<Enemy> sharedTarget = std::make_shared<Enemy>(*target);
+        std::unique_ptr<Projectile> newProjectile = nullptr;
+        switch (type) {
+            case TurretType::RIFLE:
+                newProjectile = std::make_unique<Projectile>(getPosition(), AMMO, sharedTarget, getDamage());
+                break;
+            case TurretType::BOMB:
+                newProjectile = std::make_unique<Projectile>(getPosition(), BOMB, sharedTarget, getDamage());
+                break;
+            default:
+                break;
+        }
 
-    if (newProjectile) {
-        game -> projectiles.push_back(std::move(newProjectile));
+        if (newProjectile) {
+            game->projectiles.push_back(std::move(newProjectile));
+        }
     }
 }
 

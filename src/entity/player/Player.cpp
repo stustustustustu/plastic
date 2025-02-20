@@ -115,41 +115,7 @@ void Player::Movement() {
 }
 
 void Player::shoot() {
-    if (game->projectiles.size() >= Projectile::MAX_PROJECTILES) return;
 
-    // Get the mouse cursor position
-    double mouseX, mouseY;
-    glfwGetCursorPos(game->window, &mouseX, &mouseY);
-
-    // Convert mouse position to world coordinates
-    glm::vec2 mouseWorldPos = game->camera->screenToWorld(glm::vec2(mouseX, mouseY));
-
-    // Get the player's position
-    std::vector<float> playerPos = game->player->getPosition();
-
-    // Calculate the direction vector from the player to the mouse cursor
-    std::vector<float> direction = {
-        static_cast<float>(mouseWorldPos.x - playerPos[0]),
-        static_cast<float>(mouseWorldPos.y - playerPos[1])
-    };
-
-    // Normalize the direction vector
-    float magnitude = std::sqrt(direction[0] * direction[0] + direction[1] * direction[1]);
-    if (magnitude > 0) {
-        direction[0] /= magnitude;
-        direction[1] /= magnitude;
-    }
-
-    // Create a new projectile with the calculated direction
-    std::unique_ptr<Projectile> newProjectile = std::make_unique<Projectile>(
-        game->player->getPosition(), // Position
-        AMMO,                       // Projectile type
-        direction,                   // Direction
-        game->player->getDamage()    // Damage
-    );
-
-    // Add the projectile to the game
-    game->projectiles.push_back(std::move(newProjectile));
 }
 
 bool Player::canMove(std::vector<float>& delta) {

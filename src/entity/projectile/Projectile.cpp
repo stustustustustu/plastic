@@ -86,7 +86,6 @@ void Projectile::update() {
                 return;
             }
         } else if (target) {
-            std::cout << "Laser dealing damage to target: " << target << std::endl;
             target -> hit(getDamage(), false);
         }
     }
@@ -149,7 +148,7 @@ void Projectile::move() {
     updateBounds();
 }
 
-void Projectile::createSplash(float damage, float radius) {
+void Projectile::createSplash(float damage, float radius) const {
     for (auto& enemy : *game -> enemies) {
         float distance = std::sqrt(std::pow(enemy.getPosition()[0] - getPosition()[0], 2) +
                          std::pow(enemy.getPosition()[1] - getPosition()[1], 2));

@@ -5,7 +5,7 @@
 
 const auto game = Game::getInstance();
 
-TextRenderer::TextRenderer(ShaderUtils &t_t_shader, const std::string &fontPath, int fontSize) : t_shader(t_t_shader), fontPath(fontPath), fontSize(fontSize) {
+TextRenderer::TextRenderer(ShaderUtils &t_shader, const std::string &fontPath, int fontSize) : t_shader(t_shader), fontPath(fontPath), fontSize(fontSize) {
     InitTextRenderer();
     LoadFont();
 }
@@ -54,33 +54,73 @@ void TextRenderer::LoadFont() {
 
     float scale = stbtt_ScaleForPixelHeight(&fontInfo, fontSize);
 
-    for (GLubyte c = 0; c < 128; c++) {
-        int width, height, xoff, yoff;
-        unsigned char* bitmap = stbtt_GetCodepointBitmap(&fontInfo, 0, scale, c, &width, &height, &xoff, &yoff);
+for (GLubyte c = 0; c < 128; c++) {
+    int width, height, xoff, yoff;
+    unsigned char* bitmap = stbtt_GetCodepointBitmap(&fontInfo, 0, scale, c, &width, &height, &xoff, &yoff);
 
-        GLuint texture;
-        glGenTextures(1, &texture);
-        glBindTexture(GL_TEXTURE_2D, texture);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width, height, 0, GL_RED, GL_UNSIGNED_BYTE, bitmap);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-        int advanceWidth, leftBearing;
-        stbtt_GetCodepointHMetrics(&fontInfo, c, &advanceWidth, &leftBearing);
-
-        Character character = {
-            texture,
-            glm::ivec2(width, height),
-            glm::ivec2(leftBearing, yoff),
-            static_cast<GLuint>(advanceWidth * scale)
-        };
-        Characters.insert(std::pair<GLchar, Character>(c, character));
-
-        stbtt_FreeBitmap(bitmap, nullptr);
+    // Debug: Check bitmap and dimensions
+    if (!bitmap) {
+        std::cerr << "ERROR::STB_TRUETYPE: Failed to generate bitmap for character " << static_cast<int>(c) << std::endl;
+        continue;
     }
+    if (width <= 0 || height <= 0) {
+        std::cerr << "ERROR::STB_TRUETYPE: Invalid bitmap dimensions for character " << static_cast<int>(c) << std::endl;
+        stbtt_FreeBitmap(bitmap, nullptr);
+        continue;
+    }
+
+    GLuint texture;
+    glGenTextures(1, &texture);
+    std::cout << "Generated texture ID: " << texture << std::endl;
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    // Debug: Check OpenGL context
+    GLenum err = glGetError();
+    if (err != GL_NO_ERROR) {
+        std::cerr << "ERROR::OPENGL: Failed to bind texture, error code: " << err << std::endl;
+        stbtt_FreeBitmap(bitmap, nullptr);
+        continue;
+    }
+
+    std::cout << "sigma" << std::endl;
+
+    // Debug: Print character and texture info
+    std::cout << "Character: " << static_cast<int>(c)
+              << ", Width: " << width
+              << ", Height: " << height
+              << ", Bitmap: " << (bitmap ? "Valid" : "Invalid")
+              << std::endl;
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width, height, 0, GL_RED, GL_UNSIGNED_BYTE, bitmap); // crashes here
+
+    // Debug: Check for OpenGL errors
+    err = glGetError();
+    if (err != GL_NO_ERROR) {
+        std::cerr << "ERROR::OPENGL: glTexImage2D failed with error code: " << err << std::endl;
+        stbtt_FreeBitmap(bitmap, nullptr);
+        continue;
+    }
+
+    // Set texture parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    // Store character data
+    int advanceWidth, leftBearing;
+    stbtt_GetCodepointHMetrics(&fontInfo, c, &advanceWidth, &leftBearing);
+
+    Character character = {
+        texture,
+        glm::ivec2(width, height),
+        glm::ivec2(leftBearing, yoff),
+        static_cast<GLuint>(advanceWidth * scale)
+    };
+    Characters.insert(std::pair<GLchar, Character>(c, character));
+
+    stbtt_FreeBitmap(bitmap, nullptr);
+}
 }
 
 void TextRenderer::DrawText(const std::string &text, glm::vec2 position, int size, float rotate, glm::vec3 color) const {
