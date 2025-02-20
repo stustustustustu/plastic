@@ -40,6 +40,51 @@ bool Collision::isPointInRectangle(const std::vector<float> &p, const std::vecto
             std::abs(p[1] - center[1]) <= halfDimensions[1]);
 }
 
+bool Collision::lineRectangleIntersection(const std::vector<float> &lineStart, const std::vector<float> &lineEnd, const std::vector<float> &rectCenter, const std::vector<float> &rectHalfDimensions) {
+    float rectLeft = rectCenter[0] - rectHalfDimensions[0];
+    float rectRight = rectCenter[0] + rectHalfDimensions[0];
+    float rectTop = rectCenter[1] - rectHalfDimensions[1];
+    float rectBottom = rectCenter[1] + rectHalfDimensions[1];
+
+    float x1 = lineStart[0];
+    float y1 = lineStart[1];
+    float x2 = lineEnd[0];
+    float y2 = lineEnd[1];
+
+    if (isPointInRectangle(lineStart, rectCenter, rectHalfDimensions)) return true;
+    if (isPointInRectangle(lineEnd, rectCenter, rectHalfDimensions)) return true;
+
+    if (x1 < rectLeft && x2 < rectLeft) return false; // left
+    if (x1 > rectRight && x2 > rectRight) return false; // right
+    if (y1 < rectTop && y2 < rectTop) return false; // top
+    if (y1 > rectBottom && y2 > rectBottom) return false; // bottom
+
+    auto lineIntersectsEdge = [](float x1, float y1, float x2, float y2, float edgeX1, float edgeY1, float edgeX2, float edgeY2) -> bool {
+        float dxLine = x2 - x1;
+        float dyLine = y2 - y1;
+        float dxEdge = edgeX2 - edgeX1;
+        float dyEdge = edgeY2 - edgeY1;
+
+        float det = dxLine * dyEdge - dyLine * dxEdge;
+
+        if (det == 0) {
+            return false;
+        }
+
+        float t = ((edgeX1 - x1) * dyEdge - (edgeY1 - y1) * dxEdge) / det;
+        float u = ((edgeX1 - x1) * dyLine - (edgeY1 - y1) * dxLine) / det;
+
+        return (t >= 0 && t <= 1 && u >= 0 && u <= 1);
+    };
+
+    if (lineIntersectsEdge(x1, y1, x2, y2, rectLeft, rectTop, rectLeft, rectBottom)) return true; // left
+    if (lineIntersectsEdge(x1, y1, x2, y2, rectRight, rectTop, rectRight, rectBottom)) return true; // right
+    if (lineIntersectsEdge(x1, y1, x2, y2, rectLeft, rectTop, rectRight, rectTop)) return true; // top
+    if (lineIntersectsEdge(x1, y1, x2, y2, rectLeft, rectBottom, rectRight, rectBottom)) return true; // bottom
+
+    return false;
+}
+
 bool Collision::satCollision(const std::vector<std::vector<float>> &A, const std::vector<std::vector<float>> &B) {
     if (A.empty() || B.empty()) {
         return false;

@@ -168,6 +168,8 @@ void Game::Render() const {
         }
     }
 
+    Player::drawLaser();
+
     renderer -> SetProjection(camera -> getStaticProjection());
 
     //renderer -> DrawText("ENEMIES " + std::to_string(enemies -> size()), glm::vec2(5, 55), 50.0f);

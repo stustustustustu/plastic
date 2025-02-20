@@ -3,6 +3,10 @@
 
 const auto game = Game::getInstance();
 
+bool Player::shooting = false; // Initialize laser as inactive
+std::vector<float> Player::laserStart = {0, 0}; // Initialize laser start position
+std::vector<float> Player::laserEnd = {0, 0}; // Initialize laser end position
+
 Player::Player() : Entity({
     static_cast<float>(calculateSpawnTile().first * Island::TILE_SIZE + Island::TILE_SIZE / 2),
     static_cast<float>(calculateSpawnTile().second * Island::TILE_SIZE + Island::TILE_SIZE / 2)}
@@ -107,6 +111,8 @@ void Player::Movement() {
     // Shooting
     if (game -> input -> getActionManager().getActionState("SHOOT")) {
         shoot();
+    } else {
+        shooting = false;
     }
 
     if (canMove(delta)) {
@@ -115,7 +121,42 @@ void Player::Movement() {
 }
 
 void Player::shoot() {
+    shooting = true;
 
+    double mouseX, mouseY;
+    glfwGetCursorPos(game -> window, &mouseX, &mouseY);
+
+    glm::vec2 cursorWorldPos = game -> camera -> screenToWorld(glm::vec2(mouseX, mouseY));
+
+    laserStart = {
+        game -> player -> getPosition()[0] + 16,
+        game -> player -> getPosition()[1] + 16
+    };
+
+    laserEnd = {
+        cursorWorldPos.x,
+        cursorWorldPos.y
+    };
+
+    for (auto& enemy : *game -> enemies) {
+        std::vector<float> enemyCenter = {enemy.getPosition().at(0) + 16.0f, enemy.getPosition().at(1) + 16.0f};
+        std::vector<float> enemyHalfDimensions = {16.0f, 16.0f}; // 32x32
+
+        if (Collision::lineRectangleIntersection(laserStart, laserEnd, enemyCenter, enemyHalfDimensions)) {
+            enemy.hit(game -> player -> getDamage() * 0.5f, false);
+        }
+    }
+}
+
+void Player::drawLaser() {
+    if (!shooting) return;
+
+    game -> renderer -> DrawLine(
+        glm::vec2(laserStart[0], laserStart[1]),
+        glm::vec2(laserEnd[0], laserEnd[1]),
+        2.0f,
+        glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)
+    );
 }
 
 bool Player::canMove(std::vector<float>& delta) {

@@ -34,6 +34,9 @@ class Camera {
         glm::mat4 getStaticProjection() const;
         void projectionMatrixToText(glm::mat4 projection) const;
 
+        glm::vec2 screenToWorld(glm::vec2 screenPos) const;
+
+
         // panning
         void handlePanning(double mouseX, double mouseY, float sensitivity);
         void startPanning(double mouseX, double mouseY);

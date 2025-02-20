@@ -7,6 +7,11 @@
 #include "../projectile/Projectile.h"
 
 class Player : public Entity {
+    private:
+        static bool shooting;
+        static std::vector<float> laserStart;
+        static std::vector<float> laserEnd;
+
     public:
         Player();
 
@@ -14,6 +19,8 @@ class Player : public Entity {
 
         static void Movement();
         static void shoot();
+
+        static void drawLaser();
 
         static bool canMove(std::vector<float> &delta);
 
