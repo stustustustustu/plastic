@@ -59,6 +59,7 @@ bool Collision::lineRectangleIntersection(const std::vector<float> &lineStart, c
     if (y1 < rectTop && y2 < rectTop) return false; // top
     if (y1 > rectBottom && y2 > rectBottom) return false; // bottom
 
+    // i <3 youtube for this
     auto lineIntersectsEdge = [](float x1, float y1, float x2, float y2, float edgeX1, float edgeY1, float edgeX2, float edgeY2) -> bool {
         float dxLine = x2 - x1;
         float dyLine = y2 - y1;

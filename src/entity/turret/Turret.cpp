@@ -76,19 +76,22 @@ void Turret::shoot() {
     } else {
         std::shared_ptr<Enemy> sharedTarget = std::make_shared<Enemy>(*target);
         std::unique_ptr<Projectile> newProjectile = nullptr;
+
+        auto pos = {getPosition().at(0) + 16, getPosition().at(1) + 16};
+
         switch (type) {
             case TurretType::RIFLE:
-                newProjectile = std::make_unique<Projectile>(getPosition(), AMMO, sharedTarget, getDamage());
+                newProjectile = std::make_unique<Projectile>(pos, AMMO, sharedTarget, getDamage());
                 break;
             case TurretType::BOMB:
-                newProjectile = std::make_unique<Projectile>(getPosition(), BOMB, sharedTarget, getDamage());
+                newProjectile = std::make_unique<Projectile>(pos, BOMB, sharedTarget, getDamage());
                 break;
             default:
                 break;
         }
 
         if (newProjectile) {
-            game->projectiles.push_back(std::move(newProjectile));
+            game -> projectiles.push_back(std::move(newProjectile));
         }
     }
 }
