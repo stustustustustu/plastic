@@ -93,10 +93,10 @@ bool Game::Init() {
     scenes -> addScene(SceneType::GAME, std::make_unique<InGame>());
     scenes -> switchScene(SceneType::GAME);
 
-    turret -> placeTurret(TurretType::LASER, {width/2 - 100, height/2 - 100});
-    turret -> placeTurret(TurretType::RIFLE, {width/2 + 100, height/2 - 100});
-    turret -> placeTurret(TurretType::RIFLE, {width/2 - 100, height/2 + 100});
-    turret -> placeTurret(TurretType::BOMB, {width/2 + 100, height/2 + 100});
+    //turret -> placeTurret(TurretType::LASER, {width/2 - 100, height/2 - 100});
+    //turret -> placeTurret(TurretType::RIFLE, {width/2 + 100, height/2 - 100});
+    //turret -> placeTurret(TurretType::RIFLE, {width/2 - 100, height/2 + 100});
+    //turret -> placeTurret(TurretType::BOMB, {width/2 + 100, height/2 + 100});
 
     return true;
 }
@@ -106,6 +106,7 @@ void Game::Update() {
 
     input -> processInput();
     camera -> Update();
+    scenes -> update();
 
     for (auto &projectile : projectiles) {
         projectile -> update();

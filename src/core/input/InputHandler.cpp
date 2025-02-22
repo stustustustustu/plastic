@@ -89,6 +89,13 @@ void InputHandler::processInput() {
     }
 }
 
+glm::vec2 InputHandler::getMousePosition() {
+    double mouseX, mouseY;
+    glfwGetCursorPos(game -> window, &mouseX, &mouseY);
+
+    return glm::vec2(mouseX, mouseY);
+}
+
 ActionManager & InputHandler::getActionManager() {
     return this -> actionManager;
 }

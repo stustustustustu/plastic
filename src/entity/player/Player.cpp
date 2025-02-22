@@ -1,4 +1,5 @@
 #include "Player.h"
+
 #include "../src/Game.h"
 
 const auto game = Game::getInstance();
@@ -123,10 +124,7 @@ void Player::Movement() {
 void Player::shoot() {
     shooting = true;
 
-    double mouseX, mouseY;
-    glfwGetCursorPos(game -> window, &mouseX, &mouseY);
-
-    glm::vec2 cursorWorldPos = game -> camera -> screenToWorld(glm::vec2(mouseX, mouseY));
+    glm::vec2 cursorWorldPos = game -> camera -> screenToWorld(InputHandler::getMousePosition());
 
     laserStart = {
         game -> player -> getPosition()[0] + 16,

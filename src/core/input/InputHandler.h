@@ -19,6 +19,8 @@ class InputHandler {
 
         void processInput();
 
+        static glm::vec2 getMousePosition();
+
         ActionManager& getActionManager();
 };
 
