@@ -38,6 +38,4 @@ class TextRenderer {
         void LoadFont();
 };
 
-
-
 #endif //TEXTRENDERER_H

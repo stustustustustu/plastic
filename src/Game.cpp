@@ -68,7 +68,7 @@ bool Game::Init() {
 
     renderer = new Renderer(*shader);
     batch = new BatchRenderer(100000);
-    //text = new TextRenderer(*t_shader, "../src/assets/font/ThaleahFat.ttf" , 200);
+    text = new TextRenderer(*t_shader, "../src/assets/font/ThaleahFat.ttf" , 50);
 
     input = new InputHandler();
     wave = new WaveManager();
@@ -172,7 +172,7 @@ void Game::Render() const {
 
     renderer -> SetProjection(camera -> getStaticProjection());
 
-    //renderer -> DrawText("ENEMIES " + std::to_string(enemies -> size()), glm::vec2(5, 55), 50.0f);
+    renderer -> DrawText("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 " + std::to_string(enemies -> size()), glm::vec2(5, 55), 50.0f);
 
     turret -> render();
 
