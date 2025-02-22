@@ -175,11 +175,11 @@ void Game::Render() const {
 
     renderer -> SetProjection(camera -> getStaticProjection());
 
-    //scenes -> render();
-    renderer -> DrawText("ABCDEFGHIJKLMNOPQRSTUVWXYZ", glm::vec2(5, 50), 24.0f, true);
-    renderer -> DrawText("abcdefghijklmnopqrstuvwxyz", glm::vec2(5, 50 + 24), 24.0f, true);
-    renderer -> DrawText("0123456789", glm::vec2(5, 50 + 48), 24.0f, true);
-    renderer -> DrawText("1.1,1:1;1_1*1+1-1/1=1!1?1(1)1[1]1{1}1<1>1#1$1%1&1@1", glm::vec2(5, 50 + 72), 24.0f, true);
+    scenes -> render();
+    //renderer -> DrawText("ABCDEFGHIJKLMNOPQRSTUVWXYZ", glm::vec2(5, 50), 24.0f, true);
+    //renderer -> DrawText("abcdefghijklmnopqrstuvwxyz", glm::vec2(5, 50 + 24), 24.0f, true);
+    //renderer -> DrawText("0123456789", glm::vec2(5, 50 + 48), 24.0f, true);
+    //renderer -> DrawText(".,:;_*+-/=!?()[]{}<>#$%&@", glm::vec2(5, 50 + 72), 24.0f, true);
 
     turret -> render();
 

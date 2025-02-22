@@ -189,7 +189,7 @@ float TextRenderer::GetWidth(const std::string &text, float fontSize) const {
         }
 
         Character ch = it -> second;
-        width += (ch.advance >> 6) * scale;
+        width += ch.advance * scale;
     }
 
     return width;
