@@ -2,7 +2,7 @@
 
 #include <glm/ext/matrix_clip_space.hpp>
 
-#include "core/UI/elements/toggle/Toggle.h"
+#include "core/UI/scene/scenes/InGame.h"
 
 Game *Game::instance = NULL;
 
@@ -68,7 +68,7 @@ bool Game::Init() {
 
     renderer = new Renderer(*shader);
     batch = new BatchRenderer(100000);
-    text = new TextRenderer(*t_shader, "../src/assets/font/ThaleahFat.ttf" , 50);
+    text = new TextRenderer(*t_shader, "../src/assets/font/quaver.ttf" , 48);
 
     input = new InputHandler();
     wave = new WaveManager();
@@ -89,6 +89,9 @@ bool Game::Init() {
     texture -> Bind();
 
     wave -> startNextWave();
+
+    scenes -> addScene(SceneType::GAME, std::make_unique<InGame>());
+    scenes -> switchScene(SceneType::GAME);
 
     turret -> placeTurret(TurretType::LASER, {width/2 - 100, height/2 - 100});
     turret -> placeTurret(TurretType::RIFLE, {width/2 + 100, height/2 - 100});
@@ -172,7 +175,11 @@ void Game::Render() const {
 
     renderer -> SetProjection(camera -> getStaticProjection());
 
-    renderer -> DrawText("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 " + std::to_string(enemies -> size()), glm::vec2(5, 55), 50.0f);
+    //scenes -> render();
+    renderer -> DrawText("ABCDEFGHIJKLMNOPQRSTUVWXYZ", glm::vec2(5, 50), 24.0f, true);
+    renderer -> DrawText("abcdefghijklmnopqrstuvwxyz", glm::vec2(5, 50 + 24), 24.0f, true);
+    renderer -> DrawText("0123456789", glm::vec2(5, 50 + 48), 24.0f, true);
+    renderer -> DrawText("1.1,1:1;1_1*1+1-1/1=1!1?1(1)1[1]1{1}1<1>1#1$1%1&1@1", glm::vec2(5, 50 + 72), 24.0f, true);
 
     turret -> render();
 

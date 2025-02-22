@@ -16,7 +16,7 @@ class SceneManager {
         void render();
         void update();
 
-        void initScene();
+        void initScene() const;
 };
 
 #endif //SCENEMANAGER_H

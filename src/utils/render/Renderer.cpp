@@ -66,8 +66,14 @@ void Renderer::initRenderer() {
     glBindVertexArray(0);
 }
 
-void Renderer::DrawText(const std::string &text, glm::vec2 position, int size, float rotate, glm::vec3 color) const {
-	game -> text -> DrawText(text, position, size, rotate, color);
+void Renderer::DrawText(const std::string &text, glm::vec2 position, int size, bool shadow, glm::vec3 color, TextAlignment alignment) const {
+	if (shadow) {
+		game -> text -> DrawText(text, position + glm::vec2(2, 2), size, HEXtoRGB(0x000000), alignment); // shadow
+	}
+
+	//DrawLine(glm::vec2(5, game -> text -> baseline), glm::vec2(game -> getSize().at(0) - 5, game -> text -> baseline), 1.0f, glm::vec3(1.0f, 0.0f, 0.0f)); // debug
+
+	game -> text -> DrawText(text, position, size, color, alignment);
 }
 
 void Renderer::DrawSprite(Texture &texture, glm::vec2 position, float u1, float v1, float u2, float v2, glm::vec2 size, float rotate, glm::vec3 color) const {

@@ -95,6 +95,8 @@ add_executable(
         src/core/UI/scene/manager/SceneManager.cpp
         src/entity/projectile/Projectile.cpp
         src/entity/projectile/Projectile.h
+        src/core/UI/scene/scenes/InGame.cpp
+        src/core/UI/scene/scenes/InGame.h
 )
 
 target_include_directories(plastic PRIVATE dependencies) # Includes location

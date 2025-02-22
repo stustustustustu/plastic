@@ -1,6 +1,6 @@
 #include "SceneManager.h"
 
-void SceneManager::initScene() {
+void SceneManager::initScene() const {
     if (!currentScene) return;
 
     currentScene -> setElementAction(0, []() {

@@ -4,6 +4,7 @@
 #include "../../config.h"
 #include "sprites/Texture.h"
 #include "../shader/ShaderUtils.h"
+#include "text/TextRenderer.h"
 
 class Renderer {
     private:
@@ -27,8 +28,9 @@ class Renderer {
             const std::string &text,
             glm::vec2 position,
             int size,
-            float rotate = 0.0f,
-            glm::vec3 color = glm::vec3(1.0f)
+            bool shadow,
+            glm::vec3 color = glm::vec3(1.0f),
+            TextAlignment alignment = TextAlignment::LEFT
         ) const;
 
         void DrawSprite(
