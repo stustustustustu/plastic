@@ -13,8 +13,7 @@ Game::Game(float width, float height) : state(ACTIVE), width(width), height(heig
                                         camera(new Camera(width, height)),
                                         input(NULL), wave(NULL), upgrade(NULL), inventory(NULL),
                                         generator(NULL), scenes(NULL),
-                                        player(NULL), enemies(NULL) {
-}
+                                        player(NULL), enemies(NULL) {}
 
 Game::~Game() {
     delete shader;
@@ -93,10 +92,10 @@ bool Game::Init() {
     scenes -> addScene(SceneType::GAME, std::make_unique<InGame>());
     scenes -> switchScene(SceneType::GAME);
 
-    //turret -> placeTurret(TurretType::LASER, {width/2 - 100, height/2 - 100});
-    //turret -> placeTurret(TurretType::RIFLE, {width/2 + 100, height/2 - 100});
-    //turret -> placeTurret(TurretType::RIFLE, {width/2 - 100, height/2 + 100});
-    //turret -> placeTurret(TurretType::BOMB, {width/2 + 100, height/2 + 100});
+    turret -> placeTurret(TurretType::LASER, {width/2 - 100, height/2 - 100});
+    turret -> placeTurret(TurretType::RIFLE, {width/2 + 100, height/2 - 100});
+    turret -> placeTurret(TurretType::RIFLE, {width/2 - 100, height/2 + 100});
+    turret -> placeTurret(TurretType::BOMB, {width/2 + 100, height/2 + 100});
 
     return true;
 }
@@ -129,7 +128,6 @@ void Game::Update() {
 
         if (generator -> isLand(static_cast<int>((*enemies)[i].getPosition().at(0)) / Island::TILE_SIZE, static_cast<int>((*enemies)[i].getPosition().at(1)) / Island::TILE_SIZE)) {
             player -> hit((*enemies)[i].getDamage(), false);
-            std::cout << "Hit for: " << (*enemies)[i].getDamage() << "." << std::endl;
             enemies -> erase(enemies -> begin() + i);
         }
 
@@ -138,7 +136,6 @@ void Game::Update() {
             enemies -> erase(enemies -> begin() + i);
 
             if (enemies -> empty()) {
-                std::cout << "Player has " << player -> getHealth() << " health and " << player -> getCoins() << " coins." << std::endl;
                 wave -> startNextWave();
                 wave -> updateWaveStatus();
                 enemies = wave -> getCurrentEnemies();
