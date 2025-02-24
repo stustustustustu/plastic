@@ -6,6 +6,10 @@ const auto game = Game::getInstance();
 void InGame::render() {
     renderPlayerStats();
     renderWaveInfo();
+
+    if (isShopOpen) {
+        renderPlayerShop();
+    }
 }
 
 void InGame::update() {
@@ -13,6 +17,10 @@ void InGame::update() {
 
     if (portraitButton.isClicked()) {
         isAdvancedView = !isAdvancedView;
+    }
+
+    if (shopButton.isClicked()) {
+        isShopOpen = !isShopOpen;
     }
 
     if (!isAdvancedView) {
@@ -49,11 +57,13 @@ void InGame::renderPlayerStats() {
         game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(4, 4) + glm::vec2(2), 2, 32, 32, glm::vec2(portrait + border), 0, HEXtoRGB(0x000000));
         game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(portrait + (border + border / 2), 6) + glm::vec2(2), 2, 32, 32, glm::vec2(width + 4, 34), 0, HEXtoRGB(0x000000));
         game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(portrait + (border + border / 2), 40) + glm::vec2(2), 2, 32, 32, glm::vec2(coinWidth, 16 + border / 2), 0, HEXtoRGB(0x000000));
+        game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(border + border / 2, portrait + (border + border / 2)) + glm::vec2(2), 2, 32, 32, glm::vec2(portrait / 2, portrait / 2), 0, HEXtoRGB(0x000000));
 
         // backgrounds
         game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(4, 4), 2, 32, 32, glm::vec2(portrait + border), 0, HEXtoRGB(0x2F2F2F));
         game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(portrait + (border + border / 2), 6), 2, 32, 32, glm::vec2(width + 4, 34), 0, HEXtoRGB(0x2F2F2F));
         game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(portrait + (border + border / 2), 40), 2, 32, 32, glm::vec2(coinWidth, 16 + border / 2), 0, HEXtoRGB(0x2F2F2F));
+        game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(border + border / 2, portrait + (border + border / 2)), 2, 32, 32, glm::vec2(portrait / 2, portrait / 2), 0, HEXtoRGB(0x2F2F2F));
 
         // bar background
         game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(portrait + (border + border / 2), 10), 2, 32, 32, glm::vec2(width, 12), 0, HEXtoRGB(0x191919));
@@ -125,11 +135,13 @@ void InGame::renderAdvancedStats() {
     game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(4, 4) + glm::vec2(2), 2, 32, 32, glm::vec2(portrait + border), 0, HEXtoRGB(0x000000));
     game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(portrait + (border + border / 2), 6) + glm::vec2(2), 2, 32, 32, glm::vec2(textWidth + (2 * border), 84), 0, HEXtoRGB(0x000000));
     game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(portrait + (border + border / 2), 90) + glm::vec2(2), 2, 32, 32, glm::vec2(coinWidth, 16 + border / 2), 0, HEXtoRGB(0x000000));
+    game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(border + border / 2, portrait + (border + border / 2)) + glm::vec2(2), 2, 32, 32, glm::vec2(portrait / 2, portrait / 2), 0, HEXtoRGB(0x000000));
 
     // backgrounds
     game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(4, 4), 2, 32, 32, glm::vec2(portrait + border), 0, HEXtoRGB(0x2F2F2F));
     game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(portrait + (border + border / 2), 6), 2, 32, 32, glm::vec2(textWidth + (2 * border), 84), 0, HEXtoRGB(0x2F2F2F));
     game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(portrait + (border + border / 2), 90), 2, 32, 32, glm::vec2(coinWidth, 16 + border / 2), 0, HEXtoRGB(0x2F2F2F));
+    game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(border + border / 2, portrait + (border + border / 2)), 2, 32, 32, glm::vec2(portrait / 2, portrait / 2), 0, HEXtoRGB(0x2F2F2F));
 
     // portrait
     game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(border), 2, 32, 32, glm::vec2(portrait), 0, HEXtoRGB(0xFFFFFF));
@@ -145,8 +157,19 @@ void InGame::renderAdvancedStats() {
     game -> renderer -> DrawText(coinStream.str(), glm::vec2(portrait + (2 * border), border + 98), 16.0f, true, HEXtoRGB(0xFDFF74));
 }
 
+void InGame::renderPlayerShop() {
+    glm::vec2 startPos;
+    isAdvancedView ? startPos = glm::vec2(4, 2 * (portrait + border) + 2) : startPos = glm::vec2(4, 2 * border + portrait + portrait / 2);
+
+    // background shadows
+    game -> renderer -> DrawSpriteSheet(*game -> texture, startPos + glm::vec2(2), 2, 32, 32, glm::vec2(portrait + border + width, 3 * portrait), 0, HEXtoRGB(0x000000));
+
+    // backgrounds
+    game -> renderer -> DrawSpriteSheet(*game -> texture, startPos, 2, 32, 32, glm::vec2(portrait + border + width, 3 * portrait), 0, HEXtoRGB(0x2F2F2F));
+}
+
 void InGame::renderWaveInfo() {
-    game -> renderer -> DrawText("Enemies alive " + std::to_string(game -> wave -> getCurrentEnemies() -> size()), glm::vec2((game -> getSize().at(0) / 2) - 50, 40), 24.0f, true);
+    game -> renderer -> DrawText("Enemies alive: " + std::to_string(game -> wave -> getCurrentEnemies() -> size()), glm::vec2((game -> getSize().at(0) / 2) - 50, 40), 24.0f, true);
 }
 
 void InGame::renderPopup(const std::string &text, const glm::vec2 &position, const glm::vec3 &color) {
