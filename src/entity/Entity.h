@@ -1,6 +1,7 @@
 #ifndef Entity_H
 #define Entity_H
 
+#include "../core/upgrades/Upgrade.h"
 #include "../src/config.h"
 #include "../utils/render/Renderer.h"
 #include "../utils/math/collision/Collision.h"
@@ -28,6 +29,9 @@ class Entity {
         int targets;
         int maxTargets;
         std::vector<std::vector<float>> bounds;
+
+    private:
+        std::map<std::string, Upgrade> upgrades;
 
     public:
         Entity(
@@ -95,6 +99,10 @@ class Entity {
         void addCoins(int);
         bool spendCoins(int);
         bool takeCoins(Entity&, float);
+
+        void applyUpgrade(const std::string &upgradeName);
+        void addUpgrade(const std::string &name, const Upgrade &upgrade);
+        float getMultiplier(const std::string &upgradeName) const;
 };
 
 #endif //Entity_H

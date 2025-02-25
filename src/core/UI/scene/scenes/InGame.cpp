@@ -1,7 +1,34 @@
 #include "InGame.h"
+
 #include "../src/Game.h"
 
 const auto game = Game::getInstance();
+
+InGame::InGame()  : Scene(GAME) {
+    // toggle setup
+    Toggle portraitToggle(glm::vec2(border, border), glm::vec2(portrait, portrait));
+    Toggle shopToggle(glm::vec2(border + border / 2, portrait + (border + border / 2)), glm::vec2(portrait / 2, portrait / 2));
+
+    portraitToggle.addCallback([this]() {
+        isAdvancedView = !isAdvancedView;
+    });
+
+    shopToggle.addCallback([this]() {
+        isShopOpen = !isShopOpen;
+    });
+
+    toggles.push_back(portraitToggle);
+    toggles.push_back(shopToggle);
+
+    // upgrade panel setup
+    Upgrade healthUpgrade(10, HEALTH, 1.15f, "Increases max health by 15%");
+    Upgrade damageUpgrade(10, DAMAGE, 1.15f, "Increases damage by 15%");
+
+    glm::vec2 panelSize(2 * portrait + border + width, 10 * portrait);
+
+    upgradePanels.emplace_back(healthUpgrade, glm::vec2(4, 2 * border + portrait + portrait / 2), panelSize / glm::vec2(1, 5));
+    upgradePanels.emplace_back(damageUpgrade, glm::vec2(4, 2 * border + portrait + portrait / 2) + glm::vec2(0, panelSize.y / 5), panelSize / glm::vec2(1, 5));
+}
 
 void InGame::render() {
     renderPlayerStats();
@@ -13,15 +40,7 @@ void InGame::render() {
 }
 
 void InGame::update() {
-    portraitButton.update();
-
-    if (portraitButton.isClicked()) {
-        isAdvancedView = !isAdvancedView;
-    }
-
-    if (shopButton.isClicked()) {
-        isShopOpen = !isShopOpen;
-    }
+    for (auto toggle : toggles) { toggle.update(); }
 
     if (!isAdvancedView) {
         auto mousePos = game -> input -> getMousePosition();
@@ -43,6 +62,14 @@ void InGame::update() {
                             {shieldBarPos.x + shieldBarHalfDim.x, shieldBarPos.y + shieldBarHalfDim.y},
                             {shieldBarHalfDim.x, shieldBarHalfDim.y}
         );
+    }
+
+    for (size_t i = 0; i < upgradePanels.size(); ++i) {
+        glm::vec2 panelPosition = isAdvancedView
+            ? glm::vec2(4, 2 * (portrait + border) + 2 + i * (upgradePanels[i].getSize().y + border))
+            : glm::vec2(4, 2 * border + portrait + portrait / 2 + i * (upgradePanels[i].getSize().y + border));
+        upgradePanels[i].setPosition(panelPosition);
+        upgradePanels[i].update();
     }
 }
 
@@ -158,14 +185,20 @@ void InGame::renderAdvancedStats() {
 }
 
 void InGame::renderPlayerShop() {
-    glm::vec2 startPos;
-    isAdvancedView ? startPos = glm::vec2(4, 2 * (portrait + border) + 2) : startPos = glm::vec2(4, 2 * border + portrait + portrait / 2);
+    glm::vec2 pos;
+    glm::vec2 size(2 * portrait + border + width, 10 * portrait);
+    isAdvancedView ? pos = glm::vec2(4, 2 * (portrait + border) + 2) : pos = glm::vec2(4, 2 * border + portrait + portrait / 2);
 
     // background shadows
-    game -> renderer -> DrawSpriteSheet(*game -> texture, startPos + glm::vec2(2), 2, 32, 32, glm::vec2(portrait + border + width, 3 * portrait), 0, HEXtoRGB(0x000000));
+    game -> renderer -> DrawSpriteSheet(*game -> texture, pos + glm::vec2(2), 2, 32, 32, size, 0, HEXtoRGB(0x000000));
 
     // backgrounds
-    game -> renderer -> DrawSpriteSheet(*game -> texture, startPos, 2, 32, 32, glm::vec2(portrait + border + width, 3 * portrait), 0, HEXtoRGB(0x2F2F2F));
+    game -> renderer -> DrawSpriteSheet(*game -> texture, pos, 2, 32, 32, size, 0, HEXtoRGB(0x2F2F2F));
+
+    // upgrade panels
+    for (auto &panel : upgradePanels) {
+        panel.render();
+    }
 }
 
 void InGame::renderWaveInfo() {

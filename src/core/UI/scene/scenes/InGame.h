@@ -2,24 +2,28 @@
 #define INGAME_H
 
 #include "../Scene.h"
+#include "../../../upgrades/panel/UpgradePanel.h"
 #include "../../elements/button/Button.h"
+#include "../../elements/toggle/Toggle.h"
 
 class InGame : public Scene {
     private:
         bool isHoveringHealth = false;
         bool isHoveringShield = false;
-        bool isShopOpen = false;
+        bool isShopOpen = true;
         bool isAdvancedView = false;
 
         float border = 8;
         float portrait = 48;
         int width = 100;
 
-        Button portraitButton;
-        Button shopButton;
+    std::vector<Button> buttons;
+
+    std::vector<UpgradePanel> upgradePanels;
+    std::vector<Toggle> toggles;
 
     public:
-        InGame() : Scene(SceneType::GAME), portraitButton(glm::vec2(border, border), glm::vec2(portrait, portrait), ""), shopButton(glm::vec2(border + border / 2, portrait + (border + border / 2)), glm::vec2(portrait / 2, portrait / 2), "") {}
+        InGame();
         void render() override;
         void update() override;
 

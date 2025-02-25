@@ -97,6 +97,8 @@ add_executable(
         src/entity/projectile/Projectile.h
         src/core/UI/scene/scenes/InGame.cpp
         src/core/UI/scene/scenes/InGame.h
+        src/core/upgrades/panel/UpgradePanel.cpp
+        src/core/upgrades/panel/UpgradePanel.h
 )
 
 target_include_directories(plastic PRIVATE dependencies) # Includes location

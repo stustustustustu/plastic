@@ -5,7 +5,8 @@
 
 enum UpgradeType {
     DAMAGE, // increases damage
-    HEALTH, // heals for some health on upgrade, increases max health
+    HEALTH, // increases max health
+    SHIELD, // increases max shield
     SPEED, // increases speed
     SPECIAL // lifesteal and so on
 };
@@ -16,6 +17,7 @@ class Upgrade {
         UpgradeType type;
         float multiplier;
         std::string description;
+
     public:
         Upgrade(int cost, UpgradeType type, float increase, const std::string &description);
         int getCost() const;

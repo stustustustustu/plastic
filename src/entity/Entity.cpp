@@ -1,4 +1,7 @@
 #include "Entity.h"
+
+#include <windows.h>
+
 #include "../Game.h"
 
 const auto game = Game::getInstance();
@@ -360,4 +363,40 @@ bool Entity::takeCoins(Entity &target, float percentage) {
     }
 
     return false;
+}
+
+void Entity::applyUpgrade(const std::string &upgradeName) {
+    auto it = upgrades.find(upgradeName);
+    if (it != upgrades.end()) {
+        const Upgrade &upgrade = it -> second;
+        switch (upgrade.getType()) {
+            case HEALTH:
+                setMaxHealth(getMaxHealth() * upgrade.getMultiplier());
+                break;
+            case SHIELD:
+                setMaxShield(getMaxShield() * upgrade.getMultiplier());
+                break;
+            case DAMAGE:
+                setDamage(getDamage() * upgrade.getMultiplier());
+                break;
+            case SPEED:
+                setSpeed(getSpeed() * upgrade.getMultiplier());
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+void Entity::addUpgrade(const std::string &name, const Upgrade &upgrade) {
+    upgrades.emplace(name, upgrade);
+}
+
+float Entity::getMultiplier(const std::string &upgradeName) const {
+    auto it = upgrades.find(upgradeName);
+    if (it != upgrades.end()) {
+        return it -> second.getMultiplier();
+    }
+
+    return 1.0f;
 }
