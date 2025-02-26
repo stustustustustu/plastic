@@ -3,22 +3,30 @@
 
 #include "../Upgrade.h"
 #include "../../../config.h"
+#include "../../../utils/math/number/number.h"
 
 class UpgradePath {
     private:
-        std::string name;
+        UpgradeType type;
         std::vector<Upgrade> upgrades;
         int level = 0;
-    public:
-        UpgradePath(std::string &name, const std::vector<Upgrade> &upgrades);
 
-        const std::string &getName() const;
-        void setName(const std::string &name);
+    private:
+        std::string generateName() const;
+        int generateCost() const;
+        float generateMultiplier() const;
+        std::string generateDescription(float multiplier) const;
+
+    public:
+        UpgradePath(UpgradeType type);
+
+        Upgrade generateNextUpgrade();
+
+        UpgradeType getType() const;
 
         const std::vector<Upgrade> &getUpgrades() const;
         const Upgrade &getCurrentUpgrade() const;
-        const Upgrade &getNextUpgrade() const;
-        bool canUpgrade() const;
+        const Upgrade &getNextUpgrade();
         void upgrade();
 
         int getLevel() const;

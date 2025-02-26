@@ -1,6 +1,14 @@
 #include "Upgrade.h"
 
-Upgrade::Upgrade(int cost, UpgradeType type, float multiplier, const std::string &description) : cost(cost), type(type), multiplier(multiplier), description(description) {}
+Upgrade::Upgrade(const std::string &name, int cost, UpgradeType type, float multiplier, const std::string &description) : name(name), cost(cost), type(type), multiplier(multiplier), description(description) {}
+
+const std::string & Upgrade::getName() const {
+    return this -> name;
+}
+
+void Upgrade::setName(const std::string &name) {
+    this -> name = name;
+}
 
 int Upgrade::getCost() const {
     return this -> cost;

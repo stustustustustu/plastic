@@ -19,7 +19,7 @@ class InGame : public Scene {
 
     std::vector<Button> buttons;
 
-    std::vector<UpgradePanel> upgradePanels;
+    std::vector<std::unique_ptr<UpgradePanel>> upgradePanels;
     std::vector<Toggle> toggles;
 
     public:
@@ -34,6 +34,10 @@ class InGame : public Scene {
 
         void renderWaveInfo();
         void renderPopup(const std::string& text, const glm::vec2& position, const glm::vec3& color);
+
+    public:
+        void refreshUpgradePanels();
+
 };
 
 #endif //INGAME_H

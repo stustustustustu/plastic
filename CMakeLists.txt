@@ -99,6 +99,7 @@ add_executable(
         src/core/UI/scene/scenes/InGame.h
         src/core/upgrades/panel/UpgradePanel.cpp
         src/core/upgrades/panel/UpgradePanel.h
+        src/utils/math/number/number.h
 )
 
 target_include_directories(plastic PRIVATE dependencies) # Includes location

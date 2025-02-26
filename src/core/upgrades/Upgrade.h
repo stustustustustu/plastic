@@ -13,15 +13,21 @@ enum UpgradeType {
 
 class Upgrade {
     private:
+        std::string name;
         int cost;
         UpgradeType type;
         float multiplier;
         std::string description;
 
     public:
-        Upgrade(int cost, UpgradeType type, float increase, const std::string &description);
+        Upgrade(const std::string &name, int cost, UpgradeType type, float increase, const std::string &description);
+
+        const std::string &getName() const;
+        void setName(const std::string &name);
+
         int getCost() const;
         void setCost(int cost);
+
         float getMultiplier() const;
         void setMultiplier(float multiplier);
 

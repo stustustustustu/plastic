@@ -6,23 +6,22 @@
 #include "../../../config.h"
 
 class UpgradeManager {
+    private:
+        std::map<UpgradeType, UpgradePath> paths;
+        Inventory& inventory;
     public:
         explicit UpgradeManager(Inventory& inventory);
 
-        void Init();
+        std::map<UpgradeType, UpgradePath> getPaths() const;
 
-        void addPath(const std::string& name, const UpgradePath& path);
-        bool upgrade(const std::string& name);
+        void addPath(UpgradeType type);
+        bool upgrade(UpgradeType type);
 
-        float getMultiplier(const std::string& name) const;
-        int getCurrentLevel(const std::string& name) const;
-        int getCost(const std::string& name, int level) const;
+        float getMultiplier(UpgradeType type) const;
+        int getCurrentLevel(UpgradeType type) const;
+        int getCost(UpgradeType type, int level) const;
 
-        bool hasUpgradePath(const std::string& name) const;
-
-    private:
-        std::map<std::string, UpgradePath> paths;
-        Inventory& inventory;
+        bool hasUpgradePath(UpgradeType type) const;
 };
 
 

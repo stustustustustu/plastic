@@ -20,14 +20,7 @@ InGame::InGame()  : Scene(GAME) {
     toggles.push_back(portraitToggle);
     toggles.push_back(shopToggle);
 
-    // upgrade panel setup
-    Upgrade healthUpgrade(10, HEALTH, 1.15f, "Increases max health by 15%");
-    Upgrade damageUpgrade(10, DAMAGE, 1.15f, "Increases damage by 15%");
-
-    glm::vec2 panelSize(2 * portrait + border + width, 10 * portrait);
-
-    upgradePanels.emplace_back(healthUpgrade, glm::vec2(4, 2 * border + portrait + portrait / 2), panelSize / glm::vec2(1, 5));
-    upgradePanels.emplace_back(damageUpgrade, glm::vec2(4, 2 * border + portrait + portrait / 2) + glm::vec2(0, panelSize.y / 5), panelSize / glm::vec2(1, 5));
+    refreshUpgradePanels();
 }
 
 void InGame::render() {
@@ -66,10 +59,10 @@ void InGame::update() {
 
     for (size_t i = 0; i < upgradePanels.size(); ++i) {
         glm::vec2 panelPosition = isAdvancedView
-            ? glm::vec2(4, 2 * (portrait + border) + 2 + i * (upgradePanels[i].getSize().y + border))
-            : glm::vec2(4, 2 * border + portrait + portrait / 2 + i * (upgradePanels[i].getSize().y + border));
-        upgradePanels[i].setPosition(panelPosition);
-        upgradePanels[i].update();
+            ? glm::vec2(4, 2 * (portrait + border) + 2 + i * (upgradePanels[i] -> getSize().y + border))
+            : glm::vec2(4, 2 * border + portrait + portrait / 2 + i * (upgradePanels[i] -> getSize().y + border));
+        upgradePanels[i] -> setPosition(panelPosition);
+        upgradePanels[i] -> update();
     }
 }
 
@@ -186,7 +179,7 @@ void InGame::renderAdvancedStats() {
 
 void InGame::renderPlayerShop() {
     glm::vec2 pos;
-    glm::vec2 size(2 * portrait + border + width, 10 * portrait);
+    glm::vec2 size(2 * portrait + border + width, 8 * portrait);
     isAdvancedView ? pos = glm::vec2(4, 2 * (portrait + border) + 2) : pos = glm::vec2(4, 2 * border + portrait + portrait / 2);
 
     // background shadows
@@ -197,7 +190,7 @@ void InGame::renderPlayerShop() {
 
     // upgrade panels
     for (auto &panel : upgradePanels) {
-        panel.render();
+        panel -> render();
     }
 }
 
@@ -213,4 +206,24 @@ void InGame::renderPopup(const std::string &text, const glm::vec2 &position, con
     game -> renderer -> DrawSpriteSheet(*game -> texture, position, 2, 32, 32, glm::vec2(textWidth + 10, textHeight + 10), 0, HEXtoRGB(0x2F2F2F));
 
     game -> renderer -> DrawText(text, position + glm::vec2(5, textHeight + 2), 16.0f, true, color);
+}
+
+void InGame::refreshUpgradePanels() {
+    upgradePanels.clear();
+
+    glm::vec2 panelSize(2 * portrait + border + width, 10 * portrait / 5);
+
+    for (const auto& path : game -> upgrade -> getPaths()) {
+        UpgradePath upgradePath = path.second;
+
+        const Upgrade& nextUpgrade = upgradePath.getNextUpgrade();
+        glm::vec2 panelPosition = glm::vec2(4, 2 * border + portrait + portrait / 2) + glm::vec2(0, upgradePanels.size() * panelSize.y / 5);
+
+        upgradePanels.push_back(std::make_unique<UpgradePanel>(
+            nextUpgrade,
+            panelPosition,
+            panelSize,
+            [this]() { refreshUpgradePanels(); }
+        ));
+    }
 }
