@@ -8,10 +8,10 @@ UpgradePanel::UpgradePanel(const Upgrade &upgrade, glm::vec2 position, glm::vec2
     : upgrade(upgrade), position(position), size(size), refresh(refresh),
     button(position + glm::vec2(size.x - (border + 48), size.y - (24 + border)), glm::vec2(48, 24), "Buy") {
 
-    button.addCallback([this, refresh]() {
+    button.addCallback([this, refresh, upgrade]() {
         if (game -> player -> getCoins() >= this -> upgrade.getCost()) {
             game -> upgrade -> upgrade(this -> upgrade.getType());
-            game -> player -> applyUpgrade(this -> upgrade.getName());
+            game -> player -> applyUpgrade(upgrade);
 
             if (refresh) {
                 refresh();

@@ -30,9 +30,6 @@ class Entity {
         int maxTargets;
         std::vector<std::vector<float>> bounds;
 
-    private:
-        std::map<std::string, Upgrade> upgrades;
-
     public:
         Entity(
             std::vector<float> position,
@@ -100,9 +97,8 @@ class Entity {
         bool spendCoins(int);
         bool takeCoins(Entity&, float);
 
-        void applyUpgrade(const std::string &upgradeName);
-        void addUpgrade(const std::string &name, const Upgrade &upgrade);
-        float getMultiplier(const std::string &upgradeName) const;
+        void applyUpgrade(Upgrade upgrade);
+
 };
 
 #endif //Entity_H
