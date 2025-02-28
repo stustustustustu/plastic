@@ -19,6 +19,8 @@ class InGame : public Scene {
         float portrait = 48;
         int width = 100;
 
+        Button turretShopToggle;
+
         std::vector<Button> buttons;
         std::vector<Toggle> toggles;
 

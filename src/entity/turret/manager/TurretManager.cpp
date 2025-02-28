@@ -49,7 +49,7 @@ void TurretManager::renderPreview(const glm::vec2& mousePos) const {
             break;
     }
 
-    float opacity = isValid ? 0.5f : 0.2f;
+    float opacity = isValid ? 0.5f : 0.1f;
 
     game -> renderer -> DrawSpriteSheet(
         *game -> texture,

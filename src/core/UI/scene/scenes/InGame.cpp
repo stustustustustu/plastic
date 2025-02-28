@@ -4,21 +4,25 @@
 
 const auto game = Game::getInstance();
 
-InGame::InGame()  : Scene(GAME) {
+InGame::InGame()  : Scene(GAME), turretShopToggle(glm::vec2(game -> getSize().at(0) - 2 - portrait / 2, portrait), glm::vec2(portrait / 2, portrait / 2), "") {
     // toggle setup
     Toggle portraitToggle(glm::vec2(border, border), glm::vec2(portrait, portrait));
-    Toggle shopToggle(glm::vec2(border + border / 2, portrait + (border + border / 2)), glm::vec2(portrait / 2, portrait / 2));
+    Toggle playerShopToggle(glm::vec2(border + border / 2, portrait + (border + border / 2)), glm::vec2(portrait / 2, portrait / 2));
 
     portraitToggle.addCallback([this]() {
         isAdvancedView = !isAdvancedView;
     });
 
-    shopToggle.addCallback([this]() {
+    playerShopToggle.addCallback([this]() {
         isPlayerShopOpen = !isPlayerShopOpen;
     });
 
+    turretShopToggle.addCallback([this]() {
+        isTurretShopOpen = !isTurretShopOpen;
+    });
+
     toggles.push_back(portraitToggle);
-    toggles.push_back(shopToggle);
+    toggles.push_back(playerShopToggle);
 
     refreshUpgradePanels();
 
@@ -34,11 +38,11 @@ void InGame::render() {
     renderPlayerStats();
     renderWaveInfo();
 
-    renderTurretShop();
-
     if (isPlayerShopOpen) {
         renderPlayerShop();
     }
+
+    renderTurretShop();
 }
 
 void InGame::update() {
@@ -74,9 +78,16 @@ void InGame::update() {
         upgradePanels[i] -> update();
     }
 
-    for (auto &panel : shopPanels) {
-        panel -> update();
+    if (isTurretShopOpen) {
+        for (auto &panel : shopPanels) {
+            panel -> update();
+        }
+        turretShopToggle.setPosition(glm::vec2(game -> getSize().at(0) - (2 * portrait + border + width) - 4 - portrait / 2, portrait));
+    } else {
+        turretShopToggle.setPosition(glm::vec2(game -> getSize().at(0) - 2 - portrait / 2, portrait));
     }
+
+    turretShopToggle.update();
 }
 
 void InGame::renderPlayerStats() {
@@ -211,19 +222,27 @@ void InGame::renderTurretShop() {
     auto screenWidth = game -> getSize().at(0);
     glm::vec2 size(2 * portrait + border + width, 6 * portrait);
 
-    // background shadows
-    game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(screenWidth - size.x - 4, portrait) + glm::vec2(2), 2, 32, 32, size, 0, HEXtoRGB(0x000000));
-    game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(screenWidth - size.x - 4 - portrait / 2, portrait) + glm::vec2(2), 2, 32, 32, glm::vec2(portrait / 2, portrait / 2), 0, HEXtoRGB(0x000000));
+    if (isTurretShopOpen) {
+        // background shadows
+        game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(screenWidth - size.x - 4, portrait) + glm::vec2(2), 2, 32, 32, size, 0, HEXtoRGB(0x000000));
+        game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(screenWidth - size.x - 4 - portrait / 2, portrait) + glm::vec2(2), 2, 32, 32, glm::vec2(portrait / 2, portrait / 2), 0, HEXtoRGB(0x000000));
 
-    // backgrounds
-    game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(screenWidth - size.x - 4, portrait), 2, 32, 32, size, 0, HEXtoRGB(0x2F2F2F));
-    game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(screenWidth - size.x - 4 - portrait / 2, portrait), 2, 32, 32, glm::vec2(portrait / 2, portrait / 2), 0, HEXtoRGB(0x2F2F2F));
+        // backgrounds
+        game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(screenWidth - size.x - 4, portrait), 2, 32, 32, size, 0, HEXtoRGB(0x2F2F2F));
+        game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(screenWidth - size.x - 4 - portrait / 2, portrait), 2, 32, 32, glm::vec2(portrait / 2, portrait / 2), 0, HEXtoRGB(0x2F2F2F));
 
-    // turret image
-    game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(screenWidth - size.x, portrait + 4) + glm::vec2(4, 4), 2, 32, 32, glm::vec2(portrait), 0, HEXtoRGB(0xFFFFFFF));
+        // turret image
+        game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(screenWidth - size.x, portrait + 4) + glm::vec2(4, 4), 2, 32, 32, glm::vec2(portrait), 0, HEXtoRGB(0xFFFFFFF));
 
-    for (auto &panel : shopPanels) {
-        panel -> render();
+        for (auto &panel : shopPanels) {
+            panel -> render();
+        }
+    } else {
+        // background shadows
+        game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(screenWidth - 2 - portrait / 2, portrait) + glm::vec2(2), 2, 32, 32, glm::vec2(portrait / 2, portrait / 2), 0, HEXtoRGB(0x000000));
+
+        // backgrounds
+        game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(screenWidth - 2 - portrait / 2, portrait), 2, 32, 32, glm::vec2(portrait / 2, portrait / 2), 0, HEXtoRGB(0x2F2F2F));
     }
 }
 
