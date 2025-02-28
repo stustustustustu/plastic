@@ -9,8 +9,6 @@ void TurretManager::update() {
         turret -> rotateTowardsTarget();
         turret -> shoot();
     }
-
-    shop -> update();
 }
 
 void TurretManager::render() {
@@ -21,14 +19,6 @@ void TurretManager::render() {
     }
 
     game -> renderer -> SetProjection(game -> camera -> getStaticProjection());
-
-    if (showShop) {
-        shop -> render();
-    }
-
-    if (showUpgrades && selectedTurret) {
-        //renderUpgradeMenu();
-    }
 }
 
 void TurretManager::placeTurret(TurretType type, const std::vector<float> &position) {
@@ -46,7 +36,6 @@ void TurretManager::placeTurret(TurretType type, const std::vector<float> &posit
 
 void TurretManager::openUpgradeMenu(std::shared_ptr<Turret> turret) {
     selectedTurret = turret;
-    showUpgrades = true;
 }
 
 void TurretManager::handleClick(const glm::vec2 &mousePos) {

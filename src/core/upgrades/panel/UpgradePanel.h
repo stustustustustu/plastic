@@ -16,8 +16,6 @@ class UpgradePanel {
 
         Refresh refresh;
 
-        float border = 8;
-
     public:
         UpgradePanel(const Upgrade &upgrade, glm::vec2 position, glm::vec2 size, Refresh refresh);
 
@@ -26,7 +24,6 @@ class UpgradePanel {
 
         void setPosition(glm::vec2 position);
         glm::vec2 getSize() const;
-
 };
 
 #endif //UPGRADEPANEL_H

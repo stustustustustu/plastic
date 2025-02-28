@@ -4,9 +4,11 @@
 
 const auto game = Game::getInstance();
 
+constexpr auto border = 8;
+
 UpgradePanel::UpgradePanel(const Upgrade &upgrade, glm::vec2 position, glm::vec2 size, Refresh refresh)
     : upgrade(upgrade), position(position), size(size), refresh(refresh),
-    button(position + glm::vec2(size.x - (border + 48), size.y - (24 + border)), glm::vec2(48, 24), "Buy") {
+    button(position + glm::vec2(size.x - (border + 48), size.y - (24 + border)), glm::vec2(48, 24), "") {
 
     button.addCallback([this, refresh, upgrade]() {
         if (game -> player -> getCoins() >= this -> upgrade.getCost()) {

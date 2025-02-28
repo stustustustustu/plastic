@@ -85,9 +85,6 @@ add_executable(
         src/core/action/manager/ActionManager.h
         src/entity/turret/manager/TurretManager.cpp
         src/entity/turret/manager/TurretManager.h
-        src/entity/turret/manager/shop/Shop.h
-        src/entity/turret/manager/Upgrades.h
-        src/entity/turret/manager/shop/Shop.cpp
 
         src/core/UI/scene/Scene.h
         src/core/UI/scene/Scene.cpp
@@ -100,6 +97,8 @@ add_executable(
         src/core/upgrades/panel/UpgradePanel.cpp
         src/core/upgrades/panel/UpgradePanel.h
         src/utils/math/number/number.h
+        src/entity/turret/panel/ShopPanel.cpp
+        src/entity/turret/panel/ShopPanel.h
 )
 
 target_include_directories(plastic PRIVATE dependencies) # Includes location

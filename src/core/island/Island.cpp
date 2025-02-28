@@ -134,6 +134,7 @@ Tile Island::getBeachTileVariant(int x, int y) const {
         case 0b11000001:
         case 0b01000001:
             return Tile::LEFT;
+
         default: break;
     }
 
@@ -173,6 +174,7 @@ Tile Island::getBeachTileVariant(int x, int y) const {
         case 0b11100001:
         case 0b11110001:
             return Tile::REVERSE_BOTTOM_LEFT;
+
         default: break;
     }
 
@@ -221,6 +223,7 @@ Tile Island::getBeachTileVariant(int x, int y) const {
         case 0b01000011:
         case 0b11000100:
             return Tile::REVERSE_TOP_LEFT;
+
         default: break;
     }
 
