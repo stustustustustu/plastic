@@ -12,7 +12,7 @@ ShopPanel::ShopPanel(glm::vec2 position, glm::vec2 size, TurretType type)
       button(position + glm::vec2(border, portrait + border + 6), glm::vec2(24, 24), ""),
       type(type) {
     button.addCallback([this]() {
-        game->turret->placeTurret(this->type, {50, 50});
+        game -> turret -> startPlacingTurret(this -> type);;
     });
 }
 

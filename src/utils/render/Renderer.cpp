@@ -76,22 +76,20 @@ void Renderer::DrawText(const std::string &text, glm::vec2 position, int size, b
 	game -> text -> DrawText(text, position, size, color, alignment);
 }
 
-void Renderer::DrawSprite(Texture &texture, glm::vec2 position, float u1, float v1, float u2, float v2, glm::vec2 size, float rotate, glm::vec3 color) const {
-	//Game::getInstance() -> batch -> pushObject(texture, {position, rotate}, {u1, v1, u2, v2}, size, {color, 1.0f});
-	//return;
+void Renderer::DrawSprite(Texture &texture, glm::vec2 position, float u1, float v1, float u2, float v2, glm::vec2 size, float rotate, glm::vec3 color, float opacity) const {
+    this -> shader.Use();
 
-	this -> shader.Use();
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(position, 0.0f));
+    model = glm::translate(model, glm::vec3(0.5f * size.x, 0.5f * size.y, 0.0f));
+    model = glm::rotate(model, glm::radians(rotate), glm::vec3(0.0f, 0.0f, 1.0f));
+    model = glm::translate(model, glm::vec3(-0.5f * size.x, -0.5f * size.y, 0.0f));
+    model = glm::scale(model, glm::vec3(size, 1.0f));
 
-	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(position, 0.0f));
-	model = glm::translate(model, glm::vec3(0.5f * size.x, 0.5f * size.y, 0.0f));
-	model = glm::rotate(model, glm::radians(rotate), glm::vec3(0.0f, 0.0f, 1.0f));
-	model = glm::translate(model, glm::vec3(-0.5f * size.x, -0.5f * size.y, 0.0f));
-	model = glm::scale(model, glm::vec3(size, 1.0f));
-
-	this -> shader.SetMat4("model", model);
-	this -> shader.SetMat4("projection", projection);
-	this -> shader.SetVec3("spriteColor", color);
+    this -> shader.SetMat4("model", model);
+    this -> shader.SetMat4("projection", projection);
+    this -> shader.SetVec3("spriteColor", color);
+    this -> shader.SetFloat("opacity", opacity);
 
     GLfloat texCoords[] = {
         u1, v2,
@@ -101,44 +99,43 @@ void Renderer::DrawSprite(Texture &texture, glm::vec2 position, float u1, float 
         u1, v2,
         u2, v2,
         u2, v1,
-
     };
 
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	glBindVertexArray(this -> quadVAO);
+    glBindVertexArray(this->quadVAO);
 
-	GLuint texVBO;
-	glGenBuffers(1, &texVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, texVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(texCoords), texCoords, GL_DYNAMIC_DRAW);
+    GLuint texVBO;
+    glGenBuffers(1, &texVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, texVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(texCoords), texCoords, GL_DYNAMIC_DRAW);
 
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), NULL);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), NULL);
 
-	glActiveTexture(GL_TEXTURE0);
-	texture.Bind();
+    glActiveTexture(GL_TEXTURE0);
+    texture.Bind();
 
-	glDrawArrays(GL_TRIANGLES, 0, 6);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
 
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
-	glDeleteBuffers(1, &texVBO);
-	glDisable(GL_BLEND);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+    glDeleteBuffers(1, &texVBO);
+    glDisable(GL_BLEND);
 }
 
-void Renderer::DrawSprite(Texture &texture, glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color) const {
-	this -> DrawSprite(texture, position, 0.0f, 0.0f, 1.0f, 1.0f, size, rotate, color);
+void Renderer::DrawSprite(Texture &texture, glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color, float opacity) const {
+    this -> DrawSprite(texture, position, 0.0f, 0.0f, 1.0f, 1.0f, size, rotate, color, opacity);
 }
 
-void Renderer::DrawSpriteSheet(Texture &texture, glm::vec2 position, int index, int rows, int cols, glm::vec2 size, float rotate, glm::vec3 color) const {
-	float u1 = static_cast<float>(index % cols) / cols;
-	float v1 = static_cast<float>(index / cols) / rows;
-	float u2 = static_cast<float>((index % cols) + 1) / cols;
-	float v2 = static_cast<float>((index / cols) + 1) / rows;
+void Renderer::DrawSpriteSheet(Texture &texture, glm::vec2 position, int index, int rows, int cols, glm::vec2 size, float rotate, glm::vec3 color, float opacity) const {
+    float u1 = static_cast<float>(index % cols) / cols;
+    float v1 = static_cast<float>(index / cols) / rows;
+    float u2 = static_cast<float>((index % cols) + 1) / cols;
+    float v2 = static_cast<float>((index / cols) + 1) / rows;
 
-	this -> DrawSprite(texture, position, u1, v1, u2, v2, size, rotate, color);
+    this->DrawSprite(texture, position, u1, v1, u2, v2, size, rotate, color, opacity);
 }
 
 void Renderer::DrawBackground(int index) const {

@@ -15,6 +15,9 @@ void InputHandler::InitBindings() {
     bindKeyCombo( {GLFW_KEY_A}, "LEFT");
     bindKeyCombo( {GLFW_KEY_D}, "RIGHT");
     bindKeyCombo( {GLFW_MOUSE_BUTTON_1}, "SHOOT");
+    bindKeyCombo( {GLFW_MOUSE_BUTTON_2}, "PLACE_TURRET");
+
+    bindKeyCombo( {GLFW_KEY_ESCAPE}, "CANCEL_PLACEMENT");
 
     // camera
     bindKeyCombo( {GLFW_MOUSE_BUTTON_3}, "CAMERA_PAN");
@@ -29,13 +32,19 @@ void InputHandler::RegisterActions() {
     getActionManager().registerAction("LEFT", [](){  });
     getActionManager().registerAction("RIGHT", [](){  });
     getActionManager().registerAction("SHOOT", [](){  });
+    getActionManager().registerAction("PLACE_TURRET", []() {
+        game -> turret -> handleClick(getMousePosition());
+    });
+
+    getActionManager().registerAction("CANCEL_PLACEMENT", []() {
+        game -> turret -> cancelPlacingTurret();
+    });
 
     // camera
     getActionManager().registerAction("CAMERA_PAN", []() {
         if (!game -> camera -> panning) {
-            double mouseX, mouseY;
-            glfwGetCursorPos(game -> window, &mouseX, &mouseY);
-            game -> camera -> startPanning(mouseX, mouseY);
+            auto mousePos = getMousePosition();
+            game -> camera -> startPanning(mousePos.x, mousePos.y);
         }
     });
 

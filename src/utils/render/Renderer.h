@@ -39,7 +39,8 @@ class Renderer {
             float u1, float v1, float u2, float v2,
             glm::vec2 size = glm::vec2(32.0f),
             float rotate = 0.0f,
-            glm::vec3 color = glm::vec3(1.0f)
+            glm::vec3 color = glm::vec3(1.0f),
+            float opacity = 1.0f
         ) const;
 
         void DrawSprite(
@@ -47,7 +48,8 @@ class Renderer {
             glm::vec2 position,
             glm::vec2 size = glm::vec2(32.0f),
             float rotate = 0.0f,
-            glm::vec3 color = glm::vec3(1.0f)
+            glm::vec3 color = glm::vec3(1.0f),
+            float opacity = 1.0f
         ) const;
 
         void DrawSpriteSheet(
@@ -56,7 +58,8 @@ class Renderer {
             int index, int rows, int cols,
             glm::vec2 size = glm::vec2(32.0f),
             float rotate = 0.0f,
-            glm::vec3 color = glm::vec3(1.0f)
+            glm::vec3 color = glm::vec3(1.0f),
+            float opacity = 1.0f
         ) const;
 
         void DrawBackground(int index) const;
