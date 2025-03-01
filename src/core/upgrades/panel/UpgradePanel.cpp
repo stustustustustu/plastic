@@ -8,7 +8,7 @@ constexpr auto border = 8;
 
 UpgradePanel::UpgradePanel(const Upgrade &upgrade, glm::vec2 position, glm::vec2 size, Refresh refresh)
     : upgrade(upgrade), position(position), size(size), refresh(refresh),
-    button(position + glm::vec2(size.x - (border + 48), size.y - (24 + border)), glm::vec2(48, 24), "") {
+    button(position + glm::vec2(size.x - (border + 48), size.y - (24 + border)), glm::vec2(48, 24), "", HEXtoRGB(0x6F6F6F)) {
 
     button.addCallback([this, refresh, upgrade]() {
         if (game -> player -> getCoins() >= this -> upgrade.getCost()) {
@@ -34,15 +34,15 @@ void UpgradePanel::render() {
     game -> renderer -> DrawText(upgrade.getDescription(), position + glm::vec2(border, border + 24), 8.0f, true, HEXtoRGB(0xDFDFDF));
     game -> renderer -> DrawText("$"+ std::to_string(upgrade.getCost()), position + glm::vec2(border, size.y - border - 2), 16.0f, true, HEXtoRGB(0xFDFF74));
 
-    // button shadows
-    game -> renderer -> DrawSpriteSheet(*game -> texture, button.getPosition() + glm::vec2(2, 2), 2, 32, 32, button.getSize(), 0, HEXtoRGB(0x000000));
-
     // button
-    int buttonColor = game -> player -> getCoins() >= upgrade.getCost() ? 0x6F6F6F : 0x3F3F3F;
-    game -> renderer -> DrawSpriteSheet(*game -> texture, button.getPosition(), 2, 32, 32, button.getSize(), 0, HEXtoRGB(buttonColor));
+    button.render();
 }
 
 void UpgradePanel::update() {
+    if (game -> player -> getCoins() < upgrade.getCost()) {
+        button.setActive(false);
+    }
+
     button.update();
 }
 

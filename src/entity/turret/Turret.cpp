@@ -131,6 +131,9 @@ int Turret::getCost(TurretType type) {
     }
 }
 
+TurretType Turret::getType() const {
+    return this -> type;
+}
 
 float Turret::calculateDistance(const std::vector<float>& a, const std::vector<float>& b) {
     return std::sqrt(std::pow(b[0] - a[0], 2) + std::pow(b[1] - a[1], 2));

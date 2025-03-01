@@ -34,6 +34,7 @@ class Turret : public Entity {
         void render(Texture *texture) const;
 
         static int getCost(TurretType type);
+        TurretType getType() const;
 
     private:
         static float calculateDistance(const std::vector<float>& a, const std::vector<float>& b);

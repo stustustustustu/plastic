@@ -61,6 +61,7 @@ void TurretManager::renderPreview(const glm::vec2& mousePos) const {
         opacity
     );
 }
+
 void TurretManager::startPlacingTurret(TurretType type) {
     isPlacingTurret = true;
     placingTurretType = type;
@@ -86,15 +87,70 @@ void TurretManager::cancelPlacingTurret() {
 }
 
 void TurretManager::handleClick(const glm::vec2& mousePos) {
-    if (!isPlacingTurret) return;
+    if (isPlacingTurret) {
+        auto worldPos = game -> camera -> screenToWorld(mousePos);
+
+        int gridX = static_cast<int>(worldPos[0] / Island::TILE_SIZE) * Island::TILE_SIZE;
+        int gridY = static_cast<int>(worldPos[1] / Island::TILE_SIZE) * Island::TILE_SIZE;
+
+        placeTurret({static_cast<float>(gridX), static_cast<float>(gridY)});
+        return;
+    }
+
+    if (isMouseInsideMenu(mousePos)) {
+        return;
+    } else if (isUpgrading()){
+        closeUpgradeMenu();
+        return;
+    }
 
     auto worldPos = game -> camera -> screenToWorld(mousePos);
 
-    int gridX = static_cast<int>(worldPos[0] / Island::TILE_SIZE) * Island::TILE_SIZE;
-    int gridY = static_cast<int>(worldPos[1] / Island::TILE_SIZE) * Island::TILE_SIZE;
+    for (const auto &turret : turrets) {
+        auto turretPos = turret -> getPosition();
+        if (Collision::isPointInRectangle({ worldPos.x, worldPos.y }, { turret -> getPosition().at(0) + 16 / 2, turret -> getPosition().at(1) + 16 / 2 }, {16, 16})) {
+            openUpgradeMenu(turret);
+            return;
+        }
+    }
 
-    placeTurret({static_cast<float>(gridX), static_cast<float>(gridY)});
+    selectedTurret = NULL;
 }
+
+void TurretManager::openUpgradeMenu(std::shared_ptr<Turret> turret) {
+    this -> selectedTurret = turret;
+    this -> isUpgradeMenuOpen = true;
+
+    auto turretPos = turret->getPosition();
+    auto screenCenter = glm::vec2(game -> getSize().at(0) / 2, game -> getSize().at(1) / 2);
+
+    menuSize = glm::vec2(300, 500);
+
+    if (turretPos[0] < screenCenter.x) {
+        menuPosition = glm::vec2(turretPos[0] + 40, turretPos[1] - 50);
+    } else {
+        menuPosition = glm::vec2(turretPos[0] - menuSize.x - 40, turretPos[1] - 50);
+    }
+}
+
+void TurretManager::closeUpgradeMenu() {
+    this -> isUpgradeMenuOpen = false;
+    this -> selectedTurret = NULL;
+}
+
+bool TurretManager::isUpgrading() const {
+    return this -> isUpgradeMenuOpen;
+}
+
+bool TurretManager::isMouseInsideMenu(const glm::vec2 &mousePos) const {
+    if (!isUpgrading()) return false;
+
+    auto worldPos = game -> camera -> screenToWorld(mousePos);
+
+    return Collision::isPointInRectangle({mousePos.x, mousePos.y}, {menuPosition.x + menuSize.x / 2, menuPosition.y + menuSize.y / 2}, {menuSize.x / 2, menuSize.y / 2}) ||
+           Collision::isPointInRectangle({ worldPos.x, worldPos.y }, { selectedTurret -> getPosition().at(0) + 16 / 2, selectedTurret -> getPosition().at(1) + 16 / 2 }, {16, 16});
+}
+
 
 bool TurretManager::isValidPlacement(const std::vector<float>& position) const {
     int tileX = static_cast<int>(position[0] / Island::TILE_SIZE);
@@ -126,9 +182,9 @@ bool TurretManager::isValidPlacement(const std::vector<float>& position) const {
 }
 
 bool TurretManager::isPlacing() const {
-    return isPlacingTurret;
+    return this -> isPlacingTurret;
 }
 
-void TurretManager::openUpgradeMenu(std::shared_ptr<Turret> turret) {
-    selectedTurret = turret;
+std::shared_ptr<Turret> TurretManager::getSelectedTurret() const {
+    return this -> selectedTurret;
 }

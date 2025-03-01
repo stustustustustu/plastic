@@ -57,7 +57,7 @@ Projectile::Projectile(std::vector<float> position, ProjectileType type, std::sh
             splashRadius = 25.0f;
             break;
         case BOMB:
-            this -> setSpeed(5.0f);
+            this -> setSpeed(3.0f);
             splashRadius = 35.0f;
             break;
     }
@@ -103,22 +103,26 @@ void Projectile::render() {
     if (!active) return;
 
     int hex;
+    glm::vec2 size;
     switch (type) {
         case LASER:
             break;
         case AMMO:
             hex = 0x00FF00;
+            size = glm::vec2(8.0f);
             break;
         case HOMING_MISSILE:
             hex = 0x0000FF;
+            size = glm::vec2(16.0f);
             break;
         case BOMB:
-            hex = 0xFFFF00;
+            hex = 0x000000;
+            size = glm::vec2(16.0f);
             break;
     }
 
     if (type != LASER) {
-        game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(getRenderPosition().at(0), getRenderPosition().at(1)), 0, 32, 32, glm::vec2(16.0f), 0, HEXtoRGB(hex));
+        game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(getRenderPosition().at(0), getRenderPosition().at(1)), 0, 32, 32, size, 0, HEXtoRGB(hex));
     }
 }
 

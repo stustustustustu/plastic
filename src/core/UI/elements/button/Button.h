@@ -7,11 +7,12 @@
 class Button : public Element {
     private:
         std::string label;
+        glm::vec3 color;
         bool hovered = false;
         bool clicked = false;
 
     public:
-        Button(glm::vec2 position, glm::vec2 size, const std::string& label) : Element(position, size), label(label) {}
+        Button(glm::vec2 position, glm::vec2 size, const std::string& label, glm::vec3 color) : Element(position, size), label(label), color(color) {}
 
         void render() override;
         void update() override;

@@ -5,7 +5,12 @@ const auto game = Game::getInstance();
 
 
 void Button::render() {
-    game -> renderer -> DrawSpriteSheet(*game -> texture, !clicked ? position : position + glm::vec2(0, 2), 2, 32, 32, size, 0, HEXtoRGB(!hovered ? 0x323232 : 0x646464));
+    game -> renderer -> DrawSpriteSheet(*game -> texture, position + glm::vec2(2), 2, 32, 32, size, 0, HEXtoRGB(0x000000));
+    if (!isActive()) {
+        game -> renderer -> DrawSpriteSheet(*game -> texture, position, 2, 32, 32, size, 0, brightness(color, -0.50));
+        return;
+    }
+    game -> renderer -> DrawSpriteSheet(*game -> texture, position, 2, 32, 32, size, 0, isHovering() ? brightness(color, 0.25) : color);
 }
 
 void Button::update() {

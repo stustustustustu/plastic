@@ -31,7 +31,9 @@ void InputHandler::RegisterActions() {
     getActionManager().registerAction("DOWN", [](){  });
     getActionManager().registerAction("LEFT", [](){  });
     getActionManager().registerAction("RIGHT", [](){  });
-    getActionManager().registerAction("SHOOT", [](){  });
+    getActionManager().registerAction("SHOOT", []() {
+        game -> turret -> handleClick(getMousePosition());
+    });
     getActionManager().registerAction("PLACE_TURRET", []() {
         game -> turret -> handleClick(getMousePosition());
     });

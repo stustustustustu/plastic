@@ -10,7 +10,11 @@ class TurretManager {
 
         std::shared_ptr<Turret> selectedTurret;
         bool isPlacingTurret = false;
+        bool isUpgradeMenuOpen = false;
         TurretType placingTurretType = TurretType::RIFLE;
+
+    public:
+        glm::vec2 menuSize, menuPosition;
 
     public:
         void update();
@@ -24,9 +28,14 @@ class TurretManager {
         bool isPlacing() const;
 
         void openUpgradeMenu(std::shared_ptr<Turret> turret);
+        void closeUpgradeMenu();
+        bool isUpgrading() const;
+        bool isMouseInsideMenu(const glm::vec2 &mousePos) const;
 
         void handleClick(const glm::vec2& mousePos);
         bool isValidPlacement(const std::vector<float>& position) const;
+
+        std::shared_ptr<Turret> getSelectedTurret() const;
 };
 
 #endif // TURRETMANAGER_H

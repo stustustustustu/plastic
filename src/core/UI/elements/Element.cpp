@@ -29,6 +29,14 @@ bool Element::isClicked() const {
     return isHovering() && glfwGetMouseButton(game -> window, 0) == GLFW_PRESS;
 }
 
+void Element::setActive(bool active) {
+    this -> active = active;
+}
+
+bool Element::isActive() const {
+    return this -> active;
+}
+
 bool Element::debounce(float debounce) {
     auto now = std::chrono::high_resolution_clock::now();
     float timeSinceLastAction = std::chrono::duration<float>(now - lastActionTime).count();

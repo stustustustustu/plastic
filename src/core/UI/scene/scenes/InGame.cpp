@@ -5,9 +5,9 @@
 const auto game = Game::getInstance();
 
 InGame::InGame() : Scene(GAME),
-                    turretShopToggle(glm::vec2(game -> getSize().at(0) - 2 - portrait / 2, portrait), glm::vec2(portrait / 2, portrait / 2), ""),
-                    portraitToggle(glm::vec2(border, border), glm::vec2(portrait, portrait), ""),
-                    playerShopToggle(glm::vec2(border + border / 2, portrait + (border + border / 2)), glm::vec2(portrait / 2, portrait / 2), "") {
+                    turretShopToggle(glm::vec2(game -> getSize().at(0) - 2 - portrait / 2, portrait), glm::vec2(portrait / 2, portrait / 2), "", HEXtoRGB(0x2F2F2F)),
+                    portraitToggle(glm::vec2(border, border), glm::vec2(portrait, portrait), "", HEXtoRGB(0x2F2F2F)),
+                    playerShopToggle(glm::vec2(border + border / 2, portrait + (border + border / 2)), glm::vec2(portrait / 2, portrait / 2), "", HEXtoRGB(0x2F2F2F)) {
 
     portraitToggle.addCallback([this]() {
         isAdvancedView = !isAdvancedView;
@@ -40,6 +40,7 @@ void InGame::render() {
     }
 
     renderTurretShop();
+    renderTurretUpgrades();
 }
 
 void InGame::update() {
@@ -244,6 +245,25 @@ void InGame::renderTurretShop() {
         // backgrounds
         game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(screenWidth - 2 - portrait / 2, portrait), 2, 32, 32, glm::vec2(portrait / 2, portrait / 2), 0, HEXtoRGB(0x2F2F2F));
     }
+}
+
+void InGame::renderTurretUpgrades() {
+    auto turret = game -> turret -> getSelectedTurret();
+    if (!turret && !game -> turret -> isUpgrading()) return;
+
+    auto popupSize = game -> turret -> menuSize;
+    auto popupPosition = game -> turret -> menuPosition;
+
+    // shadow
+    game -> renderer -> DrawSpriteSheet(*game -> texture, popupPosition + glm::vec2(2), 2, 32, 32, popupSize, 0.0f, HEXtoRGB(0x000000));
+
+    // background
+    game -> renderer -> DrawSpriteSheet(*game -> texture, popupPosition, 2, 32, 32, popupSize, 0.0f, HEXtoRGB(0x2F2F2F));
+
+    // X button
+    game -> renderer -> DrawSpriteSheet(*game -> texture, popupPosition + glm::vec2(popupSize.x - (2 * border + game -> text -> GetWidth("X", 16)) + 2, border - 2), 2, 32, 32, glm::vec2(24), 0.0f, HEXtoRGB(0x000000));
+    game -> renderer -> DrawSpriteSheet(*game -> texture, popupPosition + glm::vec2(popupSize.x - (2 * border + game -> text -> GetWidth("X", 16)), border - 4), 2, 32, 32, glm::vec2(24), 0.0f, HEXtoRGB(0x3F3F3F));
+    game -> renderer -> DrawText("X", popupPosition + glm::vec2(popupSize.x - (border + game -> text -> GetWidth("X", 16) + 1), border + 14), 16.0f, true, HEXtoRGB(0xFF0000));
 }
 
 void InGame::renderWaveInfo() {

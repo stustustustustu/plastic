@@ -9,7 +9,7 @@ constexpr auto portrait = 48;
 
 ShopPanel::ShopPanel(glm::vec2 position, glm::vec2 size, TurretType type)
     : position(position), size(size),
-      button(position + glm::vec2(border, portrait + border + 6), glm::vec2(24, 24), ""),
+      button(position + glm::vec2(border, portrait + border + 6), glm::vec2(24, 24), "", HEXtoRGB(0x6F6F6F)),
       type(type) {
 
     button.addCallback([this]() {
@@ -64,14 +64,14 @@ void ShopPanel::render() {
     game -> renderer -> DrawText(cost.str(), position + size - glm::vec2(game -> text -> GetWidth(cost.str(), 16.0f) + border, 2), 16.0f, true, HEXtoRGB(0xFDFF74)); // cost
 
     // button
-    game -> renderer -> DrawSpriteSheet(*game -> texture, button.getPosition() + glm::vec2(2), 2, 32, 32, button.getSize(), 0, HEXtoRGB(0x000000));
-
-    // button
-    int buttonColor =  game -> player -> getCoins() >= Turret::getCost(type) ? 0x6F6F6F : 0x3F3F3F;
-    game -> renderer -> DrawSpriteSheet(*game -> texture, button.getPosition(), 2, 32, 32, button.getSize(), 0, HEXtoRGB(buttonColor));
+    button.render();
 }
 
 void ShopPanel::update() {
+    if (game -> player -> getCoins() < Turret::getCost(type)) {
+        button.setActive(false);
+    }
+
     button.update();
 }
 

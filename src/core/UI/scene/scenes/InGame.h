@@ -36,8 +36,8 @@ class InGame : public Scene {
         void renderAdvancedStats();
 
         void renderPlayerShop();
-
         void renderTurretShop();
+        void renderTurretUpgrades();
 
         void renderWaveInfo();
         void renderPopup(const std::string& text, const glm::vec2& position, const glm::vec3& color);
