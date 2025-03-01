@@ -87,7 +87,7 @@ void TurretManager::cancelPlacingTurret() {
 }
 
 void TurretManager::handleClick(const glm::vec2& mousePos) {
-    if (isPlacingTurret) {
+    if (isPlacingTurret && glfwGetMouseButton(game -> window, GLFW_MOUSE_BUTTON_2)) {
         auto worldPos = game -> camera -> screenToWorld(mousePos);
 
         int gridX = static_cast<int>(worldPos[0] / Island::TILE_SIZE) * Island::TILE_SIZE;
@@ -98,6 +98,7 @@ void TurretManager::handleClick(const glm::vec2& mousePos) {
     }
 
     if (isMouseInsideMenu(mousePos)) {
+
         return;
     } else if (isUpgrading()){
         closeUpgradeMenu();
@@ -108,7 +109,7 @@ void TurretManager::handleClick(const glm::vec2& mousePos) {
 
     for (const auto &turret : turrets) {
         auto turretPos = turret -> getPosition();
-        if (Collision::isPointInRectangle({ worldPos.x, worldPos.y }, { turret -> getPosition().at(0) + 16 / 2, turret -> getPosition().at(1) + 16 / 2 }, {16, 16})) {
+        if (Collision::isPointInRectangle({ worldPos.x, worldPos.y }, { turret -> getPosition().at(0) + 16 / 2, turret -> getPosition().at(1) + 16 / 2 }, {16, 16}) && glfwGetMouseButton(game -> window, GLFW_MOUSE_BUTTON_1)) {
             openUpgradeMenu(turret);
             return;
         }

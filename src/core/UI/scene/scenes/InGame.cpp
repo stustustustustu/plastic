@@ -7,7 +7,8 @@ const auto game = Game::getInstance();
 InGame::InGame() : Scene(GAME),
                     turretShopToggle(glm::vec2(game -> getSize().at(0) - 2 - portrait / 2, portrait), glm::vec2(portrait / 2, portrait / 2), "", HEXtoRGB(0x2F2F2F)),
                     portraitToggle(glm::vec2(border, border), glm::vec2(portrait, portrait), "", HEXtoRGB(0x2F2F2F)),
-                    playerShopToggle(glm::vec2(border + border / 2, portrait + (border + border / 2)), glm::vec2(portrait / 2, portrait / 2), "", HEXtoRGB(0x2F2F2F)) {
+                    playerShopToggle(glm::vec2(border + border / 2, portrait + (border + border / 2)), glm::vec2(portrait / 2, portrait / 2), "", HEXtoRGB(0x2F2F2F)),
+                    turretUpgradeClose(game -> turret -> menuPosition + glm::vec2(game -> turret -> menuSize.x - (2 * border + game -> text -> GetWidth("X", 16)), border - 4), glm::vec2(24), "", HEXtoRGB(0x3F3F3F)) {
 
     portraitToggle.addCallback([this]() {
         isAdvancedView = !isAdvancedView;
@@ -19,6 +20,10 @@ InGame::InGame() : Scene(GAME),
 
     turretShopToggle.addCallback([this]() {
         isTurretShopOpen = !isTurretShopOpen;
+    });
+
+    turretUpgradeClose.addCallback([this]() {
+        game -> turret -> closeUpgradeMenu();
     });
 
     refreshUpgradePanels();
@@ -86,6 +91,11 @@ void InGame::update() {
         turretShopToggle.setPosition(glm::vec2(game -> getSize().at(0) - (2 * portrait + border + width) - 4 - portrait / 2, portrait));
     } else {
         turretShopToggle.setPosition(glm::vec2(game -> getSize().at(0) - 2 - portrait / 2, portrait));
+    }
+
+    if (game -> turret -> isUpgrading()) {
+        turretUpgradeClose.setPosition(game -> turret -> menuPosition + glm::vec2(game -> turret -> menuSize.x - (2 * border + game -> text -> GetWidth("X", 16)), border - 4));
+        turretUpgradeClose.update();
     }
 
     turretShopToggle.update();
@@ -251,8 +261,8 @@ void InGame::renderTurretUpgrades() {
     auto turret = game -> turret -> getSelectedTurret();
     if (!turret && !game -> turret -> isUpgrading()) return;
 
-    auto popupSize = game -> turret -> menuSize;
     auto popupPosition = game -> turret -> menuPosition;
+    auto popupSize = game -> turret -> menuSize;
 
     // shadow
     game -> renderer -> DrawSpriteSheet(*game -> texture, popupPosition + glm::vec2(2), 2, 32, 32, popupSize, 0.0f, HEXtoRGB(0x000000));
@@ -261,8 +271,7 @@ void InGame::renderTurretUpgrades() {
     game -> renderer -> DrawSpriteSheet(*game -> texture, popupPosition, 2, 32, 32, popupSize, 0.0f, HEXtoRGB(0x2F2F2F));
 
     // X button
-    game -> renderer -> DrawSpriteSheet(*game -> texture, popupPosition + glm::vec2(popupSize.x - (2 * border + game -> text -> GetWidth("X", 16)) + 2, border - 2), 2, 32, 32, glm::vec2(24), 0.0f, HEXtoRGB(0x000000));
-    game -> renderer -> DrawSpriteSheet(*game -> texture, popupPosition + glm::vec2(popupSize.x - (2 * border + game -> text -> GetWidth("X", 16)), border - 4), 2, 32, 32, glm::vec2(24), 0.0f, HEXtoRGB(0x3F3F3F));
+    turretUpgradeClose.render();
     game -> renderer -> DrawText("X", popupPosition + glm::vec2(popupSize.x - (border + game -> text -> GetWidth("X", 16) + 1), border + 14), 16.0f, true, HEXtoRGB(0xFF0000));
 }
 
