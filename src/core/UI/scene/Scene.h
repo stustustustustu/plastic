@@ -2,7 +2,7 @@
 #define SCENE_H
 
 #include "../src/config.h"
-#include "../Element.h"
+#include "../elements/Element.h"
 
 enum SceneType {
     GAME,

@@ -2,7 +2,7 @@
 #define SLIDER_H
 
 #include "../src/config.h"
-#include "../../Element.h"
+#include "../Element.h"
 
 class Slider : public Element {
     private:

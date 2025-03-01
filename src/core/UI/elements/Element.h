@@ -1,8 +1,8 @@
 #ifndef ELEMENT_H
 #define ELEMENT_H
 
-#include "../action/Action.h"
-#include "../src/config.h"
+#include "../../action/Action.h"
+#include "../../../config.h"
 
 class Element {
     protected:

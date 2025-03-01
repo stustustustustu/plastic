@@ -16,6 +16,7 @@ class Turret : public Entity {
         float rotationSpeed;
         float currentAngle;
         Enemy* target;
+        int cost;
 
         float fireRate;
         float timeSinceLastShot;
@@ -31,6 +32,8 @@ class Turret : public Entity {
         void shoot();
 
         void render(Texture *texture) const;
+
+        static int getCost(TurretType type);
 
     private:
         static float calculateDistance(const std::vector<float>& a, const std::vector<float>& b);

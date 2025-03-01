@@ -11,8 +11,11 @@ ShopPanel::ShopPanel(glm::vec2 position, glm::vec2 size, TurretType type)
     : position(position), size(size),
       button(position + glm::vec2(border, portrait + border + 6), glm::vec2(24, 24), ""),
       type(type) {
+
     button.addCallback([this]() {
-        game -> turret -> startPlacingTurret(this -> type);;
+        if (game -> player -> getCoins() >= Turret::getCost(this -> type)) {
+            game -> turret -> startPlacingTurret(this -> type);
+        }
     });
 }
 
@@ -25,25 +28,47 @@ void ShopPanel::render() {
 
     // turret image
     int hex;
+    std::ostringstream damage, fireRate, cost;
+    std::string name;
     switch (type) {
         case TurretType::LASER:
             hex = 0xFF5733;
-        break;
+            damage << std::fixed << std::setprecision(1) << 1.0f;
+            fireRate << std::fixed << std::setprecision(1) << 10.0f;
+            cost << "$" << Turret::getCost(TurretType::LASER);
+            name = "LASER";
+            break;
         case TurretType::RIFLE:
             hex = 0xF2EE0A;
-        break;
+            damage << std::fixed << std::setprecision(1) << 5.0f;
+            fireRate << std::fixed << std::setprecision(1) << 20.0f;
+            cost << "$" << Turret::getCost(TurretType::RIFLE);
+            name = "RIFLE";
+            break;
         case TurretType::BOMB:
             hex = 0x323232;
-        break;
+            damage << std::fixed << std::setprecision(1) << 25.0f;
+            fireRate << std::fixed << std::setprecision(1) << 2.0f;
+            cost << "$" << Turret::getCost(TurretType::BOMB);
+            name = "BOMB";
+            break;
     }
 
     game -> renderer -> DrawSpriteSheet(*game -> texture, position + glm::vec2(border, border), 2, 32, 32, glm::vec2(portrait), 0, HEXtoRGB(hex));
+
+    // text
+    game -> renderer -> DrawText(name, position + glm::vec2(portrait + 2 * border, 16 + border / 2), 16.0f, true, HEXtoRGB(hex)); // name
+
+    game -> renderer -> DrawText("Damage: " + damage.str(), position + glm::vec2(portrait + 2 * border, 24 + border / 2 + 4), 8.0f, true, HEXtoRGB(0xFFFFFF)); // damage
+    game -> renderer -> DrawText("Fire Rate: " + fireRate.str(), position + glm::vec2(portrait + 2 * border, 32 + border / 2 + 4 * 2), 8.0f, true, HEXtoRGB(0xFFFFFF)); // fire rate
+    game -> renderer -> DrawText(cost.str(), position + size - glm::vec2(game -> text -> GetWidth(cost.str(), 16.0f) + border, 2), 16.0f, true, HEXtoRGB(0xFDFF74)); // cost
 
     // button
     game -> renderer -> DrawSpriteSheet(*game -> texture, button.getPosition() + glm::vec2(2), 2, 32, 32, button.getSize(), 0, HEXtoRGB(0x000000));
 
     // button
-    game -> renderer -> DrawSpriteSheet(*game -> texture, button.getPosition(), 2, 32, 32, button.getSize(), 0, HEXtoRGB(0x6F6F6F));
+    int buttonColor =  game -> player -> getCoins() >= Turret::getCost(type) ? 0x6F6F6F : 0x3F3F3F;
+    game -> renderer -> DrawSpriteSheet(*game -> texture, button.getPosition(), 2, 32, 32, button.getSize(), 0, HEXtoRGB(buttonColor));
 }
 
 void ShopPanel::update() {

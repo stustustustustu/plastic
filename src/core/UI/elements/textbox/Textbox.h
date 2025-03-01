@@ -2,7 +2,7 @@
 #define TEXTBOX_H
 
 #include "../src/config.h"
-#include "../../Element.h"
+#include "../Element.h"
 
 class Textbox : public Element{
     private:

@@ -2,7 +2,7 @@
 #define TOGGLE_H
 
 #include "../src/config.h"
-#include "../../Element.h"
+#include "../Element.h"
 
 class Toggle : public Element {
     private:

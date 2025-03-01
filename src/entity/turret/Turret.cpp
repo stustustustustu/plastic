@@ -8,14 +8,17 @@ Turret::Turret(std::vector<float> position, TurretType type) : Entity(position),
         case TurretType::LASER:
             fireRate = 10.0f;
             setDamage(1.0f);
+            cost = 20;
             break;
         case TurretType::RIFLE:
             fireRate = 20.0f;
             setDamage(5.0f);
+            cost = 50;
             break;
         case TurretType::BOMB:
-            fireRate = 5.0f;
-            setDamage(15.0f);
+            fireRate = 2.0f;
+            setDamage(25.0f);
+            cost = 100;
             break;
     }
 
@@ -114,6 +117,20 @@ void Turret::render(Texture *texture) const {
 
     game -> renderer -> DrawSpriteSheet(*texture, glm::vec2(getRenderPosition().at(0), getRenderPosition().at(1)), 2, 32, 32, glm::vec2(32.0f), currentAngle, HEXtoRGB(hex));
 }
+
+int Turret::getCost(TurretType type) {
+    switch (type) {
+        case TurretType::LASER:
+            return 20;
+        case TurretType::RIFLE:
+            return 50;
+        case TurretType::BOMB:
+            return 100;
+        default:
+            return 0;
+    }
+}
+
 
 float Turret::calculateDistance(const std::vector<float>& a, const std::vector<float>& b) {
     return std::sqrt(std::pow(b[0] - a[0], 2) + std::pow(b[1] - a[1], 2));

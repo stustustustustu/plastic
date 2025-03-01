@@ -2,7 +2,7 @@
 #define BUTTON_H
 
 #include "../src/config.h"
-#include "../../Element.h"
+#include "../Element.h"
 
 class Button : public Element {
     private:

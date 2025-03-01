@@ -53,8 +53,8 @@ add_executable(
         src/utils/math/color/color.h
         src/utils/math/collision/Collision.cpp
         src/utils/math/collision/Collision.h
-        src/core/UI/Element.cpp
-        src/core/UI/Element.h
+        src/core/UI/elements/Element.cpp
+        src/core/UI/elements/Element.h
         src/core/camera/Camera.cpp
         src/core/camera/Camera.h
         src/utils/render/batch/BatchRenderer.cpp

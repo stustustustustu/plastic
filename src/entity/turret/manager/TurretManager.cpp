@@ -69,12 +69,10 @@ void TurretManager::startPlacingTurret(TurretType type) {
 void TurretManager::placeTurret(const std::vector<float>& position) {
     if (!isPlacingTurret || !isValidPlacement(position)) return;
 
-    int cost = 25;
-    if (game -> inventory -> hasEnoughCoins(cost)) {
-        if (game -> inventory -> spendCoins(cost)) {
+    if (game -> inventory -> hasEnoughCoins(Turret::getCost(placingTurretType))) {
+        if (game -> inventory -> spendCoins(Turret::getCost(placingTurretType))) {
             auto turret = std::make_shared<Turret>(position, placingTurretType);
             turrets.push_back(turret);
-            std::cout << "Turret placed at [" << position[0] << ", " << position[1] << "]" << std::endl;
         }
     } else {
         std::cout << "Not enough coins to place turret." << std::endl;
