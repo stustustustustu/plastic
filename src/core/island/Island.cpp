@@ -312,12 +312,41 @@ float Island::gradientMask(float x, float y) {
 }
 
 void Island::render(Texture &texture) {
+    static double lastTime = glfwGetTime();
+    double currentTime = glfwGetTime();
+    double deltaTime = currentTime - lastTime;
+
+    static int frameIndex = 0;
+    static int direction = 1;
+    static double forwardDelay = 0.45;
+    static double backwardDelay = 0.25;
+
+    if (direction == 1 && deltaTime >= forwardDelay) {
+        frameIndex += direction;
+        if (frameIndex >= 3) {
+            frameIndex = 3;
+            direction = -1;
+        }
+        lastTime = currentTime;
+    } else if (direction == -1 && deltaTime >= backwardDelay) {
+        frameIndex += direction;
+        if (frameIndex <= 0) {
+            frameIndex = 0;
+            direction = 1;
+        }
+        lastTime = currentTime;
+    }
+
     for (int y = 0; y < MAP_HEIGHT; ++y) {
         for (int x = 0; x < MAP_WIDTH; ++x) {
             int variant = tileMap[y][x];
 
             if (tileMap[y][x] != static_cast<int>(Tile::WATER)) {
-                game -> renderer -> DrawSpriteSheet(texture, glm::vec2(x * TILE_SIZE, y * TILE_SIZE), variant, 32, 32, glm::vec2(TILE_SIZE, TILE_SIZE));
+                if (tileMap[y][x] != static_cast<int>(Tile::CENTER)) {
+                    game -> renderer -> DrawSpriteSheet(texture, glm::vec2(x * TILE_SIZE, y * TILE_SIZE), variant + (frameIndex * 32), 32, 32, glm::vec2(TILE_SIZE, TILE_SIZE));
+                } else {
+                    game -> renderer -> DrawSpriteSheet(texture, glm::vec2(x * TILE_SIZE, y * TILE_SIZE), variant, 32, 32, glm::vec2(TILE_SIZE, TILE_SIZE)); // static center
+                }
             }
         }
     }

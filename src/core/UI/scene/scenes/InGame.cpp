@@ -4,7 +4,7 @@
 
 const auto game = Game::getInstance();
 
-InGame::InGame()  : Scene(GAME),
+InGame::InGame() : Scene(GAME),
                     turretShopToggle(glm::vec2(game -> getSize().at(0) - 2 - portrait / 2, portrait), glm::vec2(portrait / 2, portrait / 2), ""),
                     portraitToggle(glm::vec2(border, border), glm::vec2(portrait, portrait), ""),
                     playerShopToggle(glm::vec2(border + border / 2, portrait + (border + border / 2)), glm::vec2(portrait / 2, portrait / 2), "") {
