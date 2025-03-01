@@ -27,13 +27,13 @@ void ShopPanel::render() {
     int hex;
     switch (type) {
         case TurretType::LASER:
-            hex = 0xFF5733; // Red
+            hex = 0xFF5733;
         break;
         case TurretType::RIFLE:
-            hex = 0xF2EE0A; // Yellow
+            hex = 0xF2EE0A;
         break;
         case TurretType::BOMB:
-            hex = 0x323232; // Dark Gray
+            hex = 0x323232;
         break;
     }
 

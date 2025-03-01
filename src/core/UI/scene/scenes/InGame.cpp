@@ -4,10 +4,10 @@
 
 const auto game = Game::getInstance();
 
-InGame::InGame()  : Scene(GAME), turretShopToggle(glm::vec2(game -> getSize().at(0) - 2 - portrait / 2, portrait), glm::vec2(portrait / 2, portrait / 2), "") {
-    // toggle setup
-    Toggle portraitToggle(glm::vec2(border, border), glm::vec2(portrait, portrait));
-    Toggle playerShopToggle(glm::vec2(border + border / 2, portrait + (border + border / 2)), glm::vec2(portrait / 2, portrait / 2));
+InGame::InGame()  : Scene(GAME),
+                    turretShopToggle(glm::vec2(game -> getSize().at(0) - 2 - portrait / 2, portrait), glm::vec2(portrait / 2, portrait / 2), ""),
+                    portraitToggle(glm::vec2(border, border), glm::vec2(portrait, portrait), ""),
+                    playerShopToggle(glm::vec2(border + border / 2, portrait + (border + border / 2)), glm::vec2(portrait / 2, portrait / 2), "") {
 
     portraitToggle.addCallback([this]() {
         isAdvancedView = !isAdvancedView;
@@ -20,9 +20,6 @@ InGame::InGame()  : Scene(GAME), turretShopToggle(glm::vec2(game -> getSize().at
     turretShopToggle.addCallback([this]() {
         isTurretShopOpen = !isTurretShopOpen;
     });
-
-    toggles.push_back(portraitToggle);
-    toggles.push_back(playerShopToggle);
 
     refreshUpgradePanels();
 
@@ -46,7 +43,8 @@ void InGame::render() {
 }
 
 void InGame::update() {
-    for (auto toggle : toggles) { toggle.update(); }
+    portraitToggle.update();
+    playerShopToggle.update();
 
     if (!isAdvancedView) {
         auto mousePos = game -> input -> getMousePosition();
@@ -70,12 +68,14 @@ void InGame::update() {
         );
     }
 
-    for (size_t i = 0; i < upgradePanels.size(); ++i) {
-        glm::vec2 panelPosition = isAdvancedView
-            ? glm::vec2(4, 2 * (portrait + border) + 2 + i * (upgradePanels[i] -> getSize().y + border))
-            : glm::vec2(4, 2 * border + portrait + portrait / 2 + i * (upgradePanels[i] -> getSize().y + border));
-        upgradePanels[i] -> setPosition(panelPosition);
-        upgradePanels[i] -> update();
+    if (isPlayerShopOpen) {
+        for (size_t i = 0; i < upgradePanels.size(); ++i) {
+            glm::vec2 panelPosition = isAdvancedView
+                ? glm::vec2(4, 2 * (portrait + border) + 2 + i * (upgradePanels[i] -> getSize().y + border))
+                : glm::vec2(4, 2 * border + portrait + portrait / 2 + i * (upgradePanels[i] -> getSize().y + border));
+            upgradePanels[i] -> setPosition(panelPosition);
+            upgradePanels[i] -> update();
+        }
     }
 
     if (isTurretShopOpen) {
