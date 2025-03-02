@@ -41,7 +41,10 @@ class InGame : public Scene {
         void renderTurretUpgrades();
 
         void renderWaveInfo();
-        void renderPopup(const std::string& text, const glm::vec2& position, const glm::vec3& color);
+
+        void renderPopup(const std::string& text, const glm::vec2& position, const glm::vec3 &color);
+        void renderUpgradeNode(Upgrade* upgrade, const glm::vec2& position, const glm::vec3 &color);
+        void renderConnection(const glm::vec2& from, const glm::vec2& to, const glm::vec3 &color);
 
     public:
         void refreshUpgradePanels();

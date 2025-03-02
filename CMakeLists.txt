@@ -99,6 +99,8 @@ add_executable(
         src/utils/math/number/number.h
         src/entity/turret/panel/ShopPanel.cpp
         src/entity/turret/panel/ShopPanel.h
+        src/core/upgrades/turret/TurretUpgradeManager.cpp
+        src/core/upgrades/turret/TurretUpgradeManager.h
 )
 
 target_include_directories(plastic PRIVATE dependencies) # Includes location

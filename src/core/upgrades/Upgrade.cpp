@@ -41,3 +41,15 @@ const std::string & Upgrade::getDescription() const {
 void Upgrade::setDescription(const std::string &description) {
     this -> description = description;
 }
+
+bool Upgrade::isUnlocked() const {
+    return this -> unlocked;
+}
+
+void Upgrade::setUnlocked(bool unlocked) {
+    this -> unlocked = unlocked;
+}
+
+bool Upgrade::isTurretUpgrade() const {
+    return (type == TURRET_DAMAGE || type == TURRET_FIRERATE || type == TURRET_RANGE || type == TURRET_SPECIAL);
+}

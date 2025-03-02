@@ -70,6 +70,8 @@ void ShopPanel::render() {
 void ShopPanel::update() {
     if (game -> player -> getCoins() < Turret::getCost(type)) {
         button.setActive(false);
+    } else {
+        button.setActive(true);
     }
 
     button.update();

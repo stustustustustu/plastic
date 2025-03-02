@@ -4,20 +4,28 @@
 #include "../../config.h"
 
 enum UpgradeType {
-    DAMAGE, // increases damage
-    HEALTH, // increases max health
-    SHIELD, // increases max shield
-    SPEED, // increases speed
-    SPECIAL // lifesteal and so on
+    // player
+    DAMAGE,
+    HEALTH,
+    SHIELD,
+    SPEED,
+    SPECIAL,
+
+    // turret
+    TURRET_DAMAGE,
+    TURRET_RANGE,
+    TURRET_FIRERATE,
+    TURRET_SPECIAL
 };
 
 class Upgrade {
-    private:
+    protected:
         std::string name;
         int cost;
         UpgradeType type;
         float multiplier;
         std::string description;
+        bool unlocked = false; // mostly for turrets
 
     public:
         Upgrade(const std::string &name, int cost, UpgradeType type, float increase, const std::string &description);
@@ -36,6 +44,11 @@ class Upgrade {
 
         const std::string &getDescription() const;
         void setDescription(const std::string &description);
+
+        bool isUnlocked() const;
+        void setUnlocked(bool unlocked);
+
+        bool isTurretUpgrade() const;
 };
 
 

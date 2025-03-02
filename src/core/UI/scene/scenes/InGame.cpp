@@ -273,6 +273,23 @@ void InGame::renderTurretUpgrades() {
     // X button
     turretUpgradeClose.render();
     game -> renderer -> DrawText("X", popupPosition + glm::vec2(popupSize.x - (border + game -> text -> GetWidth("X", 16) + 1), border + 14), 16.0f, true, HEXtoRGB(0xFF0000));
+
+    // skill tree
+    auto skillTree = game -> turret -> getUpgradeManager().getSkillTree();
+    auto nodePositions = game -> turret -> calculateNodePositions();
+
+    for (const auto& [upgrade, prereqs] : skillTree) {
+        glm::vec2 nodePosition = nodePositions[upgrade];
+
+        // Render the upgrade node
+        renderUpgradeNode(upgrade, nodePosition, HEXtoRGB(0x4F4F4F));
+
+        // Render connections to prerequisites
+        for (auto prereq : prereqs) {
+            glm::vec2 prereqPosition = nodePositions[prereq];
+            renderConnection(nodePosition + glm::vec2(12), prereqPosition + glm::vec2(12), HEXtoRGB(0xFFFFFF));
+        }
+    }
 }
 
 void InGame::renderWaveInfo() {
@@ -287,6 +304,19 @@ void InGame::renderPopup(const std::string &text, const glm::vec2 &position, con
     game -> renderer -> DrawSpriteSheet(*game -> texture, position, 2, 32, 32, glm::vec2(textWidth + 10, textHeight + 10), 0, HEXtoRGB(0x2F2F2F));
 
     game -> renderer -> DrawText(text, position + glm::vec2(5, textHeight + 2), 16.0f, true, color);
+}
+
+void InGame::renderUpgradeNode(Upgrade *upgrade, const glm::vec2 &position, const glm::vec3 &color) {
+    Button button(position, glm::vec2(24), "", color);
+
+    button.render();
+    if (button.isHovering()) {
+        renderPopup(upgrade -> getDescription(), game -> input -> getMousePosition() + glm::vec2(12, 4), glm::vec3(1.0f, 1.0f, 1.0f));
+    }
+}
+
+void InGame::renderConnection(const glm::vec2 &from, const glm::vec2 &to, const glm::vec3 &color) {
+    game -> renderer -> DrawLine(from, to, 2.0f, color);
 }
 
 void InGame::refreshUpgradePanels() {

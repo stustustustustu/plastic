@@ -41,6 +41,8 @@ void UpgradePanel::render() {
 void UpgradePanel::update() {
     if (game -> player -> getCoins() < upgrade.getCost()) {
         button.setActive(false);
+    } else {
+        button.setActive(true);
     }
 
     button.update();

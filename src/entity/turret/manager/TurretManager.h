@@ -2,6 +2,7 @@
 #define TURRETMANAGER_H
 
 #include "../../../core/upgrades/manager/UpgradeManager.h"
+#include "../../../core/upgrades/turret/TurretUpgradeManager.h"
 #include "../Turret.h"
 
 class TurretManager {
@@ -13,12 +14,20 @@ class TurretManager {
         bool isUpgradeMenuOpen = false;
         TurretType placingTurretType = TurretType::RIFLE;
 
+    private:
+        TurretUpgradeManager upgradeManager;
+
     public:
         glm::vec2 menuSize, menuPosition;
 
     public:
+        TurretManager();
+
         void update();
         void render();
+
+        void initUpgrades();
+        std::map<Upgrade*, glm::vec2> calculateNodePositions() const;
 
         void renderPreview(const glm::vec2& position) const;
 
@@ -36,6 +45,10 @@ class TurretManager {
         bool isValidPlacement(const std::vector<float>& position) const;
 
         std::shared_ptr<Turret> getSelectedTurret() const;
+
+        TurretUpgradeManager& getUpgradeManager();
+        bool unlockTurretUpgrade(const std::string& upgradeName);
+
 };
 
 #endif // TURRETMANAGER_H
