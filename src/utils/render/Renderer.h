@@ -13,7 +13,6 @@ class Renderer {
         unsigned int quadVAO;
 
         Texture *pixel;
-        Texture *background;
 
         glm::mat4 projection;
 
@@ -61,8 +60,6 @@ class Renderer {
             glm::vec3 color = glm::vec3(1.0f),
             float opacity = 1.0f
         ) const;
-
-        void DrawBackground(int index) const;
 
         void DrawLine(glm::vec2 position1, glm::vec2 position2, float thickness, glm::vec3 color) const;
         void DrawLine(float x1, float y1, float x2, float y2, float thickness, glm::vec3 color) const;

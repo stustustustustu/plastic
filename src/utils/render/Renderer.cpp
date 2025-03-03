@@ -6,7 +6,7 @@
 
 const auto game = Game::getInstance();
 
-Renderer::Renderer(ShaderUtils &shader) : shader(shader), quadVAO(0), pixel(Texture::Create("../src/assets/sprites/pixel.png", true)), background(Texture::Create("../src/assets/sprites/background.png", true)){
+Renderer::Renderer(ShaderUtils &shader) : shader(shader), quadVAO(0), pixel(Texture::Create("../assets/sprites/pixel.png", true)){
 	initRenderer();
 }
 
@@ -136,13 +136,6 @@ void Renderer::DrawSpriteSheet(Texture &texture, glm::vec2 position, int index, 
     float v2 = static_cast<float>((index / cols) + 1) / rows;
 
     this->DrawSprite(texture, position, u1, v1, u2, v2, size, rotate, color, opacity);
-}
-
-void Renderer::DrawBackground(int index) const {
-	glm::vec2 position(0.0f, 0.0f);
-	glm::vec2 size(1280.0f, 960.0f);
-
-	DrawSpriteSheet(*background, position, index, 1, 4, size);
 }
 
 void Renderer::DrawLine(glm::vec2 position1, glm::vec2 position2, float thickness, glm::vec3 color) const {

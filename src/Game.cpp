@@ -67,7 +67,7 @@ bool Game::Init() {
 
     renderer = new Renderer(*shader);
     batch = new BatchRenderer(100000);
-    text = new TextRenderer(*t_shader, "../src/assets/font/quaver.ttf" , 48);
+    text = new TextRenderer(*t_shader, "../assets/font/quaver.ttf" , 48);
 
     input = new InputHandler();
     wave = new WaveManager();
@@ -80,7 +80,7 @@ bool Game::Init() {
 
     turret = new TurretManager();
 
-    texture = Texture::Create("../src/assets/sprites/sheet.png", true);
+    texture = Texture::Create("../assets/sprites/sheet.png", true);
 
     renderer -> SetProjection(camera -> getStaticProjection());
     camera -> returnToDefault();

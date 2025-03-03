@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.30)
 project(plastic VERSION 0.1)
 
-# todo: add font renderer using FreeType
+set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static")
 
 find_package(OpenGL REQUIRED)
 
