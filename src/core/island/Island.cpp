@@ -69,7 +69,7 @@ void Island::generate() {
 
     traceIslandEdge();
 
-    std::cout << "Generated an island with the seed of: " << seed << ", using threshold: " << threshold << std::endl;
+    //std::cout << "Generated an island with the seed of: " << seed << ", using threshold: " << threshold << std::endl;
 }
 
 void Island::traceIslandEdge() {

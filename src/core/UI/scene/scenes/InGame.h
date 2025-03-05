@@ -9,16 +9,18 @@
 
 class InGame : public Scene {
     private:
+        float border = 8;
+        float portrait = 48;
+        int width = 100;
+
+    private:
         bool isHoveringHealth = false;
         bool isHoveringShield = false;
         bool isPlayerShopOpen = false;
         bool isTurretShopOpen = false;
         bool isAdvancedView = false;
 
-        float border = 8;
-        float portrait = 48;
-        int width = 100;
-
+    private:
         Button portraitToggle;
         Button playerShopToggle;
         Button turretShopToggle;

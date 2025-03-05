@@ -10,7 +10,10 @@ void Button::render() {
         game -> renderer -> DrawSpriteSheet(*game -> texture, position, 2, 32, 32, size, 0, brightness(color, -0.50));
         return;
     }
+
     game -> renderer -> DrawSpriteSheet(*game -> texture, position, 2, 32, 32, size, 0, isHovering() ? brightness(color, 0.25) : color);
+
+    game -> renderer -> DrawText(label, getCenteredTextPosition(label, 16.0f) + glm::vec2(0, 14), 16.0f, true);
 }
 
 void Button::update() {

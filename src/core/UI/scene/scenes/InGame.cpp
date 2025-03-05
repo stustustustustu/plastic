@@ -281,10 +281,8 @@ void InGame::renderTurretUpgrades() {
     for (const auto& [upgrade, prereqs] : skillTree) {
         glm::vec2 nodePosition = nodePositions[upgrade];
 
-        // Render the upgrade node
         renderUpgradeNode(upgrade, nodePosition, HEXtoRGB(0x4F4F4F));
 
-        // Render connections to prerequisites
         for (auto prereq : prereqs) {
             glm::vec2 prereqPosition = nodePositions[prereq];
             renderConnection(nodePosition + glm::vec2(12), prereqPosition + glm::vec2(12), HEXtoRGB(0xFFFFFF));

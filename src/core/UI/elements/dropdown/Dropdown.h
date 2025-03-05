@@ -6,20 +6,22 @@
 
 class Dropdown : public Element {
     private:
+        std::vector<std::string> options;
+        int selectedIndex = 0;
         bool open = false;
-        std::vector<Element*> elements;
 
     public:
-        Dropdown(glm::vec2 position, glm::vec2 size) : Element(position, size) {}
-
+        Dropdown(glm::vec2 position, glm::vec2 size, const std::string& label);
         void render() override;
         void update() override;
 
-        void toggle();
+        bool isOpen() const;
 
-        void addElement(Element* element);
+        void addOption(const std::string& option);
+        int getOptionCount() const;
+
+        int getSelectedIndex() const;
+        void selectOption(int index);
 };
-
-
 
 #endif //DROPDOWN_H

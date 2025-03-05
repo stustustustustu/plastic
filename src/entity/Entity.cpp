@@ -352,13 +352,11 @@ bool Entity::takeCoins(Entity &target, float percentage) {
 
     int amount = static_cast<int>(target.getCoins() * percentage);
     if (amount <= 0) {
-        //std::cerr << "No coins to steal." << std::endl;
         return false;
     }
 
     if (target.spendCoins(amount)) {
         this -> addCoins(amount);
-        //std::cout << "Stole " << amount << " coins from the target." << std::endl;
         return true;
     }
 

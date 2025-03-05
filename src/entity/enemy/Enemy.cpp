@@ -4,7 +4,30 @@
 auto const game = Game::getInstance();
 
 Enemy::Enemy(EnemyType type, const std::vector<float>& position, float health, float damage, float speed) : Entity(position, speed * 0.5f, damage, health), type(type) {
-    this -> setCoins(std::max(5, rand() % static_cast<int>(health) / 10));
+    setCoins(std::max(5, rand() % static_cast<int>(health) / 10));
+
+    switch (game -> getDifficulty()) {
+        case EASY:
+            setHealth(health * 0.8f);
+            setCoins(std::max(1, static_cast<int>(getCoins() * 1.2f)));
+            break;
+        case MEDIUM:
+            setHealth(health * 1.0f);
+            setCoins(std::max(1, static_cast<int>(getCoins() * 1.0f)));
+            break;
+        case HARD:
+            setHealth(health * 1.2f);
+            setCoins(std::max(1, static_cast<int>(getCoins() * 0.8f)));
+            break;
+        case EXPERT:
+            setHealth(health * 1.4f);
+            setCoins(std::max(1, static_cast<int>(getCoins() * 0.6f)));
+            break;
+        case IMPOSSIBLE:
+            setHealth(health * 1.6f);
+            setCoins(std::max(1, static_cast<int>(getCoins() * 0.4f)));
+            break;
+    }
 }
 
 std::vector<Enemy> Enemy::generateEnemies(int index, int totalWeight) {

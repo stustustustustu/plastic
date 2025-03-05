@@ -7,7 +7,6 @@
 #include "../utils/math/collision/Collision.h"
 #include "../utils/math/color/color.h"
 
-
 class Entity {
     private:
         // Position vector
@@ -63,8 +62,8 @@ class Entity {
 
         std::vector<float> getPosition() const;
         std::vector<int> getRenderPosition() const;
-        void setPosition(std::vector<float>); // Set position to given vector
-        void move(std::vector<int>); // Add vectors together
+        void setPosition(std::vector<float>);
+        void move(std::vector<int>);
         void move(const std::vector<float>&);
 
         float getSpeed() const;
@@ -85,8 +84,8 @@ class Entity {
         float getMaxShield() const;
         void setMaxShield(float);
 
-        void hit(float, bool); // Entity taking damage
-        void heal(float, bool); // Entity healing
+        void hit(float, bool);
+        void heal(float, bool);
 
         int getLevel() const;
         void setLevel(int);

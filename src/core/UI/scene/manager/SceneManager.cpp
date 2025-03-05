@@ -29,3 +29,7 @@ void SceneManager::update() {
         currentScene -> update();
     }
 }
+
+SceneType SceneManager::getScene() const {
+    return currentScene ? currentScene -> getType() : SceneType::NONE;
+}

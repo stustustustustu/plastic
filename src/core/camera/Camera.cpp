@@ -24,7 +24,7 @@ void Camera::Update() {
         targetZoom = 1.0f;
     }
 
-    // quick reset back to original position if camera isn't being interacted with (too fast to use)
+    // quick reset back to original position if camera isn't being interacted with
     if (!(panning || game -> input -> getActionManager().getActionState("CAMERA_ZOOM_IN") || game -> input -> getActionManager().getActionState("CAMERA_ZOOM_OUT"))) {
         returnToDefault();
     }

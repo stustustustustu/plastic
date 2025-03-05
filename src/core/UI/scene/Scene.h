@@ -7,8 +7,10 @@
 enum SceneType {
     GAME,
     MENU,
+    WORLD_CREATION,
     GAME_OVER,
-    REPLAY
+    REPLAY,
+    NONE
 };
 
 class Scene {

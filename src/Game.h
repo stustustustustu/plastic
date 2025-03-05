@@ -22,8 +22,7 @@
 
 enum GameState {
     ACTIVE,
-    PAUSED,
-    NONE
+    PAUSED
 };
 
 enum Difficulty {
@@ -41,6 +40,7 @@ class Game {
         GameState state;
         float width, height; // window dimensions
         Difficulty difficulty;
+        unsigned int seed;
 
     public:
         std::vector<std::unique_ptr<Projectile>> projectiles;
@@ -80,6 +80,11 @@ class Game {
         static Game *getInstance(float width = 1280.0f, float height = 960.0f);
 
         std::vector<float> getSize();
+        Difficulty getDifficulty() const;
+        unsigned int getSeed() const;
+
+        void setDifficulty(Difficulty difficulty);
+        void setSeed(unsigned int seed);
 
         bool Init();
         void Update();

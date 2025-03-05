@@ -37,6 +37,8 @@ class Element {
 
         void addCallback(const Action::Callback &callback);
         void executeAction();
+
+        glm::vec2 getCenteredTextPosition(const std::string& text, float fontSize) const;
 };
 
 #endif //ELEMENT_H

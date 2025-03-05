@@ -101,6 +101,10 @@ add_executable(
         src/entity/turret/panel/ShopPanel.h
         src/core/upgrades/turret/TurretUpgradeManager.cpp
         src/core/upgrades/turret/TurretUpgradeManager.h
+        src/core/UI/scene/scenes/MainMenu.cpp
+        src/core/UI/scene/scenes/MainMenu.h
+        src/core/UI/scene/scenes/WorldCreation.cpp
+        src/core/UI/scene/scenes/WorldCreation.h
 )
 
 target_include_directories(plastic PRIVATE dependencies) # Includes location

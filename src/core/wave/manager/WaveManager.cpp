@@ -1,4 +1,7 @@
 #include "WaveManager.h"
+#include "../../../Game.h"
+
+auto const game = Game::getInstance();
 
 WaveManager::WaveManager() : currentWaveIndex(0), forcable(false) {}
 
@@ -6,6 +9,24 @@ void WaveManager::startNextWave() {
     currentWaveIndex++;
     int weight = 100 * std::pow(1.2f, currentWaveIndex);
     bool bossfight = false;
+
+    switch (game -> getDifficulty()) {
+        case EASY:
+            weight = static_cast<int>(weight * 0.8f);
+            break;
+        case MEDIUM:
+            weight = static_cast<int>(weight * 1.0f);
+            break;
+        case HARD:
+            weight = static_cast<int>(weight * 1.2f);
+            break;
+        case EXPERT:
+            weight = static_cast<int>(weight * 1.4f);
+            break;
+        case IMPOSSIBLE:
+            weight = static_cast<int>(weight * 1.6f);
+            break;
+    }
 
     if (currentWaveIndex > 0 && rand() % (100 - (currentWaveIndex * 2)) == 0) {
         weight *= 2;

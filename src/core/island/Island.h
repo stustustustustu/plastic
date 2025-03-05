@@ -44,11 +44,6 @@ class Island {
         float simplexNoise(float x, float y);
         float gradientMask(float x, float y);
 
-        void classifyTile(int x, int y, float threshold);
-        Tile getTileVariant(int x, int y);
-
-        void saveTileData(int x, int y, Tile variant);
-
     public:
         Island(unsigned int seed);
 

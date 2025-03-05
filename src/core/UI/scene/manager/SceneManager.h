@@ -17,6 +17,7 @@ class SceneManager {
         void update();
 
         void initScene() const;
+        SceneType getScene() const;
 };
 
 #endif //SCENEMANAGER_H

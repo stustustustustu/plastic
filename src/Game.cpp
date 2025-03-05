@@ -3,17 +3,21 @@
 #include <glm/ext/matrix_clip_space.hpp>
 
 #include "core/UI/scene/scenes/InGame.h"
+#include "core/UI/scene/scenes/MainMenu.h"
+#include "core/UI/scene/scenes/WorldCreation.h"
 
 Game *Game::instance = NULL;
 
-Game::Game(float width, float height) : state(ACTIVE), width(width), height(height),
-                                        window(NULL), shader(NULL), texture(NULL), renderer(NULL), batch(NULL),
-                                        text(NULL),
+Game::Game(float width, float height) : state(ACTIVE), width(width), height(height), difficulty(MEDIUM), seed(0),
+                                        window(NULL), shader(NULL), texture(NULL), renderer(NULL), batch(NULL), text(NULL),
                                         turret(new TurretManager()),
                                         camera(new Camera(width, height)),
                                         input(NULL), wave(NULL), upgrade(NULL), inventory(NULL),
                                         generator(NULL), scenes(NULL),
-                                        player(NULL), enemies(NULL) {}
+                                        player(NULL), enemies(NULL) {
+    srand(time(NULL));
+    setSeed(std::pow(rand(), 2));
+}
 
 Game::~Game() {
     delete shader;
@@ -48,6 +52,22 @@ std::vector<float> Game::getSize() {
     return {width, height};
 }
 
+Difficulty Game::getDifficulty() const {
+    return this -> difficulty;
+}
+
+void Game::setDifficulty(Difficulty difficulty) {
+    this -> difficulty = difficulty;
+}
+
+unsigned int Game::getSeed() const {
+    return this -> seed;
+}
+
+void Game::setSeed(unsigned int seed) {
+    this -> seed = seed;
+}
+
 bool Game::Init() {
     srand(time(NULL));
 
@@ -73,7 +93,7 @@ bool Game::Init() {
     wave = new WaveManager();
     inventory = new Inventory();
     upgrade = new UpgradeManager(*inventory);
-    generator = new Island(std::pow(rand(), 2));
+    generator = new Island(seed);
     scenes = new SceneManager();
 
     player = new Player();
@@ -87,10 +107,12 @@ bool Game::Init() {
 
     texture -> Bind();
 
-    wave -> startNextWave();
-
     scenes -> addScene(SceneType::GAME, std::make_unique<InGame>());
-    scenes -> switchScene(SceneType::GAME);
+    scenes -> addScene(SceneType::MENU, std::make_unique<MainMenu>());
+    scenes -> addScene(SceneType::WORLD_CREATION, std::make_unique<WorldCreation>());
+    scenes -> switchScene(SceneType::MENU);
+
+    wave -> startNextWave();
 
     return true;
 }
@@ -102,41 +124,45 @@ void Game::Update() {
     camera -> Update();
     scenes -> update();
 
-    for (auto &projectile : projectiles) {
-        projectile -> update();
-    }
+    //std::cout << difficulty << std::endl;
 
-    projectiles.erase(
-        std::remove_if(projectiles.begin(), projectiles.end(),
-            [](const std::unique_ptr<Projectile>& projectile) {
-                return projectile -> isMarked();
-            }),
-        projectiles.end()
-    );
-
-    Player::Movement(); // Player movement
-
-    turret -> update();
-
-    for (int i = 0; i < enemies -> size();) {
-        (*enemies)[i].moveTowards(player -> getPosition());
-
-        if (generator -> isLand(static_cast<int>((*enemies)[i].getPosition().at(0)) / Island::TILE_SIZE, static_cast<int>((*enemies)[i].getPosition().at(1)) / Island::TILE_SIZE)) {
-            player -> hit((*enemies)[i].getDamage(), false);
-            enemies -> erase(enemies -> begin() + i);
+    if (scenes -> getScene() == SceneType::GAME) {
+        for (auto &projectile : projectiles) {
+            projectile -> update();
         }
 
-        if ((*enemies)[i].getHealth() <= 0) {
-            player -> takeCoins((*enemies)[i], 1.0f);
-            enemies -> erase(enemies -> begin() + i);
+        projectiles.erase(
+            std::remove_if(projectiles.begin(), projectiles.end(),
+                [](const std::unique_ptr<Projectile>& projectile) {
+                    return projectile -> isMarked();
+                }),
+            projectiles.end()
+        );
 
-            if (enemies -> empty()) {
-                wave -> startNextWave();
-                wave -> updateWaveStatus();
-                enemies = wave -> getCurrentEnemies();
+        Player::Movement(); // player movement
+
+        turret -> update();
+
+        for (int i = 0; i < enemies -> size();) {
+            (*enemies)[i].moveTowards(player -> getPosition());
+
+            if (generator -> isLand(static_cast<int>((*enemies)[i].getPosition().at(0)) / Island::TILE_SIZE, static_cast<int>((*enemies)[i].getPosition().at(1)) / Island::TILE_SIZE)) {
+                player -> hit((*enemies)[i].getDamage(), false);
+                enemies -> erase(enemies -> begin() + i);
             }
-        } else {
-            ++i;
+
+            if ((*enemies)[i].getHealth() <= 0) {
+                player -> takeCoins((*enemies)[i], 1.0f);
+                enemies -> erase(enemies -> begin() + i);
+
+                if (enemies -> empty()) {
+                    wave -> startNextWave();
+                    wave -> updateWaveStatus();
+                    enemies = wave -> getCurrentEnemies();
+                }
+            } else {
+                ++i;
+            }
         }
     }
 }
@@ -148,33 +174,36 @@ void Game::Render() const {
 
     generator -> render(*texture);
 
-    for (auto &projectile : projectiles) {
-        projectile->render();
-    }
+    if (scenes -> getScene() == SceneType::GAME) {
+        for (auto &projectile : projectiles) {
+            projectile->render();
+        }
 
-    if (player -> getHealth() > 0) {
-        player -> drawEntity(texture);
-    }
+        if (player -> getHealth() > 0) {
+            player -> drawEntity(texture);
+        }
 
-    if (wave) {
-        for (const auto& enemy : *enemies) {
-            if (enemy.getHealth() > 0) {
-                enemy.drawEntity(texture);
+        if (wave) {
+            for (const auto& enemy : *enemies) {
+                if (enemy.getHealth() > 0) {
+                    enemy.drawEntity(texture);
+                }
             }
         }
-    }
 
-    Player::drawLaser();
+        Player::drawLaser();
+
+        //renderer -> DrawText("ABCDEFGHIJKLMNOPQRSTUVWXYZ", glm::vec2(5, 50), 24.0f, true);
+        //renderer -> DrawText("abcdefghijklmnopqrstuvwxyz", glm::vec2(5, 50 + 24), 24.0f, true);
+        //renderer -> DrawText("0123456789", glm::vec2(5, 50 + 48), 24.0f, true);
+        //renderer -> DrawText(".,:;_*+-/=!?()[]{}<>#$%&@", glm::vec2(5, 50 + 72), 24.0f, true);
+
+        turret -> render();
+    }
 
     renderer -> SetProjection(camera -> getStaticProjection());
 
     scenes -> render();
-    //renderer -> DrawText("ABCDEFGHIJKLMNOPQRSTUVWXYZ", glm::vec2(5, 50), 24.0f, true);
-    //renderer -> DrawText("abcdefghijklmnopqrstuvwxyz", glm::vec2(5, 50 + 24), 24.0f, true);
-    //renderer -> DrawText("0123456789", glm::vec2(5, 50 + 48), 24.0f, true);
-    //renderer -> DrawText(".,:;_*+-/=!?()[]{}<>#$%&@", glm::vec2(5, 50 + 72), 24.0f, true);
-
-    turret -> render();
 
     glfwSwapBuffers(window);
     glfwPollEvents();

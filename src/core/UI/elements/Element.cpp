@@ -55,3 +55,12 @@ void Element::addCallback(const Action::Callback &callback) {
 void Element::executeAction() {
     action.execute();
 }
+
+glm::vec2 Element::getCenteredTextPosition(const std::string &text, float fontSize) const {
+    float textWidth = game -> text -> GetWidth(text, fontSize);
+
+    float offsetX = (size.x - textWidth) / 2.0f;
+    float offsetY = (size.y - fontSize) / 2.0f;
+
+    return position + glm::vec2(offsetX, offsetY);
+}
