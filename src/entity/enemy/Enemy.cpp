@@ -9,22 +9,32 @@ Enemy::Enemy(EnemyType type, const std::vector<float>& position, float health, f
     switch (game -> getDifficulty()) {
         case EASY:
             setHealth(health * 0.8f);
+            setDamage(damage * 0.8f);
+            setSpeed(getSpeed() * 0.9f);
             setCoins(std::max(1, static_cast<int>(getCoins() * 1.2f)));
             break;
         case MEDIUM:
             setHealth(health * 1.0f);
+            setDamage(damage * 1.0f);
+            setSpeed(getSpeed() * 1.0f);
             setCoins(std::max(1, static_cast<int>(getCoins() * 1.0f)));
             break;
         case HARD:
             setHealth(health * 1.2f);
+            setDamage(damage * 1.2f);
+            setSpeed(getSpeed() * 1.1f);
             setCoins(std::max(1, static_cast<int>(getCoins() * 0.8f)));
             break;
         case EXPERT:
             setHealth(health * 1.4f);
+            setDamage(damage * 1.4f);
+            setSpeed(getSpeed() * 1.15f);
             setCoins(std::max(1, static_cast<int>(getCoins() * 0.6f)));
             break;
         case IMPOSSIBLE:
             setHealth(health * 1.6f);
+            setDamage(damage * 1.6f);
+            setSpeed(getSpeed() * 1.2f);
             setCoins(std::max(1, static_cast<int>(getCoins() * 0.4f)));
             break;
     }
