@@ -1,7 +1,9 @@
 #ifndef WORLDCREATION_H
 #define WORLDCREATION_H
+
 #include "../Scene.h"
 #include "../../../island/Island.h"
+
 #include "../../elements/button/Button.h"
 #include "../../elements/dropdown/Dropdown.h"
 #include "../../elements/textbox/Textbox.h"
@@ -25,7 +27,8 @@ class WorldCreation : public Scene {
         void render() override;
         void update() override;
 
-    private:
+        void resize() override;
+
         void updateIslandPreview();
 };
 

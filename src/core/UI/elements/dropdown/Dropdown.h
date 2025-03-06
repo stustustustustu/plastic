@@ -21,6 +21,8 @@ class Dropdown : public Element {
         int getOptionCount() const;
 
         int getSelectedIndex() const;
+        std::string getSelectedOption() const;
+
         void selectOption(int index);
 };
 

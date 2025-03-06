@@ -41,6 +41,7 @@ class Game {
         float width, height; // window dimensions
         Difficulty difficulty;
         unsigned int seed;
+        float volume = 0.5f;
 
     public:
         std::vector<std::unique_ptr<Projectile>> projectiles;
@@ -80,16 +81,23 @@ class Game {
         static Game *getInstance(float width = 1280.0f, float height = 960.0f);
 
         std::vector<float> getSize();
-        Difficulty getDifficulty() const;
-        unsigned int getSeed() const;
+        void setSize(const std::string &size);
 
+        Difficulty getDifficulty() const;
         void setDifficulty(Difficulty difficulty);
+
+        unsigned int getSeed() const;
         void setSeed(unsigned int seed);
+
+        float getVolume() const;
+        void setVolume(float volume);
 
         bool Init();
         void Update();
         void Render() const;
         void Loop();
+
+        void resizeWindow(glm::ivec2 size);
 };
 
 #endif //GAME_H

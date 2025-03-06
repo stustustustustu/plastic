@@ -15,6 +15,7 @@ void SceneManager::addScene(SceneType type, std::unique_ptr<Scene> scene) {
 void SceneManager::switchScene(SceneType type) {
     if (scenes.find(type) != scenes.end()) {
         currentScene = scenes[type].get();
+        currentScene -> resize();
     }
 }
 

@@ -158,6 +158,8 @@ bool Renderer::initializeWindow(GLFWwindow*& window, int width, int height, cons
         return false;
     }
 
+	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+
     window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
     if (!window) {
         std::cout << "GLFW couldn't create a window." << std::endl;

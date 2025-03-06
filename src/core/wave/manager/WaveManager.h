@@ -7,7 +7,7 @@ class WaveManager {
     private:
         std::vector<Wave> waves;
 
-        int currentWaveIndex;
+        int currentWaveIndex = 0;
         bool forcable;
 
         std::deque<std::shared_ptr<Wave>> activeWaves;

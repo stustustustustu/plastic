@@ -2,6 +2,7 @@
 #define MAINMENU_H
 
 #include "../Scene.h"
+
 #include "../../elements/button/Button.h"
 
 class MainMenu : public Scene {
@@ -18,6 +19,8 @@ class MainMenu : public Scene {
 
         void render() override;
         void update() override;
+
+        void resize() override;
 };
 
 #endif //MAINMENU_H

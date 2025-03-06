@@ -10,7 +10,7 @@ Enemy::Enemy(EnemyType type, const std::vector<float>& position, float health, f
         case EASY:
             setHealth(health * 0.8f);
             setDamage(damage * 0.8f);
-            setSpeed(getSpeed() * 0.9f);
+            setSpeed(getSpeed() * 0.8f);
             setCoins(std::max(1, static_cast<int>(getCoins() * 1.2f)));
             break;
         case MEDIUM:
@@ -22,19 +22,19 @@ Enemy::Enemy(EnemyType type, const std::vector<float>& position, float health, f
         case HARD:
             setHealth(health * 1.2f);
             setDamage(damage * 1.2f);
-            setSpeed(getSpeed() * 1.1f);
+            setSpeed(getSpeed() * 1.2f);
             setCoins(std::max(1, static_cast<int>(getCoins() * 0.8f)));
             break;
         case EXPERT:
             setHealth(health * 1.4f);
             setDamage(damage * 1.4f);
-            setSpeed(getSpeed() * 1.15f);
+            setSpeed(getSpeed() * 1.4f);
             setCoins(std::max(1, static_cast<int>(getCoins() * 0.6f)));
             break;
         case IMPOSSIBLE:
             setHealth(health * 1.6f);
             setDamage(damage * 1.6f);
-            setSpeed(getSpeed() * 1.2f);
+            setSpeed(getSpeed() * 1.6f);
             setCoins(std::max(1, static_cast<int>(getCoins() * 0.4f)));
             break;
     }

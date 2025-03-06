@@ -4,12 +4,16 @@
 const auto game = Game::getInstance();
 
 void Slider::render() {
-    game -> renderer -> DrawSpriteSheet(*game -> texture, getPosition(), 2, 32, 32, getSize(), 0, HEXtoRGB(0x323232));
+    game -> renderer -> DrawSpriteSheet(*game -> texture, position + glm::vec2(2), 2, 32, 32, size, 0, HEXtoRGB(0x000000));
 
-    float normalizedValue = (value - min) / (max - min); // normalize to [0, 1]
-    glm::vec2 thumbPosition = getPosition() + glm::vec2(normalizedValue * getSize().x, 0);
+    game -> renderer -> DrawSpriteSheet(*game -> texture, position, 2, 32, 32, size, 0, HEXtoRGB(0x3F3F3F));
 
-    game -> renderer -> DrawSpriteSheet(*game -> texture, thumbPosition, 2, 32, 32, {10, getSize().y}, 0, HEXtoRGB(0x646464));
+    float normalizedValue = (value - min) / (max - min);
+    glm::vec2 thumbPosition = position + glm::vec2(normalizedValue * size.x - 5, -2);
+
+    game -> renderer -> DrawSpriteSheet(*game -> texture, thumbPosition + glm::vec2(2), 2, 32, 32, {10, size.y + 4}, 0, HEXtoRGB(0x000000));
+
+    game -> renderer -> DrawSpriteSheet(*game -> texture, thumbPosition, 2, 32, 32, {10, size.y + 4}, 0, HEXtoRGB(0x646464));
 }
 
 void Slider::update() {
@@ -19,11 +23,10 @@ void Slider::update() {
 
     if (dragging) {
         if (glfwGetMouseButton(game -> window, 0) == GLFW_PRESS) {
-            double mouseX, mouseY;
-            glfwGetCursorPos(game -> window, &mouseX, &mouseY);
+            auto mousePos = game -> input -> getMousePosition();
 
-            float normalizedValue = (mouseX - getPosition().x) / getSize().x;
-            normalizedValue = std::max(0.0f, std::min(1.0f, normalizedValue)); // clamp to [0, 1]
+            float normalizedValue = (mousePos.x - position.x) / size.x;
+            normalizedValue = std::max(0.0f, std::min(1.0f, normalizedValue));
 
             value = min + normalizedValue * (max - min);
 

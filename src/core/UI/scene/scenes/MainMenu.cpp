@@ -15,8 +15,7 @@ MainMenu::MainMenu() : Scene(SceneType::MENU) {
     });
 
     optionsButton -> addCallback([]() {
-        std::cerr << "not implemented" << std::endl;
-        // TODO: options scene
+        game -> scenes -> switchScene(SceneType::OPTIONS);
     });
 
     quitButton -> addCallback([]() {
@@ -27,6 +26,8 @@ MainMenu::MainMenu() : Scene(SceneType::MENU) {
     addElement(std::move(optionsButton));
     addElement(std::move(quitButton));
 }
+
+void MainMenu::resize() {}
 
 void MainMenu::render() {
     for (const auto& element : getElements()) {

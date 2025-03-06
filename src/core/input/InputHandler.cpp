@@ -26,7 +26,7 @@ void InputHandler::InitBindings() {
     bindKeyCombo( {GLFW_KEY_UP}, "CAMERA_ZOOM_IN");
     bindKeyCombo( {GLFW_KEY_DOWN}, "CAMERA_ZOOM_OUT");
 
-    bindKeyCombo( {GLFW_KEY_ESCAPE}, "PAUSE");
+    //bindKeyCombo( {GLFW_KEY_ESCAPE}, "PAUSE");
 }
 
 void InputHandler::RegisterActions() {

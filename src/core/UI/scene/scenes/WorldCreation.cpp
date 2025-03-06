@@ -43,36 +43,38 @@ WorldCreation::WorldCreation() : Scene(SceneType::WORLD_CREATION), islandPreview
         updateIslandPreview();
 
         game -> scenes -> switchScene(SceneType::GAME);
+
         game -> player -> setPosition({static_cast<float>(game -> player -> calculateSpawnTile().first * Island::TILE_SIZE + Island::TILE_SIZE / 2),
                                           static_cast<float>(game -> player -> calculateSpawnTile().second) * Island::TILE_SIZE + Island::TILE_SIZE / 2});
     });
-
-    addElement(std::move(backButton));
-    addElement(std::move(generateSeedButton));
-    addElement(std::move(createWorldButton));
 }
 
-void WorldCreation::updateIslandPreview() {
-    islandPreview = Island(currentSeed);
-    game -> generator = &islandPreview;
+void WorldCreation::resize() {
+    backButton -> setPosition(glm::vec2(game -> getSize().at(0), game -> getSize().at(1)) - glm::vec2(175, 75));
+    createWorldButton -> setPosition(glm::vec2(25, game -> getSize().at(1)) - glm::vec2(0, 75));
+
+    updateIslandPreview();
 }
 
 void WorldCreation::render() {
-    game -> generator -> render(*game -> texture);
-
-    for (const auto& element : getElements()) {
-        element -> render();
-    }
+    backButton -> render();
+    generateSeedButton -> render();
+    createWorldButton -> render();
 
     difficultyDropdown -> render();
     seedInput -> render();
 }
 
 void WorldCreation::update() {
-    for (const auto& element : getElements()) {
-        element -> update();
-    }
+    backButton -> update();
+    generateSeedButton -> update();
+    createWorldButton -> update();
 
     difficultyDropdown -> update();
     seedInput -> update();
+}
+
+void WorldCreation::updateIslandPreview() {
+    islandPreview = Island(currentSeed);
+    game -> generator = &islandPreview;
 }

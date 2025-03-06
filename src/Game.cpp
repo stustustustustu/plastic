@@ -4,6 +4,7 @@
 
 #include "core/UI/scene/scenes/InGame.h"
 #include "core/UI/scene/scenes/MainMenu.h"
+#include "core/UI/scene/scenes/Options.h"
 #include "core/UI/scene/scenes/WorldCreation.h"
 
 Game *Game::instance = NULL;
@@ -52,6 +53,27 @@ std::vector<float> Game::getSize() {
     return {width, height};
 }
 
+void Game::setSize(const std::string &size) {
+    size_t x = size.find('x');
+    if (x != std::string::npos) {
+        int w = std::stoi(size.substr(0, x));
+        int h = std::stoi(size.substr(x + 1));
+
+        glViewport(0, 0, w, h);
+
+        resizeWindow(glm::ivec2(w, h));
+    }
+}
+
+void Game::resizeWindow(glm::ivec2 size) {
+    this -> width = size.x;
+    this -> height = size.y;
+
+    glfwSetWindowSize(window, size.x, size.y);
+
+    camera -> setSize(size.x, size.y);
+}
+
 Difficulty Game::getDifficulty() const {
     return this -> difficulty;
 }
@@ -66,6 +88,14 @@ unsigned int Game::getSeed() const {
 
 void Game::setSeed(unsigned int seed) {
     this -> seed = seed;
+}
+
+float Game::getVolume() const {
+    return this -> volume;
+}
+
+void Game::setVolume(float volume) {
+    this -> volume = volume;
 }
 
 bool Game::Init() {
@@ -110,6 +140,8 @@ bool Game::Init() {
     scenes -> addScene(SceneType::GAME, std::make_unique<InGame>());
     scenes -> addScene(SceneType::MENU, std::make_unique<MainMenu>());
     scenes -> addScene(SceneType::WORLD_CREATION, std::make_unique<WorldCreation>());
+    scenes -> addScene(SceneType::OPTIONS, std::make_unique<Options>());
+
     scenes -> switchScene(SceneType::MENU);
 
     wave -> startNextWave();

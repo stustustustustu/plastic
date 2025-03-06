@@ -52,6 +52,8 @@ class Camera {
         void setSmoothMovement(bool);
 
         void returnToDefault();
+
+        void setSize(int screenWidth, int screenHeight);
 };
 
 

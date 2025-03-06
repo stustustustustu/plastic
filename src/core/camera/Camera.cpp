@@ -6,9 +6,8 @@ const auto game = Game::getInstance();
 Camera::Camera(float screenWidth, float screenHeight) : screenWidth(screenWidth), screenHeight(screenHeight), position(screenWidth / 2.0f, screenHeight / 2.0f), zoom(1.0f), targetZoom(1.0f), initialMousePos(0, 0) {}
 
 void Camera::Update() {
-    double mouseX, mouseY;
-    glfwGetCursorPos(game -> window, &mouseX, &mouseY);
-    handlePanning(mouseX, mouseY, 1.0f);
+    auto mousePos = game -> input -> getMousePosition();
+    handlePanning(mousePos.x, mousePos.y, 1.0f);
 
     if (smoothMovement) {
         position = glm::mix(position, targetPosition, 0.025f);
@@ -55,7 +54,7 @@ glm::mat4 Camera::getStaticProjection() const {
 void Camera::projectionMatrixToText(glm::mat4 projection) const {
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
-            std::cout << std::setw(4) << projection[i][j] << " ";
+            std::cout << std::setw(12) << projection[i][j] << " ";
         }
         std::cout << std::endl;
     }
@@ -117,4 +116,20 @@ void Camera::setSmoothMovement(bool enabled) {
 void Camera::returnToDefault() {
     targetPosition = glm::vec2(screenWidth / 2.0f, screenHeight / 2.0f);
     targetZoom = 1.0f;
+}
+
+void Camera::setSize(int screenWidth, int screenHeight) {
+    position = glm::vec2(screenWidth / 2.0f, screenHeight / 2.0f);
+    targetPosition = position;
+
+    zoom = zoom * (static_cast<float>(screenWidth) / this -> screenWidth);
+    targetZoom = zoom;
+
+    this -> screenWidth = screenWidth;
+    this -> screenHeight = screenHeight;
+
+    std::cout << "Camera State After Resize:" << std::endl;
+    std::cout << "Position: (" << position.x << ", " << position.y << ")" << std::endl;
+    std::cout << "Zoom: " << zoom << std::endl;
+    std::cout << "Screen Size: " << screenWidth << "x" << screenHeight << std::endl;
 }

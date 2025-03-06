@@ -60,6 +60,10 @@ int Dropdown::getSelectedIndex() const {
     return selectedIndex;
 }
 
+std::string Dropdown::getSelectedOption() const {
+    return options[selectedIndex];
+}
+
 void Dropdown::selectOption(int index) {
     if (index >= 0 && index < options.size()) {
         selectedIndex = index;

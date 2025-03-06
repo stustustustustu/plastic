@@ -7,6 +7,7 @@
 enum SceneType {
     GAME,
     MENU,
+    OPTIONS,
     WORLD_CREATION,
     GAME_OVER,
     REPLAY,
@@ -24,6 +25,7 @@ class Scene {
 
         virtual void render() = 0;
         virtual void update() = 0;
+        virtual void resize() = 0;
 
         SceneType getType() const;
         void setType(SceneType type);

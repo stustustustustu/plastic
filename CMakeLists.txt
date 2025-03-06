@@ -72,8 +72,6 @@ add_executable(
         src/core/UI/elements/toggle/Toggle.h
         src/core/UI/elements/dropdown/Dropdown.cpp
         src/core/UI/elements/dropdown/Dropdown.h
-        src/core/UI/elements/container/Container.cpp
-        src/core/UI/elements/container/Container.h
 
         src/utils/render/text/TextRenderer.cpp
         src/utils/render/text/TextRenderer.h
@@ -105,6 +103,8 @@ add_executable(
         src/core/UI/scene/scenes/MainMenu.h
         src/core/UI/scene/scenes/WorldCreation.cpp
         src/core/UI/scene/scenes/WorldCreation.h
+        src/core/UI/scene/scenes/Options.cpp
+        src/core/UI/scene/scenes/Options.h
 )
 
 target_include_directories(plastic PRIVATE dependencies) # Includes location

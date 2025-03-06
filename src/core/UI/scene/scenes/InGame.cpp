@@ -36,6 +36,10 @@ InGame::InGame() : Scene(GAME),
     shopPanels.push_back(std::make_unique<ShopPanel>(panelPosition + glm::vec2(0, 2 * (panelSize.y + border)), panelSize, TurretType::BOMB));
 }
 
+void InGame::resize() {
+    //todo
+}
+
 void InGame::render() {
     renderPlayerStats();
     renderWaveInfo();
