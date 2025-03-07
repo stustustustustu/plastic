@@ -6,7 +6,7 @@ auto const game = Game::getInstance();
 Enemy::Enemy(EnemyType type, const std::vector<float>& position, float health, float damage, float speed) : Entity(position, speed * 0.5f, damage, health), type(type) {
     setCoins(std::max(5, rand() % static_cast<int>(health) / 10));
 
-    switch (game -> getDifficulty()) {
+    switch (game -> getCurrentWorld() -> getDifficulty()) {
         case EASY:
             setHealth(health * 0.8f);
             setDamage(damage * 0.8f);
@@ -73,7 +73,7 @@ std::vector<Enemy> Enemy::generateEnemies(int index, int totalWeight) {
             x = screenWidth / 2 + (rand() % (screenWidth * 2)) - screenWidth;
             y = screenHeight / 2 + (rand() % (screenHeight * 2)) - screenHeight;
 
-        } while (game -> generator -> distanceToNearestLand(x, y) < minDist);
+        } while (game -> getCurrentWorld() -> island -> distanceToNearestLand(x, y) < minDist);
 
         enemies.emplace_back(type, std::vector<float>{x, y}, health, damage, speed);
         totalWeight -= weight;

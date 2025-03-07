@@ -36,16 +36,20 @@ void InputHandler::RegisterActions() {
     getActionManager().registerAction("LEFT", [](){  });
     getActionManager().registerAction("RIGHT", [](){  });
     getActionManager().registerAction("SHOOT", []() {
-        game -> turret -> handleClick(getMousePosition());
+        if (game -> getCurrentWorld()) {
+            game -> getCurrentWorld() -> turret -> handleClick(getMousePosition());
+        }
     });
 
     getActionManager().registerAction("PLACE_TURRET", []() {
-        game -> turret -> handleClick(getMousePosition());
+        if (game -> getCurrentWorld()) {
+            game -> getCurrentWorld() -> turret -> handleClick(getMousePosition());
+        }
     });
 
     getActionManager().registerAction("CANCEL_PLACEMENT", []() {
-        if (game -> turret -> isPlacing()) {
-            game -> turret -> cancelPlacingTurret();
+        if (game -> getCurrentWorld() && game -> getCurrentWorld() -> turret -> isPlacing()) {
+            game -> getCurrentWorld() -> turret -> cancelPlacingTurret();
         }
     });
 

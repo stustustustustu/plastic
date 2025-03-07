@@ -4,17 +4,17 @@
 const auto game = Game::getInstance();
 
 int Inventory::getCoins() const {
-    return game -> player -> getCoins();
+    return game -> getCurrentWorld() -> player -> getCoins();
 }
 
 bool Inventory::hasEnoughCoins(int amount) const {
-    return game -> player -> getCoins() >= amount;
+    return game -> getCurrentWorld() -> player -> getCoins() >= amount;
 }
 
 bool Inventory::spendCoins(int amount) const {
-    return game -> player -> spendCoins(amount);
+    return game -> getCurrentWorld() -> player -> spendCoins(amount);
 }
 
 void Inventory::addCoins(int amount) {
-    game -> player -> addCoins(amount);
+    game -> getCurrentWorld() -> player -> addCoins(amount);
 }

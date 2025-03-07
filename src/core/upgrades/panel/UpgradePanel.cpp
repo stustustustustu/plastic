@@ -11,9 +11,9 @@ UpgradePanel::UpgradePanel(const Upgrade &upgrade, glm::vec2 position, glm::vec2
     button(position + glm::vec2(size.x - (border + 48), size.y - (24 + border)), glm::vec2(48, 24), "", HEXtoRGB(0x6F6F6F)) {
 
     button.addCallback([this, refresh, upgrade]() {
-        if (game -> player -> getCoins() >= this -> upgrade.getCost()) {
-            game -> upgrade -> upgrade(this -> upgrade.getType());
-            game -> player -> applyUpgrade(upgrade);
+        if (game -> getCurrentWorld() -> player -> getCoins() >= this -> upgrade.getCost()) {
+            game -> getCurrentWorld() -> upgrade -> upgrade(this -> upgrade.getType());
+            game -> getCurrentWorld() -> player -> applyUpgrade(upgrade);
 
             if (refresh) {
                 refresh();
@@ -39,7 +39,7 @@ void UpgradePanel::render() {
 }
 
 void UpgradePanel::update() {
-    if (game -> player -> getCoins() < upgrade.getCost()) {
+    if (game -> getCurrentWorld() -> player -> getCoins() < upgrade.getCost()) {
         button.setActive(false);
     } else {
         button.setActive(true);

@@ -29,7 +29,7 @@ void Turret::findTarget() {
     float minDistance = std::numeric_limits<float>::max();
     target = NULL;
 
-    for (const auto &enemy : *game -> enemies) {
+    for (const auto &enemy : *game -> getCurrentWorld() -> enemies) {
         float distance = calculateDistance(getPosition(), enemy.getPosition());
         if (distance < minDistance) {
             minDistance = distance;
@@ -94,7 +94,7 @@ void Turret::shoot() {
         }
 
         if (newProjectile) {
-            game -> projectiles.push_back(std::move(newProjectile));
+            game -> getCurrentWorld() -> projectiles.push_back(std::move(newProjectile));
         }
     }
 }

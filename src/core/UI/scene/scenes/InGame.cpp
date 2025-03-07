@@ -8,7 +8,7 @@ InGame::InGame() : Scene(GAME),
                     turretShopToggle(glm::vec2(game -> getSize().at(0) - 2 - portrait / 2, portrait), glm::vec2(portrait / 2, portrait / 2), "", HEXtoRGB(0x2F2F2F)),
                     portraitToggle(glm::vec2(border, border), glm::vec2(portrait, portrait), "", HEXtoRGB(0x2F2F2F)),
                     playerShopToggle(glm::vec2(border + border / 2, portrait + (border + border / 2)), glm::vec2(portrait / 2, portrait / 2), "", HEXtoRGB(0x2F2F2F)),
-                    turretUpgradeClose(game -> turret -> menuPosition + glm::vec2(game -> turret -> menuSize.x - (2 * border + game -> text -> GetWidth("X", 16)), border - 4), glm::vec2(24), "", HEXtoRGB(0x3F3F3F)) {
+                    turretUpgradeClose(glm::vec2(0, 0), glm::vec2(24), "", HEXtoRGB(0x3F3F3F)) {
 
     portraitToggle.addCallback([this]() {
         isAdvancedView = !isAdvancedView;
@@ -23,10 +23,14 @@ InGame::InGame() : Scene(GAME),
     });
 
     turretUpgradeClose.addCallback([this]() {
-        game -> turret -> closeUpgradeMenu();
+        if (game -> getCurrentWorld()) {
+            game -> getCurrentWorld() -> turret -> closeUpgradeMenu();
+        }
     });
 
-    refreshUpgradePanels();
+    if (game -> getCurrentWorld()) {
+        refreshUpgradePanels();
+    }
 
     glm::vec2 panelSize(2 * portrait + border + width, 6 * portrait / 3 - border);
     glm::vec2 panelPosition(game -> getSize().at(0) - (2 * portrait + border + width) - 4, portrait);
@@ -102,8 +106,8 @@ void InGame::update() {
         turretShopToggle.setPosition(glm::vec2(game -> getSize().at(0) - 2 - portrait / 2, portrait));
     }
 
-    if (game -> turret -> isUpgrading()) {
-        turretUpgradeClose.setPosition(game -> turret -> menuPosition + glm::vec2(game -> turret -> menuSize.x - (2 * border + game -> text -> GetWidth("X", 16)), border - 4));
+    if (game -> getCurrentWorld() -> turret -> isUpgrading()) {
+        turretUpgradeClose.setPosition(game -> getCurrentWorld() -> turret -> menuPosition + glm::vec2(game -> getCurrentWorld() -> turret -> menuSize.x - (2 * border + game -> text -> GetWidth("X", 16)), border - 4));
         turretUpgradeClose.update();
     }
 
@@ -114,7 +118,7 @@ void InGame::renderPlayerStats() {
     if (isAdvancedView) {
         renderAdvancedStats();
     } else {
-        std::string coinText = "$" + std::to_string(game -> player -> getCoins());
+        std::string coinText = "$" + std::to_string(game -> getCurrentWorld() -> player -> getCoins());
         int coinWidth = game -> text -> GetWidth(coinText, 16.0f) + border / 2;
 
         // background shadows
@@ -137,13 +141,13 @@ void InGame::renderPlayerStats() {
         game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(border), 2, 32, 32, glm::vec2(portrait), 0, HEXtoRGB(0xFFFFFF));
 
         // health
-        float health = game -> player -> getHealth() / game -> player -> getMaxHealth();
+        float health = game -> getCurrentWorld() -> player -> getHealth() / game -> getCurrentWorld() -> player -> getMaxHealth();
         game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(portrait + (border + border / 2), 10), 2, 32, 32, glm::vec2(width * health, 12), 0, HEXtoRGB(0xC04C47));
         game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(portrait + (border + border / 2), 20), 2, 32, 32, glm::vec2(width * health, 2), 0, HEXtoRGB(0x963531));
         game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(portrait + (border + border / 2) + width * health - 2, 10), 2, 32, 32, glm::vec2(2, 12), 0, HEXtoRGB(0x963531));
 
         // shield
-        float shield = game -> player -> getShield() / game -> player -> getMaxShield();
+        float shield = game -> getCurrentWorld() -> player -> getShield() / game -> getCurrentWorld() -> player -> getMaxShield();
         game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(portrait + (border + border / 2), 24), 2, 32, 32, glm::vec2(width * shield, 12), 0, HEXtoRGB(0x6699AA));
         game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(portrait + (border + border / 2), 34), 2, 32, 32, glm::vec2(width * shield, 2), 0, HEXtoRGB(0x426977));
         game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(portrait + (border + border / 2) + width * shield - 2, 24), 2, 32, 32, glm::vec2(2, 12), 0, HEXtoRGB(0x426977));
@@ -154,7 +158,7 @@ void InGame::renderPlayerStats() {
         // popups
         if (isHoveringHealth) {
             std::ostringstream stream;
-            stream << std::fixed << std::setprecision(1) << game -> player -> getHealth() << " / " << game -> player -> getMaxHealth();
+            stream << std::fixed << std::setprecision(1) << game -> getCurrentWorld() -> player -> getHealth() << " / " << game -> getCurrentWorld() -> player -> getMaxHealth();
 
             renderPopup(
                 stream.str(),
@@ -163,7 +167,7 @@ void InGame::renderPlayerStats() {
             );
         } else if (isHoveringShield) { // cant hover both
             std::ostringstream stream;
-            stream << std::fixed << std::setprecision(1) << game -> player -> getShield() << " / " << game -> player -> getMaxShield();
+            stream << std::fixed << std::setprecision(1) << game -> getCurrentWorld() -> player -> getShield() << " / " << game -> getCurrentWorld() -> player -> getMaxShield();
 
             renderPopup(
                 stream.str(),
@@ -177,12 +181,12 @@ void InGame::renderPlayerStats() {
 void InGame::renderAdvancedStats() {
     // prep values / texts
     std::ostringstream healthStream, shieldStream, coinStream, damageStream, speedStream;
-    healthStream << std::fixed << std::setprecision(1) << game -> player -> getHealth() << " / " << game -> player -> getMaxHealth();
-    shieldStream << std::fixed << std::setprecision(1) << game -> player -> getShield() << " / " << game -> player -> getMaxShield();
-    damageStream << game -> player -> getDamage();
-    speedStream << game -> player -> getSpeed();
+    healthStream << std::fixed << std::setprecision(1) << game -> getCurrentWorld() -> player -> getHealth() << " / " << game -> getCurrentWorld() -> player -> getMaxHealth();
+    shieldStream << std::fixed << std::setprecision(1) << game -> getCurrentWorld() -> player -> getShield() << " / " << game -> getCurrentWorld() -> player -> getMaxShield();
+    damageStream << game -> getCurrentWorld() -> player -> getDamage();
+    speedStream << game -> getCurrentWorld() -> player -> getSpeed();
 
-    coinStream << "$" << game -> player -> getCoins();
+    coinStream << "$" << game -> getCurrentWorld() -> player -> getCoins();
 
     auto textWidth = std::max(
         std::max(
@@ -267,11 +271,11 @@ void InGame::renderTurretShop() {
 }
 
 void InGame::renderTurretUpgrades() {
-    auto turret = game -> turret -> getSelectedTurret();
-    if (!turret && !game -> turret -> isUpgrading()) return;
+    auto turret = game -> getCurrentWorld() -> turret -> getSelectedTurret();
+    if (!turret && !game -> getCurrentWorld() -> turret -> isUpgrading()) return;
 
-    auto popupPosition = game -> turret -> menuPosition;
-    auto popupSize = game -> turret -> menuSize;
+    auto popupPosition = game -> getCurrentWorld() -> turret -> menuPosition;
+    auto popupSize = game -> getCurrentWorld() -> turret -> menuSize;
 
     // shadow
     game -> renderer -> DrawSpriteSheet(*game -> texture, popupPosition + glm::vec2(2), 2, 32, 32, popupSize, 0.0f, HEXtoRGB(0x000000));
@@ -284,8 +288,8 @@ void InGame::renderTurretUpgrades() {
     game -> renderer -> DrawText("X", popupPosition + glm::vec2(popupSize.x - (border + game -> text -> GetWidth("X", 16) + 1), border + 14), 16.0f, true, HEXtoRGB(0xFF0000));
 
     // skill tree
-    auto skillTree = game -> turret -> getUpgradeManager().getSkillTree();
-    auto nodePositions = game -> turret -> calculateNodePositions();
+    auto skillTree = game -> getCurrentWorld() -> turret -> getUpgradeManager().getSkillTree();
+    auto nodePositions = game -> getCurrentWorld() -> turret -> calculateNodePositions();
 
     for (const auto& [upgrade, prereqs] : skillTree) {
         glm::vec2 nodePosition = nodePositions[upgrade];
@@ -300,7 +304,7 @@ void InGame::renderTurretUpgrades() {
 }
 
 void InGame::renderWaveInfo() {
-    game -> renderer -> DrawText("Enemies alive: " + std::to_string(game -> wave -> getCurrentEnemies() -> size()), glm::vec2((game -> getSize().at(0) / 2) - 50, 40), 24.0f, true);
+    game -> renderer -> DrawText("Enemies alive: " + std::to_string(game -> getCurrentWorld() -> wave -> getCurrentEnemies() -> size()), glm::vec2((game -> getSize().at(0) / 2) - 50, 40), 24.0f, true);
 }
 
 void InGame::renderPopup(const std::string &text, const glm::vec2 &position, const glm::vec3 &color) {
@@ -331,7 +335,7 @@ void InGame::refreshUpgradePanels() {
 
     glm::vec2 panelSize(2 * portrait + border + width, 10 * portrait / 5);
 
-    for (const auto& path : game -> upgrade -> getPaths()) {
+    for (const auto& path : game -> getCurrentWorld() -> upgrade -> getPaths()) {
         UpgradePath upgradePath = path.second;
 
         const Upgrade& nextUpgrade = upgradePath.getNextUpgrade();

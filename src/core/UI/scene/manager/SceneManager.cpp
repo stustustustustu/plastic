@@ -1,4 +1,7 @@
 #include "SceneManager.h"
+#include "../src/Game.h"
+
+const auto game = Game::getInstance();
 
 void SceneManager::initScene() const {
     if (!currentScene) return;
@@ -20,6 +23,8 @@ void SceneManager::switchScene(SceneType type) {
 }
 
 void SceneManager::render() {
+    game -> renderer -> SetProjection(game -> camera -> getStaticProjection());
+
     if (currentScene) {
         currentScene -> render();
     }

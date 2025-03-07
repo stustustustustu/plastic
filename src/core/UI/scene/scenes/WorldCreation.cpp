@@ -54,15 +54,14 @@ WorldCreation::WorldCreation() : Scene(SceneType::WORLD_CREATION), islandPreview
     });
 
     createWorldButton -> addCallback([this]() {
-        game -> setDifficulty(static_cast<Difficulty>(difficultyDropdown -> getSelectedIndex()));
-        game -> setSeed(std::stoul(seedInput -> getText()));
+        game -> createNewWorld(currentSeed, static_cast<Difficulty>(difficultyDropdown -> getSelectedIndex()));
 
         updateIslandPreview();
 
-        game -> scenes -> switchScene(SceneType::GAME);
+        game -> getCurrentWorld() -> player -> setPosition({static_cast<float>(game -> getCurrentWorld() -> player -> calculateSpawnTile().first * Island::TILE_SIZE + Island::TILE_SIZE / 2),
+                                                               static_cast<float>(game -> getCurrentWorld() -> player -> calculateSpawnTile().second) * Island::TILE_SIZE + Island::TILE_SIZE / 2});
 
-        game -> player -> setPosition({static_cast<float>(game -> player -> calculateSpawnTile().first * Island::TILE_SIZE + Island::TILE_SIZE / 2),
-                                          static_cast<float>(game -> player -> calculateSpawnTile().second) * Island::TILE_SIZE + Island::TILE_SIZE / 2});
+        game -> scenes -> switchScene(SceneType::GAME);
     });
 }
 
@@ -74,6 +73,8 @@ void WorldCreation::resize() {
 }
 
 void WorldCreation::render() {
+    islandPreview.render(*game -> texture);
+
     backButton -> render();
     generateSeedButton -> render();
     createWorldButton -> render();
@@ -93,5 +94,4 @@ void WorldCreation::update() {
 
 void WorldCreation::updateIslandPreview() {
     islandPreview = Island(currentSeed);
-    game -> generator = &islandPreview;
 }

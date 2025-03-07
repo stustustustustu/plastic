@@ -71,14 +71,14 @@ void Projectile::update() {
 
     move();
 
-    for (auto &enemy : *game -> enemies) {
+    for (auto &enemy : *game -> getCurrentWorld() -> enemies) {
         if (type != LASER) {
             if (Collision::AABBCollision(getBounds(), enemy.getBounds())) {
                 enemy.hit(getDamage(), false);
 
                 if ((type == BOMB || type == HOMING_MISSILE) && splashRadius > 0) {
                     std::unique_ptr<Explosion> explosion = std::make_unique<Explosion>(getPosition(), splashRadius, getDamage(), 2);
-                    game -> explosions.push_back(std::move(explosion));
+                    game -> getCurrentWorld() -> explosions.push_back(std::move(explosion));
                 }
 
                 mark();
@@ -97,7 +97,7 @@ void Projectile::update() {
     if (elapsedTime.count() > 1.5f || !target) {
         if (type == BOMB || type == HOMING_MISSILE) {
             std::unique_ptr<Explosion> explosion = std::make_unique<Explosion>(getPosition(), splashRadius, getDamage(), 2);
-            game -> explosions.push_back(std::move(explosion));
+            game -> getCurrentWorld() -> explosions.push_back(std::move(explosion));
         }
 
         mark();

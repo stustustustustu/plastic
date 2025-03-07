@@ -118,8 +118,8 @@ void TurretManager::startPlacingTurret(TurretType type) {
 void TurretManager::placeTurret(const std::vector<float>& position) {
     if (!isPlacingTurret || !isValidPlacement(position)) return;
 
-    if (game -> inventory -> hasEnoughCoins(Turret::getCost(placingTurretType))) {
-        if (game -> inventory -> spendCoins(Turret::getCost(placingTurretType))) {
+    if (game -> getCurrentWorld() -> inventory -> hasEnoughCoins(Turret::getCost(placingTurretType))) {
+        if (game -> getCurrentWorld() -> inventory -> spendCoins(Turret::getCost(placingTurretType))) {
             auto turret = std::make_shared<Turret>(position, placingTurretType);
             turrets.push_back(turret);
         }
@@ -205,7 +205,7 @@ bool TurretManager::isValidPlacement(const std::vector<float>& position) const {
     int tileX = static_cast<int>(position[0] / Island::TILE_SIZE);
     int tileY = static_cast<int>(position[1] / Island::TILE_SIZE);
 
-    if (!game -> generator -> isLand(tileX, tileY)) {
+    if (!game -> getCurrentWorld() -> island -> isLand(tileX, tileY)) {
         return false;
     }
 

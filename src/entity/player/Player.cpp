@@ -4,20 +4,17 @@
 
 const auto game = Game::getInstance();
 
-bool Player::shooting = false; // Initialize laser as inactive
-std::vector<float> Player::laserStart = {0, 0}; // Initialize laser start position
-std::vector<float> Player::laserEnd = {0, 0}; // Initialize laser end position
+bool Player::shooting = false;
+std::vector<float> Player::laserStart = {0, 0};
+std::vector<float> Player::laserEnd = {0, 0};
 
-Player::Player() : Entity({
-    static_cast<float>(calculateSpawnTile().first * Island::TILE_SIZE + Island::TILE_SIZE / 2),
-    static_cast<float>(calculateSpawnTile().second * Island::TILE_SIZE + Island::TILE_SIZE / 2)}
-    ) {}
+Player::Player() : Entity({0, 0}) {}
 
 std::pair<int, int> Player::calculateSpawnTile() {
     int screenCenterX = game -> getSize().at(0) / 2;
     int screenCenterY = game -> getSize().at(1) / 2;
 
-    auto [tileX, tileY] = game -> generator -> findNearestLandTile(screenCenterX, screenCenterY);
+    auto [tileX, tileY] = game -> getCurrentWorld() -> island -> findNearestLandTile(screenCenterX, screenCenterY);
 
     bool isFullyEnclosed = true;
     for (int dx = -1; dx <= 1; ++dx) {
@@ -27,9 +24,9 @@ std::pair<int, int> Player::calculateSpawnTile() {
             int neighborX = tileX + dx;
             int neighborY = tileY + dy;
 
-            if (neighborX < 0 || neighborX >= game -> generator -> MAP_WIDTH ||
-                neighborY < 0 || neighborY >= game -> generator -> MAP_HEIGHT ||
-                !game -> generator -> isLand(neighborX, neighborY)) {
+            if (neighborX < 0 || neighborX >= game -> getCurrentWorld() -> island -> MAP_WIDTH ||
+                neighborY < 0 || neighborY >= game -> getCurrentWorld() -> island -> MAP_HEIGHT ||
+                !game -> getCurrentWorld() -> island -> isLand(neighborX, neighborY)) {
                 isFullyEnclosed = false;
                 break;
             }
@@ -42,7 +39,7 @@ std::pair<int, int> Player::calculateSpawnTile() {
     }
 
     int searchRadius = 1;
-    int maxSearchRadius = std::max(game -> generator -> MAP_WIDTH, game -> generator -> MAP_HEIGHT);
+    int maxSearchRadius = std::max(game -> getCurrentWorld() -> island -> MAP_WIDTH, game -> getCurrentWorld() -> island -> MAP_HEIGHT);
 
     while (searchRadius < maxSearchRadius) {
         for (int dx = -searchRadius; dx <= searchRadius; ++dx) {
@@ -52,9 +49,9 @@ std::pair<int, int> Player::calculateSpawnTile() {
                 int newTileX = tileX + dx;
                 int newTileY = tileY + dy;
 
-                if (newTileX >= 0 && newTileX < game->generator -> MAP_WIDTH &&
-                    newTileY >= 0 && newTileY < game -> generator -> MAP_HEIGHT &&
-                    game -> generator -> isLand(newTileX, newTileY)) {
+                if (newTileX >= 0 && newTileX < game -> getCurrentWorld() -> island -> MAP_WIDTH &&
+                    newTileY >= 0 && newTileY < game -> getCurrentWorld() -> island -> MAP_HEIGHT &&
+                    game -> getCurrentWorld() -> island -> isLand(newTileX, newTileY)) {
                     bool isNewTileFullyEnclosed = true;
                     for (int nx = -1; nx <= 1; ++nx) {
                         for (int ny = -1; ny <= 1; ++ny) {
@@ -63,9 +60,9 @@ std::pair<int, int> Player::calculateSpawnTile() {
                             int neighborX = newTileX + nx;
                             int neighborY = newTileY + ny;
 
-                            if (neighborX < 0 || neighborX >= game -> generator -> MAP_WIDTH ||
-                                neighborY < 0 || neighborY >= game -> generator -> MAP_HEIGHT ||
-                                !game -> generator -> isLand(neighborX, neighborY)) {
+                            if (neighborX < 0 || neighborX >= game -> getCurrentWorld() -> island -> MAP_WIDTH ||
+                                neighborY < 0 || neighborY >= game -> getCurrentWorld() -> island -> MAP_HEIGHT ||
+                                !game -> getCurrentWorld() -> island -> isLand(neighborX, neighborY)) {
                                 isNewTileFullyEnclosed = false;
                                 break;
                             }
@@ -117,7 +114,7 @@ void Player::Movement() {
     }
 
     if (canMove(delta)) {
-        game -> player -> move(delta);
+        game -> getCurrentWorld() -> player -> move(delta);
     }
 }
 
@@ -127,8 +124,8 @@ void Player::shoot() {
     glm::vec2 cursorWorldPos = game -> camera -> screenToWorld(InputHandler::getMousePosition());
 
     laserStart = {
-        game -> player -> getPosition()[0] + 16,
-        game -> player -> getPosition()[1] + 16
+        game -> getCurrentWorld() -> player -> getPosition()[0] + 16,
+        game -> getCurrentWorld() -> player -> getPosition()[1] + 16
     };
 
     laserEnd = {
@@ -136,12 +133,12 @@ void Player::shoot() {
         cursorWorldPos.y
     };
 
-    for (auto& enemy : *game -> enemies) {
+    for (auto& enemy : *game -> getCurrentWorld() -> enemies) {
         std::vector<float> enemyCenter = {enemy.getPosition().at(0) + 16.0f, enemy.getPosition().at(1) + 16.0f};
         std::vector<float> enemyHalfDimensions = {16.0f, 16.0f}; // 32x32
 
         if (Collision::lineRectangleIntersection(laserStart, laserEnd, enemyCenter, enemyHalfDimensions)) {
-            enemy.hit(game -> player -> getDamage() * 0.5f, false);
+            enemy.hit(game -> getCurrentWorld() -> player -> getDamage() * 0.5f, false);
         }
     }
 }
@@ -158,8 +155,8 @@ void Player::drawLaser() {
 }
 
 bool Player::canMove(std::vector<float>& delta) {
-    std::vector<float> position = game -> player -> getPosition();
-    const float speed = game -> player -> getSpeed();
+    std::vector<float> position = game -> getCurrentWorld() -> player -> getPosition();
+    const float speed = game -> getCurrentWorld() -> player -> getSpeed();
 
     const float newX = position[0] + delta[0] * speed;
     const float newY = position[1] + delta[1] * speed;
@@ -167,12 +164,12 @@ bool Player::canMove(std::vector<float>& delta) {
     auto checkPosition = [&](float x, float y) {
         int tileX = static_cast<int>(x) / Island::TILE_SIZE;
         int tileY = static_cast<int>(y) / Island::TILE_SIZE;
-        if (!game -> generator -> isLand(tileX, tileY)) {
+        if (!game -> getCurrentWorld() -> island -> isLand(tileX, tileY)) {
             return false;
         }
 
-        bool beach = game -> generator -> isWater(tileX - 1, tileY) || game -> generator -> isWater(tileX + 1, tileY) ||
-                     game -> generator -> isWater(tileX, tileY - 1) || game -> generator -> isWater(tileX, tileY + 1);
+        bool beach = game -> getCurrentWorld() -> island -> isWater(tileX - 1, tileY) || game -> getCurrentWorld() -> island -> isWater(tileX + 1, tileY) ||
+                     game -> getCurrentWorld() -> island -> isWater(tileX, tileY - 1) || game -> getCurrentWorld() -> island -> isWater(tileX, tileY + 1);
 
         if (!beach) return true;
 
@@ -180,10 +177,10 @@ bool Player::canMove(std::vector<float>& delta) {
         float posInTileY = y - tileY * Island::TILE_SIZE;
 
         bool valid = true;
-        if (game -> generator -> isWater(tileX - 1, tileY)) valid &= (posInTileX >= 16);
-        if (game -> generator -> isWater(tileX + 1, tileY)) valid &= (posInTileX <= 16);
-        if (game -> generator -> isWater(tileX, tileY - 1)) valid &= (posInTileY >= 16);
-        if (game -> generator -> isWater(tileX, tileY + 1)) valid &= (posInTileY <= 16);
+        if (game -> getCurrentWorld() -> island -> isWater(tileX - 1, tileY)) valid &= (posInTileX >= 16);
+        if (game -> getCurrentWorld() -> island -> isWater(tileX + 1, tileY)) valid &= (posInTileX <= 16);
+        if (game -> getCurrentWorld() -> island -> isWater(tileX, tileY - 1)) valid &= (posInTileY >= 16);
+        if (game -> getCurrentWorld() -> island -> isWater(tileX, tileY + 1)) valid &= (posInTileY <= 16);
 
         return valid;
     };

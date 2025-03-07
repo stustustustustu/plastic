@@ -10,7 +10,7 @@ void WaveManager::startNextWave() {
     int weight = 100 * std::pow(1.2f, currentWaveIndex);
     bool bossfight = false;
 
-    switch (game -> getDifficulty()) {
+    switch (game -> getCurrentWorld() -> getDifficulty()) {
         case EASY:
             weight = static_cast<int>(weight * 0.8f);
             break;

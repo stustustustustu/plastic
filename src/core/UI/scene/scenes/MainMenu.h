@@ -7,9 +7,6 @@
 
 class MainMenu : public Scene {
     private:
-        float border = 8;
-
-    private:
         std::unique_ptr<Button> playButton;
         std::unique_ptr<Button> optionsButton;
         std::unique_ptr<Button> quitButton;

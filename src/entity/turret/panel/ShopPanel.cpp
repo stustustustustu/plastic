@@ -13,8 +13,8 @@ ShopPanel::ShopPanel(glm::vec2 position, glm::vec2 size, TurretType type)
       type(type) {
 
     button.addCallback([this]() {
-        if (game -> player -> getCoins() >= Turret::getCost(this -> type)) {
-            game -> turret -> startPlacingTurret(this -> type);
+        if (game -> getCurrentWorld() -> player -> getCoins() >= Turret::getCost(this -> type)) {
+            game -> getCurrentWorld() -> turret -> startPlacingTurret(this -> type);
         }
     });
 }
@@ -68,7 +68,7 @@ void ShopPanel::render() {
 }
 
 void ShopPanel::update() {
-    if (game -> player -> getCoins() < Turret::getCost(type)) {
+    if (game -> getCurrentWorld() -> player -> getCoins() < Turret::getCost(type)) {
         button.setActive(false);
     } else {
         button.setActive(true);

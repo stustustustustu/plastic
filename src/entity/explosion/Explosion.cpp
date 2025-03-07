@@ -19,7 +19,7 @@ void Explosion::render() const {
     game -> renderer -> DrawSpriteSheet(
         *game -> texture,
         glm::vec2(getRenderPosition().at(0) - size / 2, getRenderPosition().at(1) - size / 2),
-        0, 32, 32,
+        2, 32, 32,
         glm::vec2(size),
         0, HEXtoRGB(0x000000)
     );
@@ -30,7 +30,7 @@ bool Explosion::isFinished() const {
 }
 
 void Explosion::applySplashDamage() const {
-    for (auto &enemy : *game -> enemies) {
+    for (auto &enemy : *game -> getCurrentWorld() -> enemies) {
         float distance = std::sqrt(std::pow(enemy.getPosition()[0] - getPosition()[0], 2) +
                          std::pow(enemy.getPosition()[1] - getPosition()[1], 2));
 
