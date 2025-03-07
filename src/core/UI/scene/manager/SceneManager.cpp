@@ -31,6 +31,13 @@ void SceneManager::update() {
     }
 }
 
+void SceneManager::resize() {
+    if (currentScene) {
+        currentScene -> resize();
+    }
+}
+
+
 SceneType SceneManager::getScene() const {
     return currentScene ? currentScene -> getType() : SceneType::NONE;
 }

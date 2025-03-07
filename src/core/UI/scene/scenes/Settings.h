@@ -7,7 +7,7 @@
 #include "../../elements/dropdown/Dropdown.h"
 #include "../../elements/slider/Slider.h"
 
-class Options : public Scene {
+class Settings : public Scene {
     private:
         std::unique_ptr<Button> backButton;
         std::unique_ptr<Button> saveButton;
@@ -17,7 +17,7 @@ class Options : public Scene {
         std::unique_ptr<Dropdown> sizeDropdown;
 
     public:
-        Options();
+        Settings();
         void render() override;
         void update() override;
 

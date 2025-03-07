@@ -3,7 +3,9 @@
 
 const auto game = Game::getInstance();
 
-Camera::Camera(float screenWidth, float screenHeight) : screenWidth(screenWidth), screenHeight(screenHeight), position(screenWidth / 2.0f, screenHeight / 2.0f), zoom(1.0f), targetZoom(1.0f), initialMousePos(0, 0) {}
+Camera::Camera(float screenWidth, float screenHeight) : screenWidth(screenWidth), screenHeight(screenHeight),
+                                                        position(screenWidth / 2.0f, screenHeight / 2.0f),
+                                                        zoom(1.0f), targetZoom(1.0f), initialMousePos(0, 0) {}
 
 void Camera::Update() {
     auto mousePos = game -> input -> getMousePosition();
@@ -127,9 +129,4 @@ void Camera::setSize(int screenWidth, int screenHeight) {
 
     this -> screenWidth = screenWidth;
     this -> screenHeight = screenHeight;
-
-    std::cout << "Camera State After Resize:" << std::endl;
-    std::cout << "Position: (" << position.x << ", " << position.y << ")" << std::endl;
-    std::cout << "Zoom: " << zoom << std::endl;
-    std::cout << "Screen Size: " << screenWidth << "x" << screenHeight << std::endl;
 }

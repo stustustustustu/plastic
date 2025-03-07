@@ -6,14 +6,14 @@
 
 const auto game = Game::getInstance();
 
-Island::Island(unsigned int seed) : MAP_WIDTH(game->getInstance()->getSize().at(0) / TILE_SIZE), MAP_HEIGHT(game->getInstance()->getSize().at(1) / TILE_SIZE) {
+Island::Island(unsigned int seed) : MAP_WIDTH(game -> getInstance() -> getSize().at(0) / TILE_SIZE), MAP_HEIGHT(game -> getInstance() -> getSize().at(1) / TILE_SIZE) {
     this -> seed = seed;
     noise.SetSeed(seed);
     noise.SetNoiseType(FastNoise::Simplex);
 
     noiseMap.resize(MAP_HEIGHT * TILE_SIZE, std::vector<float>(MAP_WIDTH * TILE_SIZE, 0.0f));
-    tileMap.resize(MAP_HEIGHT, std::vector<int>(MAP_WIDTH, static_cast<int>(Tile::WATER))); // Initialize all tiles as water
-    tileVariants.resize(MAP_HEIGHT, std::vector<Tile>(MAP_WIDTH, Tile::WATER)); // Initialize variants
+    tileMap.resize(MAP_HEIGHT, std::vector<int>(MAP_WIDTH, static_cast<int>(Tile::WATER)));
+    tileVariants.resize(MAP_HEIGHT, std::vector<Tile>(MAP_WIDTH, Tile::WATER));
 
     generate();
 }
@@ -68,8 +68,6 @@ void Island::generate() {
     }
 
     traceIslandEdge();
-
-    //std::cout << "Generated an island with the seed of: " << seed << ", using threshold: " << threshold << std::endl;
 }
 
 void Island::traceIslandEdge() {

@@ -7,7 +7,7 @@
 enum SceneType {
     GAME,
     MENU,
-    OPTIONS,
+    SETTINGS,
     WORLD_CREATION,
     GAME_OVER,
     REPLAY,

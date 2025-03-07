@@ -31,6 +31,15 @@ void Textbox::update() {
             }
         }
 
+        if (glfwGetKey(game -> window, GLFW_KEY_SPACE) == GLFW_PRESS && debounce(GLFW_KEY_SPACE, 0.25)) {
+            text += ' ';
+        }
+
+        if (glfwGetKey(game -> window, GLFW_KEY_ENTER) == GLFW_PRESS && debounce(GLFW_KEY_ENTER, 0.25)) {
+            focused = false;
+            executeAction();
+        }
+
         for (int key = GLFW_KEY_A; key <= GLFW_KEY_Z; ++key) {
             if (glfwGetKey(game -> window, key) == GLFW_PRESS && debounce(key, 0.25)) {
                 char c = 'a' + (key - GLFW_KEY_A);
@@ -39,10 +48,6 @@ void Textbox::update() {
                 }
                 text += c;
             }
-        }
-
-        if (glfwGetKey(game -> window, GLFW_KEY_SPACE) == GLFW_PRESS && debounce(GLFW_KEY_BACKSPACE, 0.25)) {
-            text += ' ';
         }
 
         for (int key = GLFW_KEY_0; key <= GLFW_KEY_9; ++key) {

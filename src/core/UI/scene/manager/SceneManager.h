@@ -15,6 +15,7 @@ class SceneManager {
 
         void render();
         void update();
+        void resize();
 
         void initScene() const;
         SceneType getScene() const;

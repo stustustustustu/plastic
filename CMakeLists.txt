@@ -103,8 +103,8 @@ add_executable(
         src/core/UI/scene/scenes/MainMenu.h
         src/core/UI/scene/scenes/WorldCreation.cpp
         src/core/UI/scene/scenes/WorldCreation.h
-        src/core/UI/scene/scenes/Options.cpp
-        src/core/UI/scene/scenes/Options.h
+        src/core/UI/scene/scenes/Settings.cpp
+        src/core/UI/scene/scenes/Settings.h
 )
 
 target_include_directories(plastic PRIVATE dependencies) # Includes location

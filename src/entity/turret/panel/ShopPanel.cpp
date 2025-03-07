@@ -78,10 +78,10 @@ void ShopPanel::update() {
 }
 
 void ShopPanel::setPosition(glm::vec2 position) {
-    this->position = position;
-    button.setPosition(position + glm::vec2(size.x - (border + 48), size.y - (24 + border)));
+    this -> position = position;
+    button.setPosition(position + glm::vec2(border, portrait + border + 6));
 }
 
 glm::vec2 ShopPanel::getSize() const {
-    return this->size;
+    return this -> size;
 }

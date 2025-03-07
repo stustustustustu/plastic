@@ -22,8 +22,8 @@ enum class Tile {
     REVERSE_TOP_LEFT = 14,
     REVERSE_BOTTOM_RIGHT = 15,
     REVERSE_BOTTOM_LEFT = 16,
-    DIAGONAL_TR_BL = 17,              // water op top right and bottom left
-    DIAGONAL_TL_BR = 18              // water op top left and bottom right
+    DIAGONAL_TR_BL = 17,            // water op top right and bottom left
+    DIAGONAL_TL_BR = 18             // water op top left and bottom right
 };
 
 class Island {

@@ -4,7 +4,7 @@
 
 #include "core/UI/scene/scenes/InGame.h"
 #include "core/UI/scene/scenes/MainMenu.h"
-#include "core/UI/scene/scenes/Options.h"
+#include "core/UI/scene/scenes/Settings.h"
 #include "core/UI/scene/scenes/WorldCreation.h"
 
 Game *Game::instance = NULL;
@@ -72,6 +72,8 @@ void Game::resizeWindow(glm::ivec2 size) {
     glfwSetWindowSize(window, size.x, size.y);
 
     camera -> setSize(size.x, size.y);
+
+    scenes -> resize();
 }
 
 Difficulty Game::getDifficulty() const {
@@ -140,7 +142,7 @@ bool Game::Init() {
     scenes -> addScene(SceneType::GAME, std::make_unique<InGame>());
     scenes -> addScene(SceneType::MENU, std::make_unique<MainMenu>());
     scenes -> addScene(SceneType::WORLD_CREATION, std::make_unique<WorldCreation>());
-    scenes -> addScene(SceneType::OPTIONS, std::make_unique<Options>());
+    scenes -> addScene(SceneType::SETTINGS, std::make_unique<Settings>());
 
     scenes -> switchScene(SceneType::MENU);
 
@@ -245,6 +247,13 @@ void Game::Render() const {
 void Game::Loop() {
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
+
+        int width, height;
+        glfwGetWindowSize(window, &width, &height);
+        if (width != this -> width || height != this -> height) {
+            resizeWindow(glm::ivec2(width, height));
+        }
+
         Update();
         Render();
     }

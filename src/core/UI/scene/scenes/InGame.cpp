@@ -37,7 +37,12 @@ InGame::InGame() : Scene(GAME),
 }
 
 void InGame::resize() {
-    //todo
+    glm::vec2 panelSize(2 * portrait + border + width, 6 * portrait / 3 - border);
+    glm::vec2 panelPosition(game -> getSize().at(0) - (2 * portrait + border + width) - 4, portrait);
+
+    for (int i = 0; i < shopPanels.size(); ++i) {
+        shopPanels[i] -> setPosition(panelPosition + glm::vec2(0, i * (panelSize.y + border)));
+    }
 }
 
 void InGame::render() {

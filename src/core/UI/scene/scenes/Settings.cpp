@@ -1,4 +1,4 @@
-#include "Options.h"
+#include "Settings.h"
 
 #include "../../../../Game.h"
 #include "../src/core/UI/scene/manager/SceneManager.h"
@@ -6,7 +6,7 @@
 
 const auto game = Game::getInstance();
 
-Options::Options() : Scene(SceneType::OPTIONS) {
+Settings::Settings() : Scene(SceneType::SETTINGS) {
     backButton = std::make_unique<Button>(glm::vec2(game -> getSize().at(0), game -> getSize().at(1)) - glm::vec2(175, 75), glm::vec2(150, 50), "Cancel", HEXtoRGB(0xFF4444));
     saveButton = std::make_unique<Button>(glm::vec2(25, game -> getSize().at(1)) - glm::vec2(0, 75), glm::vec2(200, 50), "Save", HEXtoRGB(0x4444FF));
 
@@ -30,17 +30,15 @@ Options::Options() : Scene(SceneType::OPTIONS) {
         game -> setSize(size);
 
         game -> scenes -> switchScene(SceneType::MENU);
-
-        std::cout << size << " " << game -> getVolume() << std::endl;
     });
 }
 
-void Options::resize() {
+void Settings::resize() {
     saveButton -> setPosition(glm::vec2(25, game -> getSize().at(1)) - glm::vec2(0, 75));
     backButton -> setPosition(glm::vec2(game -> getSize().at(0), game -> getSize().at(1)) - glm::vec2(175, 75));
 }
 
-void Options::render() {
+void Settings::render() {
     saveButton -> render();
     backButton -> render();
 
@@ -49,7 +47,7 @@ void Options::render() {
     volumeSlider -> render();
 }
 
-void Options::update() {
+void Settings::update() {
     saveButton -> update();
     backButton -> update();
 

@@ -36,6 +36,23 @@ WorldCreation::WorldCreation() : Scene(SceneType::WORLD_CREATION), islandPreview
         updateIslandPreview();
     });
 
+    seedInput -> addCallback([this]() {
+        std::string input = seedInput -> getText();
+        unsigned int seed = 0;
+
+        for (const char ch : input) {
+            if (ch >= '0' && ch <= '9') {
+                seed = (seed * 10) + (ch - '0');
+            } else {
+                seed = (seed * 31) + static_cast<unsigned int>(ch);
+            }
+        }
+
+        currentSeed = seed % (INT_MAX + 1);
+
+        updateIslandPreview();
+    });
+
     createWorldButton -> addCallback([this]() {
         game -> setDifficulty(static_cast<Difficulty>(difficultyDropdown -> getSelectedIndex()));
         game -> setSeed(std::stoul(seedInput -> getText()));
