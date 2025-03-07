@@ -105,6 +105,8 @@ add_executable(
         src/core/UI/scene/scenes/WorldCreation.h
         src/core/UI/scene/scenes/Settings.cpp
         src/core/UI/scene/scenes/Settings.h
+        src/entity/explosion/Explosion.cpp
+        src/entity/explosion/Explosion.h
 )
 
 target_include_directories(plastic PRIVATE dependencies) # Includes location

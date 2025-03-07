@@ -54,11 +54,11 @@ Projectile::Projectile(std::vector<float> position, ProjectileType type, std::sh
             break;
         case HOMING_MISSILE:
             this -> setSpeed(2.0f);
-            splashRadius = 25.0f;
+            splashRadius = 50.0f;
             break;
         case BOMB:
             this -> setSpeed(3.0f);
-            splashRadius = 35.0f;
+            splashRadius = 75.0f;
             break;
     }
 
@@ -77,7 +77,8 @@ void Projectile::update() {
                 enemy.hit(getDamage(), false);
 
                 if ((type == BOMB || type == HOMING_MISSILE) && splashRadius > 0) {
-                    createSplash(getDamage(), splashRadius);
+                    std::unique_ptr<Explosion> explosion = std::make_unique<Explosion>(getPosition(), splashRadius, getDamage(), 2);
+                    game -> explosions.push_back(std::move(explosion));
                 }
 
                 mark();
@@ -94,6 +95,11 @@ void Projectile::update() {
     std::chrono::duration<float> elapsedTime = currentTime - creationTime;
 
     if (elapsedTime.count() > 1.5f || !target) {
+        if (type == BOMB || type == HOMING_MISSILE) {
+            std::unique_ptr<Explosion> explosion = std::make_unique<Explosion>(getPosition(), splashRadius, getDamage(), 2);
+            game -> explosions.push_back(std::move(explosion));
+        }
+
         mark();
         ACTIVE_PROJECTILES--;
     }
@@ -104,6 +110,7 @@ void Projectile::render() {
 
     int hex;
     glm::vec2 size;
+
     switch (type) {
         case LASER:
             break;
@@ -150,16 +157,6 @@ void Projectile::move() {
     });
 
     updateBounds();
-}
-
-void Projectile::createSplash(float damage, float radius) const {
-    for (auto& enemy : *game -> enemies) {
-        float distance = std::sqrt(std::pow(enemy.getPosition()[0] - getPosition()[0], 2) +
-                         std::pow(enemy.getPosition()[1] - getPosition()[1], 2));
-        if (distance <= radius) {
-            enemy.hit(damage * (1.0f - distance / radius), false); // damage falloff over distance
-        }
-    }
 }
 
 void Projectile::updateBounds() {

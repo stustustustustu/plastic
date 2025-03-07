@@ -167,10 +167,21 @@ void Game::Update() {
 
         projectiles.erase(
             std::remove_if(projectiles.begin(), projectiles.end(),
-                [](const std::unique_ptr<Projectile>& projectile) {
+                [](const std::unique_ptr<Projectile> &projectile) {
                     return projectile -> isMarked();
                 }),
             projectiles.end()
+        );
+
+        for (auto &explosion : explosions) {
+            explosion -> update();
+        }
+
+        explosions.erase(
+            std::remove_if(explosions.begin(), explosions.end(),
+            [](const std::unique_ptr<Explosion> &explosion) {
+                return explosion -> isFinished();
+            }), explosions.end()
         );
 
         Player::Movement(); // player movement
@@ -210,7 +221,11 @@ void Game::Render() const {
 
     if (scenes -> getScene() == SceneType::GAME) {
         for (auto &projectile : projectiles) {
-            projectile->render();
+            projectile -> render();
+        }
+
+        for (auto &explosion : explosions) {
+            explosion -> render();
         }
 
         if (player -> getHealth() > 0) {

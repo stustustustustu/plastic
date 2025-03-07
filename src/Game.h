@@ -13,7 +13,7 @@
 #include "utils/render/sprites/Texture.h"
 #include "utils/shader/ShaderUtils.h"
 
-#include "entity/Entity.h"
+#include "entity/explosion/Explosion.h"
 #include "entity/player/Player.h"
 #include "entity/turret/Turret.h"
 #include "entity/turret/manager/TurretManager.h"
@@ -45,7 +45,9 @@ class Game {
 
     public:
         std::vector<std::unique_ptr<Projectile>> projectiles;
+        std::vector<std::unique_ptr<Explosion>> explosions;
 
+    public:
         // rendering
         GLFWwindow *window;
         ShaderUtils *shader;
