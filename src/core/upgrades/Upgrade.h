@@ -26,9 +26,10 @@ class Upgrade {
         float multiplier;
         std::string description;
         bool unlocked = false; // mostly for turrets
+        bool mutuallyExclusive = false;
 
     public:
-        Upgrade(const std::string &name, int cost, UpgradeType type, float increase, const std::string &description);
+        Upgrade(const std::string &name, int cost, UpgradeType type, float increase, const std::string &description, bool mutuallyExclusive = false);
 
         const std::string &getName() const;
         void setName(const std::string &name);
@@ -49,6 +50,8 @@ class Upgrade {
         void setUnlocked(bool unlocked);
 
         bool isTurretUpgrade() const;
+
+        bool isMutuallyExclusive() const;
 };
 
 

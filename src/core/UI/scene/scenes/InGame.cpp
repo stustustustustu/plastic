@@ -288,7 +288,7 @@ void InGame::renderTurretUpgrades() {
     game -> renderer -> DrawText("X", popupPosition + glm::vec2(popupSize.x - (border + game -> text -> GetWidth("X", 16) + 1), border + 14), 16.0f, true, HEXtoRGB(0xFF0000));
 
     // skill tree
-    auto skillTree = game -> getCurrentWorld() -> turret -> getUpgradeManager().getSkillTree();
+    auto skillTree = game -> getCurrentWorld() -> turret -> getUpgradeManager().getSkillTree(game -> getCurrentWorld() -> turret -> getSelectedTurret() -> getType());
     auto nodePositions = game -> getCurrentWorld() -> turret -> calculateNodePositions();
 
     for (const auto& [upgrade, prereqs] : skillTree) {

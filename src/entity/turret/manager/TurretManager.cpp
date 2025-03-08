@@ -35,22 +35,22 @@ void TurretManager::initUpgrades() {
     Upgrade* laserFireRateUpgrade = new Upgrade("Laser Fire Rate I", 75, TURRET_FIRERATE, 1.15f, "Increases laser fire rate by 15%");
     Upgrade* laserRangeUpgrade = new Upgrade("Laser Range I", 100, TURRET_RANGE, 1.2f, "Increases laser range by 20%");
 
-    upgradeManager.addUpgrade(laserDamageUpgrade);
-    upgradeManager.addUpgrade(laserFireRateUpgrade, { laserDamageUpgrade });
+    upgradeManager.addUpgrade(TurretType::LASER, laserDamageUpgrade);
+    upgradeManager.addUpgrade(TurretType::LASER, laserFireRateUpgrade, { laserDamageUpgrade });
 
-    upgradeManager.addUpgrade(laserRangeUpgrade, { laserDamageUpgrade, laserFireRateUpgrade });
+    upgradeManager.addUpgrade(TurretType::LASER, laserRangeUpgrade, { laserDamageUpgrade, laserFireRateUpgrade });
 
     Upgrade* rifleDamageUpgrade = new Upgrade("Rifle Damage I", 50, TURRET_DAMAGE, 1.1f, "Increases rifle damage by 10%");
     Upgrade* rifleFireRateUpgrade = new Upgrade("Rifle Fire Rate I", 75, TURRET_FIRERATE, 1.15f, "Increases rifle fire rate by 15%");
 
-    upgradeManager.addUpgrade(rifleDamageUpgrade);
-    upgradeManager.addUpgrade(rifleFireRateUpgrade, { rifleDamageUpgrade });
+    upgradeManager.addUpgrade(TurretType::RIFLE, rifleDamageUpgrade);
+    upgradeManager.addUpgrade(TurretType::RIFLE, rifleFireRateUpgrade, { rifleDamageUpgrade });
 
     Upgrade* bombDamageUpgrade = new Upgrade("Bomb Damage I", 50, TURRET_DAMAGE, 1.1f, "Increases bomb damage by 10%");
     Upgrade* bombRangeUpgrade = new Upgrade("Bomb Range I", 100, TURRET_RANGE, 1.2f, "Increases bomb range by 20%");
 
-    upgradeManager.addUpgrade(bombDamageUpgrade);
-    upgradeManager.addUpgrade(bombRangeUpgrade, { bombDamageUpgrade });
+    upgradeManager.addUpgrade(TurretType::BOMB, bombDamageUpgrade);
+    upgradeManager.addUpgrade(TurretType::BOMB, bombRangeUpgrade, { bombDamageUpgrade });
 }
 
 std::map<Upgrade*, glm::vec2> TurretManager::calculateNodePositions() const {
@@ -60,7 +60,7 @@ std::map<Upgrade*, glm::vec2> TurretManager::calculateNodePositions() const {
 
     int row = 0;
     int col = 0;
-    for (const auto& upgrade : upgradeManager.getAvailableUpgrades()) {
+    for (const auto& upgrade : upgradeManager.getAvailableUpgrades(selectedTurret -> getType())) {
         glm::vec2 position = menuPosition + glm::vec2(0, menuSize.y / 4) + glm::vec2(col * xOffset, row * yOffset);
         nodePositions[upgrade] = position;
 
