@@ -6,7 +6,7 @@
 
 auto const game = Game::getInstance();
 
-WorldCreation::WorldCreation() : Scene(SceneType::WORLD_CREATION), islandPreview(0) {
+WorldCreation::WorldCreation() : Scene("WORLD_CREATION"), islandPreview(0) {
     backButton = std::make_unique<Button>(glm::vec2(game -> getSize().at(0), game -> getSize().at(1)) - glm::vec2(175, 75), glm::vec2(150, 50), "Cancel", HEXtoRGB(0xFF4444));
 
     seedInput = std::make_unique<Textbox>(glm::vec2(25, 25), glm::vec2(200, 50), "Seed");
@@ -27,7 +27,7 @@ WorldCreation::WorldCreation() : Scene(SceneType::WORLD_CREATION), islandPreview
     seedInput -> setText(std::to_string(currentSeed));
 
     backButton -> addCallback([]() {
-        game -> scenes -> switchScene(SceneType::MENU);
+        game -> scenes -> goBack();
     });
 
     generateSeedButton -> addCallback([this]() {
@@ -61,7 +61,7 @@ WorldCreation::WorldCreation() : Scene(SceneType::WORLD_CREATION), islandPreview
         game -> getCurrentWorld() -> player -> setPosition({static_cast<float>(game -> getCurrentWorld() -> player -> calculateSpawnTile().first * Island::TILE_SIZE + Island::TILE_SIZE / 2),
                                                                static_cast<float>(game -> getCurrentWorld() -> player -> calculateSpawnTile().second) * Island::TILE_SIZE + Island::TILE_SIZE / 2});
 
-        game -> scenes -> switchScene(SceneType::GAME);
+        game -> scenes -> switchScene("IN_GAME");
     });
 }
 

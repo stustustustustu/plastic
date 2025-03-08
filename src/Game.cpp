@@ -45,7 +45,7 @@ void Game::createNewWorld(unsigned int seed, Difficulty difficulty) {
     currentWorld = std::make_unique<World>(seed, difficulty);
     currentWorld -> init();
 
-    scenes -> addScene(SceneType::GAME, std::make_unique<InGame>());
+    scenes -> addScene("IN_GAME", std::make_unique<InGame>());
 }
 
 void Game::loadWorld(const std::string &path) {
@@ -87,7 +87,7 @@ void Game::setVolume(float volume) {
     this -> volume = volume;
 }
 
-bool Game::Init() {
+bool Game::init() {
     srand(time(NULL));
 
     if (!renderer -> initializeWindow(window, getSize().at(0), getSize().at(1), "plastic")) {
@@ -118,29 +118,29 @@ bool Game::Init() {
 
     texture -> Bind();
 
-    scenes -> addScene(SceneType::MENU, std::make_unique<MainMenu>());
-    scenes -> addScene(SceneType::WORLD_CREATION, std::make_unique<WorldCreation>());
-    scenes -> addScene(SceneType::SETTINGS, std::make_unique<Settings>());
+    scenes -> addScene("MAIN_MENU", std::make_unique<MainMenu>());
+    scenes -> addScene("WORLD_CREATION", std::make_unique<WorldCreation>());
+    scenes -> addScene("SETTINGS", std::make_unique<Settings>());
 
-    scenes -> switchScene(SceneType::MENU);
+    scenes -> switchScene("MAIN_MENU");
 
     return true;
 }
 
-void Game::Update() {
+void Game::update() {
     input -> processInput();
     camera -> Update();
     scenes -> update();
 
-    if (currentWorld && scenes -> getScene() == SceneType::GAME) {
+    if (currentWorld && scenes -> getScene() == "IN_GAME") {
         getCurrentWorld() -> update();
     }
 }
 
-void Game::Render() const {
+void Game::render() const {
     glClear(GL_COLOR_BUFFER_BIT);
 
-    if (currentWorld && scenes -> getScene() == SceneType::GAME) {
+    if (currentWorld && scenes -> getScene() == "IN_GAME") {
         getCurrentWorld() -> render();
     }
 
@@ -150,7 +150,7 @@ void Game::Render() const {
     glfwPollEvents();
 }
 
-void Game::Loop() {
+void Game::loop() {
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
 
@@ -160,8 +160,8 @@ void Game::Loop() {
             resizeWindow(glm::ivec2(width, height));
         }
 
-        Update();
-        Render();
+        update();
+        render();
     }
 
     glDeleteProgram(shader -> ID);

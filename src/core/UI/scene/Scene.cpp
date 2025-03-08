@@ -1,11 +1,11 @@
 #include "Scene.h"
 
-SceneType Scene::getType() const {
-    return this -> type;
+std::string Scene::getSceneID() const {
+    return this -> sceneID;
 }
 
-void Scene::setType(SceneType type) {
-    this -> type = type;
+void Scene::setSceneID(const std::string &sceneID) {
+    this -> sceneID = sceneID;
 }
 
 void Scene::addElement(std::unique_ptr<Element> element) {

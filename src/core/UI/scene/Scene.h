@@ -4,31 +4,23 @@
 #include "../src/config.h"
 #include "../elements/Element.h"
 
-enum SceneType {
-    GAME,
-    MENU,
-    SETTINGS,
-    WORLD_CREATION,
-    GAME_OVER,
-    REPLAY,
-    NONE
-};
-
 class Scene {
     private:
-        SceneType type;
+        std::string sceneID;
+
+    protected:
         std::vector<std::unique_ptr<Element>> elements;
 
     public:
-        Scene(SceneType type) : type(type) {}
+        Scene(const std::string &sceneID) : sceneID(sceneID) {}
         virtual ~Scene() = default;
 
         virtual void render() = 0;
         virtual void update() = 0;
         virtual void resize() = 0;
 
-        SceneType getType() const;
-        void setType(SceneType type);
+        std::string getSceneID() const;
+        void setSceneID(const std::string &scene_id);
 
         void addElement(std::unique_ptr<Element> element);
         void removeElement(const Element* element);

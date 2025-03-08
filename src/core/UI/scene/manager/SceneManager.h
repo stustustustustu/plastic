@@ -3,22 +3,27 @@
 
 #include "../Scene.h"
 
+#include <stack>
+
 class SceneManager {
     private:
-        std::unordered_map<SceneType, std::unique_ptr<Scene>> scenes;
+        std::unordered_map<std::string, std::unique_ptr<Scene>> scenes;
         Scene* currentScene = NULL;
 
-    public:
-        void addScene(SceneType type, std::unique_ptr<Scene> scene);
+        std::stack<std::string> sceneHistory;
 
-        void switchScene(SceneType type);
+    public:
+        void addScene(const std::string &sceneID, std::unique_ptr<Scene> scene);
+
+        void switchScene(const std::string &sceneID);
+        void goBack();
 
         void render();
         void update();
         void resize();
 
         void initScene() const;
-        SceneType getScene() const;
+        std::string getScene() const;
 };
 
 #endif //SCENEMANAGER_H

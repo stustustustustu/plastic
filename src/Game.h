@@ -68,10 +68,10 @@ class Game {
         float getVolume() const;
         void setVolume(float volume);
 
-        bool Init();
-        void Update();
-        void Render() const;
-        void Loop();
+        bool init();
+        void update();
+        void render() const;
+        void loop();
 
         void resizeWindow(glm::ivec2 size);
 };

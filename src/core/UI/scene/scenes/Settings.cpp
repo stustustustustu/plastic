@@ -6,7 +6,7 @@
 
 const auto game = Game::getInstance();
 
-Settings::Settings() : Scene(SceneType::SETTINGS) {
+Settings::Settings() : Scene("SETTINGS") {
     backButton = std::make_unique<Button>(glm::vec2(game -> getSize().at(0), game -> getSize().at(1)) - glm::vec2(175, 75), glm::vec2(150, 50), "Cancel", HEXtoRGB(0xFF4444));
     saveButton = std::make_unique<Button>(glm::vec2(25, game -> getSize().at(1)) - glm::vec2(0, 75), glm::vec2(200, 50), "Save", HEXtoRGB(0x4444FF));
 
@@ -19,7 +19,7 @@ Settings::Settings() : Scene(SceneType::SETTINGS) {
     sizeDropdown -> addOption("1280x960");
 
     backButton -> addCallback([]() {
-        game -> scenes -> switchScene(SceneType::MENU);
+        game -> scenes -> goBack();
     });
 
     saveButton -> addCallback([this]() {
@@ -29,7 +29,7 @@ Settings::Settings() : Scene(SceneType::SETTINGS) {
         std::string size = sizeDropdown -> getSelectedOption();
         game -> setSize(size);
 
-        game -> scenes -> switchScene(SceneType::MENU);
+        game -> scenes -> goBack();
     });
 }
 

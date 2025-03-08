@@ -11,13 +11,26 @@ void SceneManager::initScene() const {
     });
 }
 
-void SceneManager::addScene(SceneType type, std::unique_ptr<Scene> scene) {
-    scenes[type] = std::move(scene);
+void SceneManager::addScene(const std::string &sceneID, std::unique_ptr<Scene> scene) {
+    scenes[sceneID] = std::move(scene);
 }
 
-void SceneManager::switchScene(SceneType type) {
-    if (scenes.find(type) != scenes.end()) {
-        currentScene = scenes[type].get();
+void SceneManager::switchScene(const std::string &sceneID) {
+    if (scenes.find(sceneID) != scenes.end()) {
+        if (currentScene) {
+            sceneHistory.push(currentScene -> getSceneID());
+        }
+        currentScene = scenes[sceneID].get();
+        currentScene -> resize();
+    }
+}
+
+void SceneManager::goBack() {
+    if (!sceneHistory.empty()) {
+        std::string previousSceneID = sceneHistory.top();
+        sceneHistory.pop();
+
+        currentScene = scenes[previousSceneID].get();
         currentScene -> resize();
     }
 }
@@ -43,6 +56,6 @@ void SceneManager::resize() {
 }
 
 
-SceneType SceneManager::getScene() const {
-    return currentScene ? currentScene -> getType() : SceneType::NONE;
+std::string SceneManager::getScene() const {
+    return currentScene ? currentScene -> getSceneID() : "";
 }
