@@ -6,7 +6,8 @@
 
 class InputHandler {
     private:
-        std::vector<std::pair<std::vector<int>, std::string>> bindings;
+        std::vector<std::tuple<std::vector<int>, std::string, bool>> bindings;
+        std::unordered_map<std::string, bool> keyPressedState;
         ActionManager actionManager;
 
     public:
@@ -15,7 +16,7 @@ class InputHandler {
         void InitBindings();
         void RegisterActions();
 
-        void bindKeyCombo(const std::vector<int>& keys, const std::string& actionName);
+        void bindKeyCombo(const std::vector<int>& keys, const std::string& actionName, bool debounce = false);
 
         void processInput();
 

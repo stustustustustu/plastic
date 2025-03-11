@@ -287,14 +287,23 @@ void InGame::renderTurretUpgrades() {
     turretUpgradeClose.render();
     game -> renderer -> DrawText("X", popupPosition + glm::vec2(popupSize.x - (border + game -> text -> GetWidth("X", 16) + 1), border + 14), 16.0f, true, HEXtoRGB(0xFF0000));
 
-    // skill tree
+    // Skill tree
     auto skillTree = game -> getCurrentWorld() -> turret -> getUpgradeManager().getSkillTree(game -> getCurrentWorld() -> turret -> getSelectedTurret() -> getType());
     auto nodePositions = game -> getCurrentWorld() -> turret -> calculateNodePositions();
 
     for (const auto& [upgrade, prereqs] : skillTree) {
         glm::vec2 nodePosition = nodePositions[upgrade];
 
-        renderUpgradeNode(upgrade, nodePosition, HEXtoRGB(0x4F4F4F));
+        Button upgradeButton(nodePosition, glm::vec2(24), "", HEXtoRGB(0x4F4F4F));
+        upgradeButton.render();
+
+        if (upgradeButton.isClicked()) {
+            if (game -> getCurrentWorld() -> turret -> unlockTurretUpgrade(upgrade -> getName())) {
+                std::cout << "Upgrade unlocked: " << upgrade -> getName() << std::endl;
+            } else {
+                std::cout << "Cannot unlock upgrade: " << upgrade -> getName() << std::endl;
+            }
+        }
 
         for (auto prereq : prereqs) {
             glm::vec2 prereqPosition = nodePositions[prereq];
@@ -315,15 +324,6 @@ void InGame::renderPopup(const std::string &text, const glm::vec2 &position, con
     game -> renderer -> DrawSpriteSheet(*game -> texture, position, 2, 32, 32, glm::vec2(textWidth + 10, textHeight + 10), 0, HEXtoRGB(0x2F2F2F));
 
     game -> renderer -> DrawText(text, position + glm::vec2(5, textHeight + 2), 16.0f, true, color);
-}
-
-void InGame::renderUpgradeNode(Upgrade *upgrade, const glm::vec2 &position, const glm::vec3 &color) {
-    Button button(position, glm::vec2(24), "", color);
-
-    button.render();
-    if (button.isHovering()) {
-        renderPopup(upgrade -> getDescription(), game -> input -> getMousePosition() + glm::vec2(12, 4), glm::vec3(1.0f, 1.0f, 1.0f));
-    }
 }
 
 void InGame::renderConnection(const glm::vec2 &from, const glm::vec2 &to, const glm::vec3 &color) {

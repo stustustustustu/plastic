@@ -4,6 +4,7 @@
 
 #include "core/UI/scene/scenes/InGame.h"
 #include "core/UI/scene/scenes/MainMenu.h"
+#include "core/UI/scene/scenes/Pause.h"
 #include "core/UI/scene/scenes/Settings.h"
 #include "core/UI/scene/scenes/WorldCreation.h"
 
@@ -51,6 +52,14 @@ void Game::createNewWorld(unsigned int seed, Difficulty difficulty) {
 void Game::loadWorld(const std::string &path) {
     currentWorld = std::make_unique<World>(0, MEDIUM);
     currentWorld -> load(path);
+}
+
+GameState Game::getState() const {
+    return this -> state;
+}
+
+void Game::setState(GameState state) {
+    this -> state = state;
 }
 
 std::vector<float> Game::getSize() {
@@ -121,6 +130,7 @@ bool Game::init() {
     scenes -> addScene("MAIN_MENU", std::make_unique<MainMenu>());
     scenes -> addScene("WORLD_CREATION", std::make_unique<WorldCreation>());
     scenes -> addScene("SETTINGS", std::make_unique<Settings>());
+    scenes -> addScene("PAUSE", std::make_unique<Pause>());
 
     scenes -> switchScene("MAIN_MENU");
 
@@ -140,7 +150,7 @@ void Game::update() {
 void Game::render() const {
     glClear(GL_COLOR_BUFFER_BIT);
 
-    if (currentWorld && scenes -> getScene() == "IN_GAME") {
+    if (currentWorld && (scenes -> getScene() == "IN_GAME" || scenes -> getScene() == "PAUSE")) {
         getCurrentWorld() -> render();
     }
 
@@ -167,4 +177,14 @@ void Game::loop() {
     glDeleteProgram(shader -> ID);
     glfwDestroyWindow(window);
     glfwTerminate();
+}
+
+void Game::handlePause() {
+    if (state == GameState::ACTIVE) {
+        scenes -> switchScene("PAUSE");
+        state = GameState::PAUSED;
+    } else if (state == GameState::PAUSED) {
+        scenes -> goBack();
+        state = GameState::ACTIVE;
+    }
 }

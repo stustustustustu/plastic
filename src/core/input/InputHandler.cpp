@@ -19,7 +19,7 @@ void InputHandler::InitBindings() {
 
     // turret
     bindKeyCombo( {GLFW_MOUSE_BUTTON_2}, "PLACE_TURRET");
-    bindKeyCombo( {GLFW_KEY_ESCAPE}, "CANCEL_PLACEMENT");
+    bindKeyCombo( {GLFW_KEY_ESCAPE}, "CANCEL_PLACEMENT", true);
 
     // camera
     bindKeyCombo( {GLFW_MOUSE_BUTTON_3}, "CAMERA_PAN");
@@ -50,6 +50,8 @@ void InputHandler::RegisterActions() {
     getActionManager().registerAction("CANCEL_PLACEMENT", []() {
         if (game -> getCurrentWorld() && game -> getCurrentWorld() -> turret -> isPlacing()) {
             game -> getCurrentWorld() -> turret -> cancelPlacingTurret();
+        } else {
+            game -> handlePause();
         }
     });
 
@@ -70,21 +72,25 @@ void InputHandler::RegisterActions() {
     });
 }
 
-void InputHandler::bindKeyCombo(const std::vector<int>& keys, const std::string& actionName) {
+void InputHandler::bindKeyCombo(const std::vector<int>& keys, const std::string& actionName, bool debounce) {
     for (const auto& binding : bindings) {
-        if (binding.first == keys) {
-            std::cerr << "Error: Key combination already used for action: " << binding.second << std::endl;
+        if (std::get<0>(binding) == keys) {
+            std::cerr << "Error: Key combination already used for action: " << std::get<1>(binding) << std::endl;
             return;
         }
     }
-    bindings.push_back({keys, actionName});
+    bindings.push_back({keys, actionName, debounce});
 }
 
 void InputHandler::processInput() {
     for (const auto& binding : bindings) {
+        const auto& keys = std::get<0>(binding);
+        const auto& actionName = std::get<1>(binding);
+        bool debounce = std::get<2>(binding);
+
         bool allPressed = true;
 
-        for (int key : binding.first) {
+        for (int key : keys) {
             if (key >= GLFW_MOUSE_BUTTON_1 && key <= GLFW_MOUSE_BUTTON_LAST) {
                 if (glfwGetMouseButton(game -> window, key) != GLFW_PRESS) {
                     allPressed = false;
@@ -98,11 +104,19 @@ void InputHandler::processInput() {
             }
         }
 
-        if (allPressed) {
-            actionManager.executeAction(binding.second);
+        if (debounce) {
+            bool wasPressed = keyPressedState[actionName];
+            if (allPressed && !wasPressed) {
+                actionManager.executeAction(actionName);
+            }
+            keyPressedState[actionName] = allPressed;
+        } else {
+            if (allPressed) {
+                actionManager.executeAction(actionName);
+            }
         }
 
-        actionManager.setActionState(binding.second, allPressed);
+        actionManager.setActionState(actionName, allPressed);
     }
 
     // camera panning

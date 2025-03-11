@@ -17,7 +17,7 @@ void SceneManager::addScene(const std::string &sceneID, std::unique_ptr<Scene> s
 
 void SceneManager::switchScene(const std::string &sceneID) {
     if (scenes.find(sceneID) != scenes.end()) {
-        if (currentScene) {
+        if (currentScene && currentScene -> getSceneID() != "PAUSE") {
             sceneHistory.push(currentScene -> getSceneID());
         }
         currentScene = scenes[sceneID].get();

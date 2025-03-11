@@ -109,6 +109,8 @@ add_executable(
         src/entity/explosion/Explosion.h
         src/core/world/World.cpp
         src/core/world/World.h
+        src/core/UI/scene/scenes/Pause.cpp
+        src/core/UI/scene/scenes/Pause.h
 )
 
 target_include_directories(plastic PRIVATE dependencies) # Includes location

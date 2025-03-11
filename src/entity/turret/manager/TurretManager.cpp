@@ -30,27 +30,41 @@ void TurretManager::render() {
     game -> renderer -> SetProjection(game -> camera -> getStaticProjection());
 }
 
-void TurretManager::initUpgrades() {
-    Upgrade* laserDamageUpgrade = new Upgrade("Laser Damage I", 50, TURRET_DAMAGE, 1.1f, "Increases laser damage by 10%");
-    Upgrade* laserFireRateUpgrade = new Upgrade("Laser Fire Rate I", 75, TURRET_FIRERATE, 1.15f, "Increases laser fire rate by 15%");
-    Upgrade* laserRangeUpgrade = new Upgrade("Laser Range I", 100, TURRET_RANGE, 1.2f, "Increases laser range by 20%");
+void TurretManager::initUpgrades() { // temp
+    // laser
+    Upgrade* laserDamageUpgrade1 = new Upgrade("Laser Damage I", 50, TURRET_DAMAGE, 1.1f, "Increases laser damage by 10%");
+    Upgrade* laserDamageUpgrade2 = new Upgrade("Laser Damage II", 100, TURRET_DAMAGE, 1.2f, "Increases laser damage by 20%");
+    Upgrade* laserFireRateUpgrade = new Upgrade("Laser Fire Rate", 75, TURRET_FIRERATE, 1.15f, "Increases laser fire rate by 15%");
+    Upgrade* laserRangeUpgrade = new Upgrade("Laser Range", 100, TURRET_RANGE, 1.2f, "Increases laser range by 20%");
+    Upgrade* laserSlowUpgrade = new Upgrade("Laser Slow", 120, TURRET_SPECIAL, 0.8f, "Slows enemies hit by laser");
 
-    upgradeManager.addUpgrade(TurretType::LASER, laserDamageUpgrade);
-    upgradeManager.addUpgrade(TurretType::LASER, laserFireRateUpgrade, { laserDamageUpgrade });
+    upgradeManager.addUpgrade(TurretType::LASER, laserDamageUpgrade1);
+    upgradeManager.addUpgrade(TurretType::LASER, laserDamageUpgrade2, { laserDamageUpgrade1 });
+    upgradeManager.addUpgrade(TurretType::LASER, laserFireRateUpgrade, { laserDamageUpgrade1 }, { laserRangeUpgrade });
+    upgradeManager.addUpgrade(TurretType::LASER, laserRangeUpgrade, { laserDamageUpgrade1 }, { laserFireRateUpgrade });
+    upgradeManager.addUpgrade(TurretType::LASER, laserSlowUpgrade, { laserDamageUpgrade2 });
 
-    upgradeManager.addUpgrade(TurretType::LASER, laserRangeUpgrade, { laserDamageUpgrade, laserFireRateUpgrade });
+    // rifle
+    Upgrade* rifleDamageUpgrade1 = new Upgrade("Rifle Damage I", 50, TURRET_DAMAGE, 1.1f, "Increases rifle damage by 10%");
+    Upgrade* rifleDamageUpgrade2 = new Upgrade("Rifle Damage II", 100, TURRET_DAMAGE, 1.2f, "Increases rifle damage by 20%");
+    Upgrade* rifleFireRateUpgrade = new Upgrade("Rifle Fire Rate", 75, TURRET_FIRERATE, 1.15f, "Increases rifle fire rate by 15%");
+    Upgrade* riflePierceUpgrade = new Upgrade("Rifle Pierce", 120, TURRET_SPECIAL, 1.0f, "Bullets pierce through enemies");
 
-    Upgrade* rifleDamageUpgrade = new Upgrade("Rifle Damage I", 50, TURRET_DAMAGE, 1.1f, "Increases rifle damage by 10%");
-    Upgrade* rifleFireRateUpgrade = new Upgrade("Rifle Fire Rate I", 75, TURRET_FIRERATE, 1.15f, "Increases rifle fire rate by 15%");
+    upgradeManager.addUpgrade(TurretType::RIFLE, rifleDamageUpgrade1);
+    upgradeManager.addUpgrade(TurretType::RIFLE, rifleDamageUpgrade2, { rifleDamageUpgrade1 });
+    upgradeManager.addUpgrade(TurretType::RIFLE, rifleFireRateUpgrade, { rifleDamageUpgrade1 }, { riflePierceUpgrade });
+    upgradeManager.addUpgrade(TurretType::RIFLE, riflePierceUpgrade, { rifleDamageUpgrade1 }, { rifleFireRateUpgrade });
 
-    upgradeManager.addUpgrade(TurretType::RIFLE, rifleDamageUpgrade);
-    upgradeManager.addUpgrade(TurretType::RIFLE, rifleFireRateUpgrade, { rifleDamageUpgrade });
+    // bomb
+    Upgrade* bombDamageUpgrade1 = new Upgrade("Bomb Damage I", 50, TURRET_DAMAGE, 1.1f, "Increases bomb damage by 10%");
+    Upgrade* bombDamageUpgrade2 = new Upgrade("Bomb Damage II", 100, TURRET_DAMAGE, 1.2f, "Increases bomb damage by 20%");
+    Upgrade* bombRangeUpgrade = new Upgrade("Bomb Range", 100, TURRET_RANGE, 1.2f, "Increases bomb range by 20%");
+    Upgrade* bombBurnUpgrade = new Upgrade("Bomb Burn", 120, TURRET_SPECIAL, 1.0f, "Enemies hit by bombs burn over time");
 
-    Upgrade* bombDamageUpgrade = new Upgrade("Bomb Damage I", 50, TURRET_DAMAGE, 1.1f, "Increases bomb damage by 10%");
-    Upgrade* bombRangeUpgrade = new Upgrade("Bomb Range I", 100, TURRET_RANGE, 1.2f, "Increases bomb range by 20%");
-
-    upgradeManager.addUpgrade(TurretType::BOMB, bombDamageUpgrade);
-    upgradeManager.addUpgrade(TurretType::BOMB, bombRangeUpgrade, { bombDamageUpgrade });
+    upgradeManager.addUpgrade(TurretType::BOMB, bombDamageUpgrade1);
+    upgradeManager.addUpgrade(TurretType::BOMB, bombDamageUpgrade2, { bombDamageUpgrade1 });
+    upgradeManager.addUpgrade(TurretType::BOMB, bombRangeUpgrade, { bombDamageUpgrade1 }, { bombBurnUpgrade });
+    upgradeManager.addUpgrade(TurretType::BOMB, bombBurnUpgrade, { bombDamageUpgrade1 }, { bombRangeUpgrade });
 }
 
 std::map<Upgrade*, glm::vec2> TurretManager::calculateNodePositions() const {

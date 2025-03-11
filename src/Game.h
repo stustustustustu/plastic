@@ -62,6 +62,9 @@ class Game {
         void loadWorld(const std::string &path);
         void createNewWorld(unsigned int seed, Difficulty difficulty);
 
+        GameState getState() const;
+        void setState(GameState state);
+
         std::vector<float> getSize();
         void setSize(const std::string &size);
 
@@ -72,6 +75,8 @@ class Game {
         void update();
         void render() const;
         void loop();
+
+        void handlePause();
 
         void resizeWindow(glm::ivec2 size);
 };
