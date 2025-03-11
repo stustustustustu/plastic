@@ -24,7 +24,12 @@ Pause::Pause() : Scene("PAUSE") {
     });
 
     exit -> addCallback([] {
-
+        if (game -> getCurrentWorld()) {
+            std::string name = game -> getCurrentWorld() -> getName();
+            game -> getCurrentWorld() -> save("saves");
+        }
+        game -> scenes -> switchScene("MAIN_MENU");
+        game -> scenes -> clearHistory();
     });
 }
 

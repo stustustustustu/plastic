@@ -15,6 +15,10 @@ Game::Game(float width, float height) : state(ACTIVE), width(width), height(heig
                                         camera(new Camera(width, height)),
                                         input(NULL), scenes(NULL) {
     srand(time(NULL));
+
+    if (!std::filesystem::exists("saves")) {
+        std::filesystem::create_directory("saves");
+    }
 }
 
 Game::~Game() {
@@ -38,19 +42,19 @@ Game *Game::getInstance(float width, float height) {
     return instance;
 }
 
-World * Game::getCurrentWorld() const {
+World* Game::getCurrentWorld() const {
     return currentWorld.get();
 }
 
-void Game::createNewWorld(unsigned int seed, Difficulty difficulty) {
-    currentWorld = std::make_unique<World>(seed, difficulty);
+void Game::createNewWorld(std::string name, unsigned int seed, Difficulty difficulty) {
+    currentWorld = std::make_unique<World>(name, seed, difficulty);
     currentWorld -> init();
 
     scenes -> addScene("IN_GAME", std::make_unique<InGame>());
 }
 
 void Game::loadWorld(const std::string &path) {
-    currentWorld = std::make_unique<World>(0, MEDIUM);
+    currentWorld = std::make_unique<World>("New World", 0, MEDIUM);
     currentWorld -> load(path);
 }
 

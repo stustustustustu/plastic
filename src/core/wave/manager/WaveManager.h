@@ -24,6 +24,9 @@ class WaveManager {
 
         std::vector<Enemy> *getCurrentEnemies() const;
 
+        int getCurrentWaveIndex() const;
+        void setCurrentWaveIndex(int index);
+
         void addWave(Wave wave);
 
         bool isActive() const;

@@ -10,6 +10,7 @@
 
 class WorldCreation : public Scene {
     private:
+        std::string currentName;
         unsigned int currentSeed;
 
     private:

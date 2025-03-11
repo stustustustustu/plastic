@@ -100,6 +100,10 @@ std::map<EnemyType, std::tuple<float, float, float, float>> Enemy::getEnemyData(
     };
 }
 
+EnemyType Enemy::getType() const {
+    return this -> type;
+}
+
 void Enemy::moveTowards(const std::vector<float>& targetPos) {
     auto currentPos = this->getPosition();
     std::vector<float> direction = {

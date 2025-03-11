@@ -21,6 +21,7 @@ enum Difficulty {
 
 class World {
     private:
+        std::string name;
         unsigned int seed;
         Difficulty difficulty;
 
@@ -39,7 +40,7 @@ class World {
         std::vector<std::unique_ptr<Explosion>> explosions;
 
     public:
-        World(unsigned int seed, Difficulty difficulty);
+        World(std::string name, unsigned int seed, Difficulty difficulty);
 
         void init();
 
@@ -51,6 +52,9 @@ class World {
 
     // getters & setters
     public:
+        std::string getName() const { return this -> name; }
+        void setName(const std::string& name) { this -> name = name; }
+
         unsigned int getSeed() const { return this -> seed; }
         void setSeed(unsigned int seed) { this -> seed = seed; }
 

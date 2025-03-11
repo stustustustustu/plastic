@@ -90,6 +90,14 @@ std::vector<Enemy> *WaveManager::getCurrentEnemies() const {
     return &activeWaves.front() -> getEnemies();
 }
 
+int WaveManager::getCurrentWaveIndex() const {
+    return this -> currentWaveIndex;
+}
+
+void WaveManager::setCurrentWaveIndex(int index) {
+    this -> currentWaveIndex = index;
+}
+
 void WaveManager::addWave(Wave wave) {
     waves.push_back(wave);
 }

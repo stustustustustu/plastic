@@ -9,10 +9,11 @@ auto const game = Game::getInstance();
 WorldCreation::WorldCreation() : Scene("WORLD_CREATION"), islandPreview(0) {
     backButton = std::make_unique<Button>(glm::vec2(game -> getSize().at(0), game -> getSize().at(1)) - glm::vec2(175, 75), glm::vec2(150, 50), "Cancel", HEXtoRGB(0xFF4444));
 
-    seedInput = std::make_unique<Textbox>(glm::vec2(25, 25), glm::vec2(200, 50), "Seed");
-    generateSeedButton = std::make_unique<Button>(glm::vec2(235, 25), glm::vec2(game -> text -> GetWidth("Reroll", 16.0f) + 50, 50), "Reroll", HEXtoRGB(0x3F3F3F));
+    worldNameInput = std::make_unique<Textbox>(glm::vec2(25, 25), glm::vec2(200, 50), "World Name");
+    seedInput = std::make_unique<Textbox>(glm::vec2(25, 85), glm::vec2(200, 50), "Seed");
+    generateSeedButton = std::make_unique<Button>(glm::vec2(235, 85), glm::vec2(game -> text -> GetWidth("Reroll", 16.0f) + 50, 50), "Reroll", HEXtoRGB(0x3F3F3F));
 
-    difficultyDropdown = std::make_unique<Dropdown>(glm::vec2(25, 85), glm::vec2(200, 50), "Difficulty");
+    difficultyDropdown = std::make_unique<Dropdown>(glm::vec2(25, 145), glm::vec2(200, 50), "Difficulty");
     difficultyDropdown -> addOption("Easy");
     difficultyDropdown -> addOption("Medium");
     difficultyDropdown -> addOption("Hard");
@@ -53,8 +54,16 @@ WorldCreation::WorldCreation() : Scene("WORLD_CREATION"), islandPreview(0) {
         updateIslandPreview();
     });
 
+    worldNameInput -> addCallback([this]() {
+        if (std::string input = worldNameInput -> getText(); input.empty()) {
+            currentName = "New World";
+        } else {
+            currentName = input;
+        }
+    });
+
     createWorldButton -> addCallback([this]() {
-        game -> createNewWorld(currentSeed, static_cast<Difficulty>(difficultyDropdown -> getSelectedIndex()));
+        game -> createNewWorld(currentName, currentSeed, static_cast<Difficulty>(difficultyDropdown -> getSelectedIndex()));
 
         updateIslandPreview();
 
@@ -80,6 +89,7 @@ void WorldCreation::render() {
     createWorldButton -> render();
 
     difficultyDropdown -> render();
+    worldNameInput -> render();
     seedInput -> render();
 }
 
@@ -89,6 +99,7 @@ void WorldCreation::update() {
     createWorldButton -> update();
 
     difficultyDropdown -> update();
+    worldNameInput -> update();
     seedInput -> update();
 }
 

@@ -28,6 +28,7 @@ class Enemy : public Entity {
         void moveTowards(const std::vector<float>& targetPos);
 
         static std::map<EnemyType, std::tuple<float, float, float, float>> getEnemyData();
+        EnemyType getType() const;
 
         static std::vector<Enemy> generateEnemies(int index, int totalWeight);
 

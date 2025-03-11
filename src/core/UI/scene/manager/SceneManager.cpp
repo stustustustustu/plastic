@@ -1,4 +1,5 @@
 #include "SceneManager.h"
+
 #include "../src/Game.h"
 
 const auto game = Game::getInstance();
@@ -55,7 +56,10 @@ void SceneManager::resize() {
     }
 }
 
-
 std::string SceneManager::getScene() const {
     return currentScene ? currentScene -> getSceneID() : "";
+}
+
+void SceneManager::clearHistory() {
+    sceneHistory = {};
 }

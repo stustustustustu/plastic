@@ -60,7 +60,7 @@ class Game {
 
         World *getCurrentWorld() const;
         void loadWorld(const std::string &path);
-        void createNewWorld(unsigned int seed, Difficulty difficulty);
+        void createNewWorld(std::string name, unsigned int seed, Difficulty difficulty);
 
         GameState getState() const;
         void setState(GameState state);
