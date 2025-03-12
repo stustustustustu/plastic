@@ -38,6 +38,14 @@ void UpgradePath::setLevel(int level) {
     }
 }
 
+void UpgradePath::restoreLevel(int level) {
+    if (level >= 0 && level < upgrades.size()) {
+        this -> level = level;
+    } else {
+        this -> level = upgrades.size() - 1;
+    }
+}
+
 std::string UpgradePath::generateName() const {
     std::string levelStr = intToRoman(level + 1);
 

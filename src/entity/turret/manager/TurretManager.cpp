@@ -88,6 +88,15 @@ std::map<Upgrade*, glm::vec2> TurretManager::calculateNodePositions() const {
     return nodePositions;
 }
 
+std::vector<std::shared_ptr<Turret>> TurretManager::getTurrets() const {
+    return this -> turrets;
+}
+
+void TurretManager::addTurret(TurretType type, std::vector<float> position) {
+    auto turret = std::make_shared<Turret>(position, type);
+    turrets.push_back(turret);
+}
+
 void TurretManager::renderPreview(const glm::vec2& mousePos) const {
     if (!isPlacingTurret) return;
 

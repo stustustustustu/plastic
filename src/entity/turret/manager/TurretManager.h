@@ -29,6 +29,9 @@ class TurretManager {
         void initUpgrades();
         std::map<Upgrade*, glm::vec2> calculateNodePositions() const;
 
+        std::vector<std::shared_ptr<Turret>> getTurrets() const;
+        void addTurret(TurretType type, std::vector<float> position);
+
         void renderPreview(const glm::vec2& position) const;
 
         void startPlacingTurret(TurretType type);

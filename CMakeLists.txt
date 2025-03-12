@@ -111,6 +111,8 @@ add_executable(
         src/core/world/World.h
         src/core/UI/scene/scenes/Pause.cpp
         src/core/UI/scene/scenes/Pause.h
+        src/core/UI/scene/scenes/WorldSelection.cpp
+        src/core/UI/scene/scenes/WorldSelection.h
 )
 
 target_include_directories(plastic PRIVATE dependencies) # Includes location

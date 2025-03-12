@@ -36,7 +36,7 @@ void InputHandler::RegisterActions() {
     getActionManager().registerAction("LEFT", [](){  });
     getActionManager().registerAction("RIGHT", [](){  });
     getActionManager().registerAction("SHOOT", []() {
-        if (game -> getCurrentWorld()) {
+        if (game -> getCurrentWorld() && game -> getCurrentWorld() -> turret) {
             game -> getCurrentWorld() -> turret -> handleClick(getMousePosition());
         }
     });

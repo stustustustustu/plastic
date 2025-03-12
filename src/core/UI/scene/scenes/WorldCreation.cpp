@@ -63,6 +63,12 @@ WorldCreation::WorldCreation() : Scene("WORLD_CREATION"), islandPreview(0) {
     });
 
     createWorldButton -> addCallback([this]() {
+        if (std::string input = worldNameInput -> getText(); input.empty()) {
+            currentName = "New World";
+        } else {
+            currentName = input;
+        }
+
         game -> createNewWorld(currentName, currentSeed, static_cast<Difficulty>(difficultyDropdown -> getSelectedIndex()));
 
         updateIslandPreview();

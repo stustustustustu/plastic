@@ -31,6 +31,7 @@ class UpgradePath {
 
         int getLevel() const;
         void setLevel(int level);
+        void restoreLevel(int level);
 };
 
 #endif //UPGRADEPATH_H

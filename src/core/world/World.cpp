@@ -1,9 +1,12 @@
 #include "World.h"
+
+#include <string.h>
+
 #include "../../Game.h"
 
 const auto game = Game::getInstance();
 
-World::World(std::string name, unsigned int seed, Difficulty difficulty) : name(name), seed(seed), difficulty(difficulty) {}
+World::World(std::string name, unsigned int seed, Difficulty difficulty) : name(name), seed(seed), difficulty(difficulty), enemies(new std::vector<Enemy>()) {}
 
 void World::init() {
     island = std::make_unique<Island>(seed);
@@ -17,35 +20,68 @@ void World::init() {
 }
 
 void World::save(const std::string &path) {
-    std::string fileName = path + "/" + name + ".bin";
-    std::ofstream file(fileName, std::ios::binary);
+    std::ofstream file(path, std::ios::binary);
     if (!file.is_open()) {
         std::cerr << "Failed to save world: " << path << std::endl;
         return;
     }
 
-    // Save name, seed and difficulty
-    file.write(reinterpret_cast<const char*>(&name), sizeof(name));
+    // Save the length of the name first
+    size_t nameLength = name.size();
+    file.write(reinterpret_cast<const char*>(&nameLength), sizeof(nameLength));
+
+    // Save the name as a sequence of characters
+    file.write(name.c_str(), nameLength);
+
+    // Save seed, difficulty, and wave index
     file.write(reinterpret_cast<const char*>(&seed), sizeof(seed));
     file.write(reinterpret_cast<const char*>(&difficulty), sizeof(difficulty));
+    int currentWaveIndex = wave->getCurrentWaveIndex();
+    file.write(reinterpret_cast<const char*>(&currentWaveIndex), sizeof(currentWaveIndex));
+
+    // Save the current wave's state (enemies)
+    size_t enemyCount = enemies->size();
+    file.write(reinterpret_cast<const char*>(&enemyCount), sizeof(enemyCount));
+
+    for (const auto& enemy : *enemies) {
+        // Save enemy type
+        EnemyType type = enemy.getType();
+        file.write(reinterpret_cast<const char*>(&type), sizeof(type));
+
+        // Save enemy position
+        glm::vec2 position = glm::vec2(enemy.getPosition().at(0), enemy.getPosition().at(1));
+        file.write(reinterpret_cast<const char*>(&position), sizeof(position));
+
+        // Save enemy health
+        float health = enemy.getHealth();
+        file.write(reinterpret_cast<const char*>(&health), sizeof(health));
+    }
 
     // Save window size
     auto windowSize = game->getSize();
     file.write(reinterpret_cast<const char*>(&windowSize[0]), sizeof(windowSize[0]));
     file.write(reinterpret_cast<const char*>(&windowSize[1]), sizeof(windowSize[1]));
 
-    // Save player data
+    // Save player data (unchanged)
     float playerHealth = player->getHealth();
+    float playerMaxHealth = player->getMaxHealth();
+    float playerShield = player->getShield();
     int playerCoins = player->getCoins();
     glm::vec2 playerPosition = glm::vec2(player->getPosition().at(0), player->getPosition().at(1));
 
     file.write(reinterpret_cast<const char*>(&playerHealth), sizeof(playerHealth));
+    file.write(reinterpret_cast<const char*>(&playerMaxHealth), sizeof(playerMaxHealth));
+    file.write(reinterpret_cast<const char*>(&playerShield), sizeof(playerShield));
     file.write(reinterpret_cast<const char*>(&playerCoins), sizeof(playerCoins));
     file.write(reinterpret_cast<const char*>(&playerPosition), sizeof(playerPosition));
 
-    // Save upgrade manager data
-    size_t upgradePathCount = upgrade->getPaths().size();
-    file.write(reinterpret_cast<const char*>(&upgradePathCount), sizeof(upgradePathCount));
+    // Save inventory data (unchanged)
+    int coins = inventory->getCoins();
+    file.write(reinterpret_cast<const char*>(&coins), sizeof(coins));
+
+    // Save player upgrades (unchanged)
+    size_t upgradeCount = upgrade->getPaths().size();
+    file.write(reinterpret_cast<const char*>(&upgradeCount), sizeof(upgradeCount));
 
     for (const auto& [type, path] : upgrade->getPaths()) {
         file.write(reinterpret_cast<const char*>(&type), sizeof(type));
@@ -53,153 +89,169 @@ void World::save(const std::string &path) {
         file.write(reinterpret_cast<const char*>(&level), sizeof(level));
     }
 
-    // Save turret upgrade manager data
-    for (TurretType type : {TurretType::LASER, TurretType::RIFLE, TurretType::BOMB}) {
-        const auto& turretUpgrades = turret->getUpgradeManager().getSkillTree(type);
-        size_t upgradeCount = turretUpgrades.size();
-        file.write(reinterpret_cast<const char*>(&upgradeCount), sizeof(upgradeCount));
+    // Save turret data (unchanged)
+    size_t turretCount = turret->getTurrets().size();
+    file.write(reinterpret_cast<const char*>(&turretCount), sizeof(turretCount));
 
-        for (const auto& [upgrade, prerequisites] : turretUpgrades) {
-            std::string name = upgrade->getName();
-            size_t nameLength = name.size();
-            file.write(reinterpret_cast<const char*>(&nameLength), sizeof(nameLength));
-            file.write(name.c_str(), nameLength);
+    for (const auto& turretInstance : turret->getTurrets()) {
+        TurretType type = turretInstance->getType();
+        glm::vec2 position = glm::vec2(turretInstance->getPosition().at(0), turretInstance->getPosition().at(1));
 
-            bool isUnlocked = upgrade->isUnlocked();
-            file.write(reinterpret_cast<const char*>(&isUnlocked), sizeof(isUnlocked));
-        }
-    }
-
-    // Save wave manager data
-    int currentWaveIndex = wave->getCurrentWaveIndex();
-    file.write(reinterpret_cast<const char*>(&currentWaveIndex), sizeof(currentWaveIndex));
-
-    size_t activeWaveCount = wave->getCurrentEnemies()->size();
-    file.write(reinterpret_cast<const char*>(&activeWaveCount), sizeof(activeWaveCount));
-
-    for (const auto& enemy : *wave->getCurrentEnemies()) {
-        float enemyHealth = enemy.getHealth();
-        glm::vec2 enemyPosition = glm::vec2(enemy.getPosition().at(0), enemy.getPosition().at(1));
-        EnemyType enemyType = enemy.getType();
-
-        file.write(reinterpret_cast<const char*>(&enemyHealth), sizeof(enemyHealth));
-        file.write(reinterpret_cast<const char*>(&enemyPosition), sizeof(enemyPosition));
-        file.write(reinterpret_cast<const char*>(&enemyType), sizeof(enemyType));
+        file.write(reinterpret_cast<const char*>(&type), sizeof(type));
+        file.write(reinterpret_cast<const char*>(&position), sizeof(position));
     }
 
     file.close();
 }
 
 void World::load(const std::string &path) {
-    std::string fileName = path + "/" + name + ".bin";
-    std::ifstream file(fileName, std::ios::binary);
+    std::ifstream file(path, std::ios::binary);
     if (!file.is_open()) {
         std::cerr << "Failed to load world: " << path << std::endl;
+        std::cerr << "Error: " << strerror(errno) << std::endl;
         return;
     }
 
-    // Load name, seed and difficulty
-    file.read(reinterpret_cast<char*>(&name), sizeof(name));
+    // Load the length of the name first
+    size_t nameLength;
+    file.read(reinterpret_cast<char*>(&nameLength), sizeof(nameLength));
+
+    // Read the name as a sequence of characters
+    std::string loadedName(nameLength, '\0');
+    file.read(&loadedName[0], nameLength);
+    name = loadedName;
+
+    // Load seed, difficulty, and wave index
     file.read(reinterpret_cast<char*>(&seed), sizeof(seed));
     file.read(reinterpret_cast<char*>(&difficulty), sizeof(difficulty));
+    int currentWaveIndex;
+    file.read(reinterpret_cast<char*>(&currentWaveIndex), sizeof(currentWaveIndex));
+
+    // Load the current wave's state (enemies)
+    size_t enemyCount;
+    file.read(reinterpret_cast<char*>(&enemyCount), sizeof(enemyCount));
+
+    // Clear existing enemies
+    enemies->clear();
+
+    for (size_t i = 0; i < enemyCount; ++i) {
+        // Load enemy type
+        EnemyType type;
+        file.read(reinterpret_cast<char*>(&type), sizeof(type));
+
+        // Load enemy position
+        glm::vec2 position;
+        file.read(reinterpret_cast<char*>(&position), sizeof(position));
+
+        // Load enemy health
+        float health;
+        file.read(reinterpret_cast<char*>(&health), sizeof(health));
+
+        // Get damage and speed from EnemyType
+        auto enemyData = Enemy::getEnemyData();
+        auto data = enemyData[type];
+        float damage = std::get<2>(data); // Damage is the 3rd value in the tuple
+        float speed = std::get<3>(data); // Speed is the 4th value in the tuple
+
+        // Create the enemy
+        Enemy enemy(type, {position.x, position.y}, health, damage, speed);
+
+        // Add the enemy to the list
+        enemies->push_back(enemy);
+    }
 
     // Load window size
-    int windowWidth, windowHeight;
+    float windowWidth, windowHeight;
     file.read(reinterpret_cast<char*>(&windowWidth), sizeof(windowWidth));
     file.read(reinterpret_cast<char*>(&windowHeight), sizeof(windowHeight));
 
     // Set the window size in the Game instance
     game->setSize(std::to_string(windowWidth) + "x" + std::to_string(windowHeight));
 
-    // Reinitialize the world
+    // Reinitialize the world (but do not start a new wave)
     init();
+
+    // Set the wave index to the saved value
+    wave->setCurrentWaveIndex(currentWaveIndex);
 
     // Load player data
     float playerHealth;
+    float playerMaxHealth;
+    float playerShield;
     int playerCoins;
     glm::vec2 playerPosition;
 
     file.read(reinterpret_cast<char*>(&playerHealth), sizeof(playerHealth));
+    file.read(reinterpret_cast<char*>(&playerMaxHealth), sizeof(playerMaxHealth));
+    file.read(reinterpret_cast<char*>(&playerShield), sizeof(playerShield));
     file.read(reinterpret_cast<char*>(&playerCoins), sizeof(playerCoins));
     file.read(reinterpret_cast<char*>(&playerPosition), sizeof(playerPosition));
 
     player->setHealth(playerHealth);
-    player->setCoins(playerCoins);
+    player->setMaxHealth(playerMaxHealth);
+    player->setShield(playerShield);
     player->setPosition({playerPosition.x, playerPosition.y});
 
     // Load inventory data
     int coins;
     file.read(reinterpret_cast<char*>(&coins), sizeof(coins));
-    inventory->addCoins(coins);
+    player->setCoins(coins); // Directly set the coins
 
-    // Load upgrade manager data
-    size_t upgradePathCount;
-    file.read(reinterpret_cast<char*>(&upgradePathCount), sizeof(upgradePathCount));
+    // Load player upgrades
+    size_t upgradeCount;
+    file.read(reinterpret_cast<char*>(&upgradeCount), sizeof(upgradeCount));
 
-    for (size_t i = 0; i < upgradePathCount; ++i) {
+    for (size_t i = 0; i < upgradeCount; ++i) {
         UpgradeType type;
         int level;
 
         file.read(reinterpret_cast<char*>(&type), sizeof(type));
         file.read(reinterpret_cast<char*>(&level), sizeof(level));
 
-        if (upgrade->getPaths().find(type) != upgrade->getPaths().end()) {
-            for (int j = 0; j < level; ++j) {
-                upgrade->upgrade(type); // Apply upgrades to reach the saved level
-            }
+        // Ensure the upgrade path exists
+        if (upgrade->hasUpgradePath(type)) {
+            // Restore the level of the upgrade path
+            upgrade->getPaths().at(type).restoreLevel(level);
+        } else {
+            // If the upgrade path doesn't exist, create it and set the level
+            upgrade->addPath(type);
+            upgrade->getPaths().at(type).restoreLevel(level);
+        }
+
+        // Apply the upgrade to the player's stats
+        float multiplier = upgrade->getMultiplier(type);
+        switch (type) {
+            case UpgradeType::DAMAGE:
+                player->setDamage(player->getDamage() * multiplier);
+                break;
+            case UpgradeType::HEALTH:
+                player->setMaxHealth(player->getMaxHealth() * multiplier);
+                player->setHealth(player->getMaxHealth());
+                break;
+            case UpgradeType::SPEED:
+                player->setSpeed(player->getSpeed() * multiplier);
+                break;
+            case UpgradeType::SHIELD:
+                player->setShield(player->getShield() * multiplier);
+                player->setMaxShield(player->getMaxShield() * multiplier);
+                break;
+            default:
+                break;
         }
     }
 
-    // Load turret upgrade manager data
-    size_t turretTypeCount;
-    file.read(reinterpret_cast<char*>(&turretTypeCount), sizeof(turretTypeCount));
+    // Load turret data
+    size_t turretCount;
+    file.read(reinterpret_cast<char*>(&turretCount), sizeof(turretCount));
 
-    for (size_t i = 0; i < turretTypeCount; ++i) {
+    for (size_t i = 0; i < turretCount; ++i) {
         TurretType type;
+        glm::vec2 position;
+
         file.read(reinterpret_cast<char*>(&type), sizeof(type));
+        file.read(reinterpret_cast<char*>(&position), sizeof(position));
 
-        size_t upgradeCount;
-        file.read(reinterpret_cast<char*>(&upgradeCount), sizeof(upgradeCount));
-
-        for (size_t j = 0; j < upgradeCount; ++j) {
-            size_t nameLength;
-            file.read(reinterpret_cast<char*>(&nameLength), sizeof(nameLength));
-
-            std::string name(nameLength, '\0');
-            file.read(&name[0], nameLength);
-
-            bool isUnlocked;
-            file.read(reinterpret_cast<char*>(&isUnlocked), sizeof(isUnlocked));
-
-            for (auto& upgrade : turret->getUpgradeManager().getAvailableUpgrades(type)) {
-                if (upgrade->getName() == name) {
-                    upgrade->setUnlocked(isUnlocked);
-                    break;
-                }
-            }
-        }
-    }
-
-    // Load wave manager data
-    int currentWaveIndex;
-    file.read(reinterpret_cast<char*>(&currentWaveIndex), sizeof(currentWaveIndex));
-    wave->setCurrentWaveIndex(currentWaveIndex);
-
-    size_t activeWaveCount;
-    file.read(reinterpret_cast<char*>(&activeWaveCount), sizeof(activeWaveCount));
-
-    for (size_t i = 0; i < activeWaveCount; ++i) {
-        float enemyHealth;
-        glm::vec2 enemyPosition;
-        EnemyType enemyType;
-
-        file.read(reinterpret_cast<char*>(&enemyHealth), sizeof(enemyHealth));
-        file.read(reinterpret_cast<char*>(&enemyPosition), sizeof(enemyPosition));
-        file.read(reinterpret_cast<char*>(&enemyType), sizeof(enemyType));
-
-        Enemy enemy(enemyType, {enemyPosition.x, enemyPosition.y}, enemyHealth, 0.0f, 0.0f); // Add default values for damage and speed
-        enemy.setPosition({enemyPosition.x, enemyPosition.y});
-        wave->getCurrentEnemies()->push_back(enemy);
+        turret->addTurret(type, {position.x, position.y});
     }
 
     file.close();

@@ -7,6 +7,7 @@
 #include "core/UI/scene/scenes/Pause.h"
 #include "core/UI/scene/scenes/Settings.h"
 #include "core/UI/scene/scenes/WorldCreation.h"
+#include "core/UI/scene/scenes/WorldSelection.h"
 
 Game *Game::instance = NULL;
 
@@ -56,6 +57,8 @@ void Game::createNewWorld(std::string name, unsigned int seed, Difficulty diffic
 void Game::loadWorld(const std::string &path) {
     currentWorld = std::make_unique<World>("New World", 0, MEDIUM);
     currentWorld -> load(path);
+
+    scenes->addScene("IN_GAME", std::make_unique<InGame>());
 }
 
 GameState Game::getState() const {
@@ -133,6 +136,7 @@ bool Game::init() {
 
     scenes -> addScene("MAIN_MENU", std::make_unique<MainMenu>());
     scenes -> addScene("WORLD_CREATION", std::make_unique<WorldCreation>());
+    scenes -> addScene("WORLD_SELECTION", std::make_unique<WorldSelection>());
     scenes -> addScene("SETTINGS", std::make_unique<Settings>());
     scenes -> addScene("PAUSE", std::make_unique<Pause>());
 
