@@ -23,6 +23,7 @@ class WaveManager {
         void removeCompletedWaves();
 
         std::vector<Enemy> *getCurrentEnemies() const;
+        void setCurrentEnemies(const std::vector<Enemy>& enemies);
 
         int getCurrentWaveIndex() const;
         void setCurrentWaveIndex(int index);

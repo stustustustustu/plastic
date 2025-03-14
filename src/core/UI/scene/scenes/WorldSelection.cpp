@@ -86,7 +86,9 @@ void WorldSelection::createWorldButtons() {
     deleteButtons.clear();
 
     for (size_t i = 0; i < worldNames.size(); ++i) {
-        glm::vec2 position(275 - 48, 25 + i * (100 + border));
+        auto size = std::max(200.0f, game -> text -> GetWidth(worldNames[i], 24) + border);
+
+        glm::vec2 position(size + 24 + border, 25 + i * (100 + border));
         playButtons.push_back(std::make_unique<Button>(position + glm::vec2(-border / 2, border / 2), glm::vec2(48, 24), "PLAY", HEXtoRGB(0x3F3F3F)));
         deleteButtons.push_back(std::make_unique<Button>(position + glm::vec2(24 - border / 2, 100 - 24 - border / 2), glm::vec2(24, 24), "", HEXtoRGB(0xFF4444)));
 
@@ -117,9 +119,6 @@ void WorldSelection::render() {
         game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(27, 27 + i * (100 + border)), 2, 32, 32, glm::vec2(size + 48 + border, 100), 0, HEXtoRGB(0x000000));
 
         game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(25, 25 + i * (100 + border)), 2, 32, 32, glm::vec2(size + 48 + border, 100), 0, HEXtoRGB(0x2F2F2F));
-
-        playButtons[i] -> setPosition(glm::vec2(size + 24 + border, 25 + i * (100 + border)) + glm::vec2(-border / 2, border / 2));
-        deleteButtons[i] -> setPosition(glm::vec2(size + 24 + border, 25 + i * (100 + border)) + glm::vec2(24 - border / 2, 100 - 24 - border / 2));
 
         game -> renderer -> DrawText(worldNames[i], glm::vec2(25 + border / 2, 50 + i * (100 + border)), 24.0f, true);
         game -> renderer -> DrawText("Difficulty: " + worldDifficulties[i], glm::vec2(25 + border / 2, 80 + i * (100 + border)), 16.0f, true);

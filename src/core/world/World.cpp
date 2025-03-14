@@ -85,6 +85,25 @@ void World::save(const std::string &path) {
         file.write(reinterpret_cast<const char*>(&position), sizeof(position));
     }
 
+    // wave and enemies data
+    size_t enemyCount = enemies->size();
+    file.write(reinterpret_cast<const char*>(&enemyCount), sizeof(enemyCount));
+
+    for (const auto& enemy : *enemies) {
+        EnemyType type = enemy.getType();
+        file.write(reinterpret_cast<const char*>(&type), sizeof(type));
+
+        glm::vec2 position = glm::vec2(enemy.getPosition().at(0), enemy.getPosition().at(1));
+        file.write(reinterpret_cast<const char*>(&position), sizeof(position));
+
+        float health = enemy.getHealth();
+        float damage = enemy.getDamage();
+        float speed = enemy.getSpeed();
+        file.write(reinterpret_cast<const char*>(&health), sizeof(health));
+        file.write(reinterpret_cast<const char*>(&damage), sizeof(damage));
+        file.write(reinterpret_cast<const char*>(&speed), sizeof(speed));
+    }
+
     file.close();
 }
 
@@ -182,6 +201,30 @@ void World::load(const std::string &path) {
 
         turret->addTurret(type, {position.x, position.y});
     }
+
+    // waves and enemies data
+    size_t enemyCount;
+    file.read(reinterpret_cast<char*>(&enemyCount), sizeof(enemyCount));
+
+    enemies->clear();
+
+    for (size_t i = 0; i < enemyCount; ++i) {
+        EnemyType type;
+        file.read(reinterpret_cast<char*>(&type), sizeof(type));
+
+        glm::vec2 position;
+        file.read(reinterpret_cast<char*>(&position), sizeof(position));
+
+        float health, damage, speed;
+        file.read(reinterpret_cast<char*>(&health), sizeof(health));
+        file.read(reinterpret_cast<char*>(&damage), sizeof(damage));
+        file.read(reinterpret_cast<char*>(&speed), sizeof(speed));
+
+        Enemy enemy(type, {position.x, position.y}, health, damage, speed);
+        enemies->push_back(enemy);
+    }
+
+    wave->setCurrentEnemies(*enemies);
 
     file.close();
 }
