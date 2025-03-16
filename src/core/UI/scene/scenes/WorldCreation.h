@@ -25,9 +25,9 @@ class WorldCreation : public Scene {
 
     public:
         WorldCreation();
+
         void render() override;
         void update() override;
-
         void resize() override;
 
         void updateIslandPreview();

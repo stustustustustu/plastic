@@ -39,10 +39,8 @@ void UpgradePath::setLevel(int level) {
 }
 
 void UpgradePath::restoreLevel(int level) {
-    if (level >= 0 && level < upgrades.size()) {
-        this -> level = level;
-    } else {
-        this -> level = upgrades.size() - 1;
+    for (int i = 0; i < level; ++i) {
+        upgrade();
     }
 }
 

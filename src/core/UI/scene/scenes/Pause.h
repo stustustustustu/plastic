@@ -17,6 +17,7 @@ class Pause : public Scene {
         void render() override;
         void update() override;
         void resize() override;
+
 };
 
 #endif //PAUSE_H

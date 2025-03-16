@@ -22,7 +22,8 @@ class UpgradeManager {
         int getCost(UpgradeType type, int level) const;
 
         bool hasUpgradePath(UpgradeType type) const;
-};
 
+        void loadPaths(const std::map<UpgradeType, int> &levels);
+};
 
 #endif //UPGRADEMANAGER_H

@@ -41,6 +41,8 @@ InGame::InGame() : Scene("IN_GAME"),
 }
 
 void InGame::resize() {
+    refreshUpgradePanels();
+
     glm::vec2 panelSize(2 * portrait + border + width, 6 * portrait / 3 - border);
     glm::vec2 panelPosition(game -> getSize().at(0) - (2 * portrait + border + width) - 4, portrait);
 

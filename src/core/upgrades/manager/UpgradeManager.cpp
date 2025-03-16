@@ -71,3 +71,11 @@ int UpgradeManager::getCost(UpgradeType type, int level) const {
 bool UpgradeManager::hasUpgradePath(UpgradeType type) const {
     return paths.find(type) != paths.end();
 }
+
+void UpgradeManager::loadPaths(const std::map<UpgradeType, int>& levels) {
+    for (const auto& [type, level] : levels) {
+        if (paths.find(type) != paths.end()) {
+            paths.at(type).restoreLevel(level);
+        }
+    }
+}

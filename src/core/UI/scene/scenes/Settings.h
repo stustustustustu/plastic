@@ -18,10 +18,11 @@ class Settings : public Scene {
 
     public:
         Settings();
+
         void render() override;
         void update() override;
-
         void resize() override;
+
 };
 
 #endif //OPTIONS_H

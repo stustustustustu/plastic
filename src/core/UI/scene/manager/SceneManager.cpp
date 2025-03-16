@@ -60,6 +60,14 @@ std::string SceneManager::getScene() const {
     return currentScene ? currentScene -> getSceneID() : "";
 }
 
+Scene* SceneManager::getScene(const std::string& name) const {
+    auto it = scenes.find(name);
+    if (it != scenes.end()) {
+        return it->second.get();
+    }
+    return nullptr;
+}
+
 void SceneManager::clearHistory() {
     sceneHistory = {};
 }

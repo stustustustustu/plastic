@@ -16,8 +16,8 @@ class MainMenu : public Scene {
 
         void render() override;
         void update() override;
-
         void resize() override;
+
 };
 
 #endif //MAINMENU_H

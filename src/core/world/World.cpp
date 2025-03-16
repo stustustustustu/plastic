@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "../../Game.h"
+#include "../UI/scene/scenes/InGame.h"
 
 const auto game = Game::getInstance();
 
@@ -34,24 +35,24 @@ void World::save(const std::string &path) {
     // seed, difficulty, and wave index
     file.write(reinterpret_cast<const char*>(&seed), sizeof(seed));
     file.write(reinterpret_cast<const char*>(&difficulty), sizeof(difficulty));
-    int currentWaveIndex = wave->getCurrentWaveIndex();
+    int currentWaveIndex = wave -> getCurrentWaveIndex();
     file.write(reinterpret_cast<const char*>(&currentWaveIndex), sizeof(currentWaveIndex));
 
     // window size
-    auto windowSize = game->getSize();
+    auto windowSize = game -> getSize();
     file.write(reinterpret_cast<const char*>(&windowSize[0]), sizeof(windowSize[0]));
     file.write(reinterpret_cast<const char*>(&windowSize[1]), sizeof(windowSize[1]));
 
     // player data
-    float playerHealth = player->getHealth();
-    float playerMaxHealth = player->getMaxHealth();
+    float playerHealth = player -> getHealth();
+    float playerMaxHealth = player -> getMaxHealth();
 
-    float playerShield = player->getShield();
-    float playerMaxShield = player->getMaxShield();
+    float playerShield = player -> getShield();
+    float playerMaxShield = player -> getMaxShield();
 
-    int playerCoins = player->getCoins();
+    int playerCoins = player -> getCoins();
 
-    glm::vec2 playerPosition = glm::vec2(player->getPosition().at(0), player->getPosition().at(1));
+    glm::vec2 playerPosition = glm::vec2(player -> getPosition().at(0), player -> getPosition().at(1));
 
     file.write(reinterpret_cast<const char*>(&playerHealth), sizeof(playerHealth));
     file.write(reinterpret_cast<const char*>(&playerMaxHealth), sizeof(playerMaxHealth));
@@ -64,29 +65,29 @@ void World::save(const std::string &path) {
     file.write(reinterpret_cast<const char*>(&playerPosition), sizeof(playerPosition));
 
     // player upgrades
-    size_t upgradeCount = upgrade->getPaths().size();
+    size_t upgradeCount = upgrade -> getPaths().size();
     file.write(reinterpret_cast<const char*>(&upgradeCount), sizeof(upgradeCount));
 
-    for (const auto& [type, path] : upgrade->getPaths()) {
+    for (const auto& [type, path] : upgrade -> getPaths()) {
         file.write(reinterpret_cast<const char*>(&type), sizeof(type));
         int level = path.getLevel();
         file.write(reinterpret_cast<const char*>(&level), sizeof(level));
     }
 
     // turret data
-    size_t turretCount = turret->getTurrets().size();
+    size_t turretCount = turret -> getTurrets().size();
     file.write(reinterpret_cast<const char*>(&turretCount), sizeof(turretCount));
 
-    for (const auto& turretInstance : turret->getTurrets()) {
-        TurretType type = turretInstance->getType();
-        glm::vec2 position = glm::vec2(turretInstance->getPosition().at(0), turretInstance->getPosition().at(1));
+    for (const auto& turretInstance : turret -> getTurrets()) {
+        TurretType type = turretInstance -> getType();
+        glm::vec2 position = glm::vec2(turretInstance -> getPosition().at(0), turretInstance -> getPosition().at(1));
 
         file.write(reinterpret_cast<const char*>(&type), sizeof(type));
         file.write(reinterpret_cast<const char*>(&position), sizeof(position));
     }
 
     // wave and enemies data
-    size_t enemyCount = enemies->size();
+    size_t enemyCount = enemies -> size();
     file.write(reinterpret_cast<const char*>(&enemyCount), sizeof(enemyCount));
 
     for (const auto& enemy : *enemies) {
@@ -132,11 +133,11 @@ void World::load(const std::string &path) {
     float windowWidth, windowHeight;
     file.read(reinterpret_cast<char*>(&windowWidth), sizeof(windowWidth));
     file.read(reinterpret_cast<char*>(&windowHeight), sizeof(windowHeight));
-    game->setSize(std::to_string(windowWidth) + "x" + std::to_string(windowHeight));
+    game -> setSize(std::to_string(windowWidth) + "x" + std::to_string(windowHeight));
 
     init();
 
-    wave->setCurrentWaveIndex(currentWaveIndex);
+    wave -> setCurrentWaveIndex(currentWaveIndex);
 
     // player data
     float playerHealth;
@@ -159,19 +160,21 @@ void World::load(const std::string &path) {
 
     file.read(reinterpret_cast<char*>(&playerPosition), sizeof(playerPosition));
 
-    player->setHealth(playerHealth);
-    player->setMaxHealth(playerMaxHealth);
+    player -> setHealth(playerHealth);
+    player -> setMaxHealth(playerMaxHealth);
 
-    player->setShield(playerShield);
-    player->setMaxShield(playerMaxShield);
+    player -> setShield(playerShield);
+    player -> setMaxShield(playerMaxShield);
 
-    player->setCoins(playerCoins);
+    player -> setCoins(playerCoins);
 
-    player->setPosition({playerPosition.x, playerPosition.y});
+    player -> setPosition({playerPosition.x, playerPosition.y});
 
     // player upgrades
     size_t upgradeCount;
     file.read(reinterpret_cast<char*>(&upgradeCount), sizeof(upgradeCount));
+
+    std::map<UpgradeType, int> levels;
 
     for (size_t i = 0; i < upgradeCount; ++i) {
         UpgradeType type;
@@ -180,11 +183,16 @@ void World::load(const std::string &path) {
         file.read(reinterpret_cast<char*>(&type), sizeof(type));
         file.read(reinterpret_cast<char*>(&level), sizeof(level));
 
-        if (upgrade->hasUpgradePath(type)) {
-            upgrade->getPaths().at(type).restoreLevel(level);
-        } else {
-            upgrade->addPath(type);
-            upgrade->getPaths().at(type).restoreLevel(level);
+        levels[type] = level;
+    }
+
+    upgrade -> loadPaths(levels);
+
+    auto scene = game -> scenes -> getScene("IN_GAME");
+    if (scene) {
+        InGame* inGameScene = dynamic_cast<InGame*>(scene);
+        if (inGameScene) {
+            inGameScene -> refreshUpgradePanels();
         }
     }
 
@@ -199,14 +207,14 @@ void World::load(const std::string &path) {
         file.read(reinterpret_cast<char*>(&type), sizeof(type));
         file.read(reinterpret_cast<char*>(&position), sizeof(position));
 
-        turret->addTurret(type, {position.x, position.y});
+        turret -> addTurret(type, {position.x, position.y});
     }
 
     // waves and enemies data
     size_t enemyCount;
     file.read(reinterpret_cast<char*>(&enemyCount), sizeof(enemyCount));
 
-    enemies->clear();
+    enemies -> clear();
 
     for (size_t i = 0; i < enemyCount; ++i) {
         EnemyType type;
@@ -221,10 +229,10 @@ void World::load(const std::string &path) {
         file.read(reinterpret_cast<char*>(&speed), sizeof(speed));
 
         Enemy enemy(type, {position.x, position.y}, health, damage, speed);
-        enemies->push_back(enemy);
+        enemies -> push_back(enemy);
     }
 
-    wave->setCurrentEnemies(*enemies);
+    wave -> setCurrentEnemies(*enemies);
 
     file.close();
 }

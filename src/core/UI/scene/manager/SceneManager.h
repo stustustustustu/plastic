@@ -24,6 +24,7 @@ class SceneManager {
 
         void initScene() const;
         std::string getScene() const;
+        Scene *getScene(const std::string &name) const;
 
         void clearHistory();
 };

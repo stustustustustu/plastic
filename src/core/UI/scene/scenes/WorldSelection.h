@@ -24,11 +24,10 @@ class WorldSelection : public Scene {
 
     public:
         WorldSelection();
+
         void render() override;
         void update() override;
         void resize() override;
-
-
 };
 
 #endif //WORLDSELECTION_H
