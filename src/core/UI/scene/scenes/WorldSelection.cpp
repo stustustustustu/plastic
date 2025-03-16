@@ -144,4 +144,8 @@ void WorldSelection::update() {
 
 void WorldSelection::resize() {
     createWorldButtons();
+
+    backButton -> setPosition(glm::vec2(game -> getSize().at(0), game -> getSize().at(1)) - glm::vec2(175, 75));
+    createWorldButton -> setPosition(glm::vec2(25, game -> getSize().at(1)) - glm::vec2(0, 75));
+
 }

@@ -50,6 +50,9 @@ void World::save(const std::string &path) {
     float playerShield = player -> getShield();
     float playerMaxShield = player -> getMaxShield();
 
+    float playerDamage = player -> getDamage();
+    float playerSpeed = player -> getSpeed();
+
     int playerCoins = player -> getCoins();
 
     glm::vec2 playerPosition = glm::vec2(player -> getPosition().at(0), player -> getPosition().at(1));
@@ -59,6 +62,9 @@ void World::save(const std::string &path) {
 
     file.write(reinterpret_cast<const char*>(&playerShield), sizeof(playerShield));
     file.write(reinterpret_cast<const char*>(&playerMaxShield), sizeof(playerMaxShield));
+
+    file.write(reinterpret_cast<const char*>(&playerDamage), sizeof(playerDamage));
+    file.write(reinterpret_cast<const char*>(&playerSpeed), sizeof(playerSpeed));
 
     file.write(reinterpret_cast<const char*>(&playerCoins), sizeof(playerCoins));
 
@@ -146,6 +152,9 @@ void World::load(const std::string &path) {
     float playerShield;
     float playerMaxShield;
 
+    float playerDamage;
+    float playerSpeed;
+
     int playerCoins;
 
     glm::vec2 playerPosition;
@@ -156,6 +165,9 @@ void World::load(const std::string &path) {
     file.read(reinterpret_cast<char*>(&playerShield), sizeof(playerShield));
     file.read(reinterpret_cast<char*>(&playerMaxShield), sizeof(playerMaxShield));
 
+    file.read(reinterpret_cast<char*>(&playerDamage), sizeof(playerDamage));
+    file.read(reinterpret_cast<char*>(&playerSpeed), sizeof(playerSpeed));
+
     file.read(reinterpret_cast<char*>(&playerCoins), sizeof(playerCoins));
 
     file.read(reinterpret_cast<char*>(&playerPosition), sizeof(playerPosition));
@@ -165,6 +177,9 @@ void World::load(const std::string &path) {
 
     player -> setShield(playerShield);
     player -> setMaxShield(playerMaxShield);
+
+    player -> setDamage(playerDamage);
+    player -> setSpeed(playerSpeed);
 
     player -> setCoins(playerCoins);
 
@@ -228,7 +243,7 @@ void World::load(const std::string &path) {
         file.read(reinterpret_cast<char*>(&damage), sizeof(damage));
         file.read(reinterpret_cast<char*>(&speed), sizeof(speed));
 
-        Enemy enemy(type, {position.x, position.y}, health, damage, speed);
+        Enemy enemy(type, {position.x, position.y}, health, damage, speed * 2);
         enemies -> push_back(enemy);
     }
 
