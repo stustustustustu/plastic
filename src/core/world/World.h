@@ -11,6 +11,8 @@
 #include "../upgrades/manager/UpgradeManager.h"
 #include "../../entity/turret/manager/TurretManager.h"
 
+#include "../replay/Replay.h"
+
 enum Difficulty {
     EASY,
     MEDIUM,
@@ -24,6 +26,8 @@ class World {
         std::string name;
         unsigned int seed;
         Difficulty difficulty;
+
+        std::unique_ptr<Replay> replay;
 
     public:
         std::unique_ptr<Player> player;
@@ -44,13 +48,12 @@ class World {
 
         void init();
 
-        void save(const std::string &path);
-        void load(const std::string &path);
+        void save(const std::string &world);
+        void load(const std::string &world);
 
         void update();
         void render();
 
-    // getters & setters
     public:
         std::string getName() const { return this -> name; }
         void setName(const std::string& name) { this -> name = name; }

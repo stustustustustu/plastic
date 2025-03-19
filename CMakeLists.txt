@@ -113,6 +113,12 @@ add_executable(
         src/core/UI/scene/scenes/Pause.h
         src/core/UI/scene/scenes/WorldSelection.cpp
         src/core/UI/scene/scenes/WorldSelection.h
+        src/core/replay/Replay.cpp
+        src/core/replay/Replay.h
+        src/core/replay/manager/ReplayManager.cpp
+        src/core/replay/manager/ReplayManager.h
+        src/core/UI/scene/scenes/InReplay.cpp
+        src/core/UI/scene/scenes/InReplay.h
 )
 
 target_include_directories(plastic PRIVATE dependencies) # Includes location

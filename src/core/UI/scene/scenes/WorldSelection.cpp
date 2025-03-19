@@ -28,10 +28,19 @@ void WorldSelection::loadWorlds() {
     waveIndices.clear();
 
     for (const auto& entry : std::filesystem::directory_iterator("saves")) {
-        if (entry.path().extension() == ".bin") {
-            std::ifstream file(entry.path(), std::ios::binary);
+        if (entry.is_directory()) {
+            std::string worldName = entry.path().filename().string();
+
+            std::filesystem::path savePath = entry.path() / "save.bin";
+
+            if (!std::filesystem::exists(savePath)) {
+                std::cerr << "Save file not found for world: " << worldName << std::endl;
+                continue;
+            }
+
+            std::ifstream file(savePath, std::ios::binary);
             if (!file.is_open()) {
-                std::cerr << "Failed to open file: " << entry.path() << std::endl;
+                std::cerr << "Failed to open save file for world: " << worldName << std::endl;
                 continue;
             }
 
@@ -41,9 +50,9 @@ void WorldSelection::loadWorlds() {
             std::string name(nameLength, '\0');
             file.read(&name[0], nameLength);
 
+            int seed;
             Difficulty difficulty;
             int waveIndex;
-            int seed;
 
             file.read(reinterpret_cast<char*>(&seed), sizeof(seed));
             file.read(reinterpret_cast<char*>(&difficulty), sizeof(difficulty));
@@ -51,19 +60,19 @@ void WorldSelection::loadWorlds() {
 
             std::string diff;
             switch (static_cast<int>(difficulty)) {
-                case 1:
+                case 0:
                     diff = "EASY";
                     break;
-                case 2:
+                case 1:
                     diff = "MEDIUM";
                     break;
-                case 3:
+                case 2:
                     diff = "HARD";
                     break;
-                case 4:
+                case 3:
                     diff = "EXPERT";
                     break;
-                case 5:
+                case 4:
                     diff = "IMPOSSIBLE";
                     break;
                 default:
@@ -90,17 +99,34 @@ void WorldSelection::createWorldButtons() {
 
         glm::vec2 position(size + 24 + border, 25 + i * (100 + border));
         playButtons.push_back(std::make_unique<Button>(position + glm::vec2(-border / 2, border / 2), glm::vec2(48, 24), "PLAY", HEXtoRGB(0x3F3F3F)));
+        replayButtons.push_back(std::make_unique<Button>(position + glm::vec2(-border / 2 - 20, border + 24), glm::vec2(68, 24), "REPLAY", HEXtoRGB(0x3F3F3F)));
         deleteButtons.push_back(std::make_unique<Button>(position + glm::vec2(24 - border / 2, 100 - 24 - border / 2), glm::vec2(24, 24), "", HEXtoRGB(0xFF4444)));
 
         playButtons.back() -> addCallback([this, i]() {
-            game -> loadWorld("saves/" + worldNames[i] + ".bin");
+            game -> loadWorld(worldNames[i]);
             game -> scenes -> switchScene("IN_GAME");
         });
 
+        replayButtons.back() -> addCallback([this, i] () {
+            if (game -> replay) {
+                game -> replay -> loadReplay("saves/" + worldNames[i] + "/replay.bin");
+                game -> scenes -> switchScene("IN_REPLAY");
+            }
+        });
+
         deleteButtons.back() -> addCallback([this, i]() {
-            std::filesystem::remove("saves/" + worldNames[i] + ".bin");
-            loadWorlds();
-            createWorldButtons();
+            try {
+                    std::string worldPath = "saves/" + worldNames[i];
+                    if (std::filesystem::exists(worldPath)) {
+                        std::filesystem::remove_all(worldPath);
+                        loadWorlds();
+                        createWorldButtons();
+                    } else {
+                        std::cerr << "World directory does not exist: " << worldPath << std::endl;
+                    }
+                } catch (const std::filesystem::filesystem_error& e) {
+                    std::cerr << "Failed to delete world: " << e.what() << std::endl;
+                }
         });
     }
 
@@ -126,6 +152,7 @@ void WorldSelection::render() {
         game -> renderer -> DrawText("Window size: " + std::to_string(static_cast<int>(game -> getSize().at(0))) + "x" + std::to_string(static_cast<int>(game -> getSize().at(1))), glm::vec2(25 + border / 2, 120 + i * (100 + border)), 16.0f, true);
 
         playButtons[i] -> render();
+        replayButtons[i] -> render();
         deleteButtons[i] -> render();
     }
 }
@@ -135,6 +162,9 @@ void WorldSelection::update() {
     backButton -> update();
 
     for (auto& button : playButtons) {
+        button -> update();
+    }
+    for (auto& button : replayButtons) {
         button -> update();
     }
     for (auto& button : deleteButtons) {
@@ -147,5 +177,4 @@ void WorldSelection::resize() {
 
     backButton -> setPosition(glm::vec2(game -> getSize().at(0), game -> getSize().at(1)) - glm::vec2(175, 75));
     createWorldButton -> setPosition(glm::vec2(25, game -> getSize().at(1)) - glm::vec2(0, 75));
-
 }

@@ -14,6 +14,7 @@ class WorldSelection : public Scene {
         std::vector<std::string> worldDifficulties;
         std::vector<int> waveIndices;
         std::vector<std::unique_ptr<Button>> playButtons;
+        std::vector<std::unique_ptr<Button>> replayButtons;
         std::vector<std::unique_ptr<Button>> deleteButtons;
 
         std::unique_ptr<Button> createWorldButton;

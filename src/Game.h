@@ -8,6 +8,7 @@
 #include "core/upgrades/manager/UpgradeManager.h"
 #include "core/inventory/Inventory.h"
 #include "core/island/Island.h"
+#include "core/replay/manager/ReplayManager.h"
 #include "core/UI/scene/manager/SceneManager.h"
 #include "core/world/World.h"
 #include "utils/render/Renderer.h"
@@ -51,6 +52,7 @@ class Game {
         // core systems
         InputHandler *input;
         SceneManager *scenes;
+        ReplayManager *replay;
 
     public:
         Game(float, float);

@@ -3,6 +3,7 @@
 #include <glm/ext/matrix_clip_space.hpp>
 
 #include "core/UI/scene/scenes/InGame.h"
+#include "core/UI/scene/scenes/InReplay.h"
 #include "core/UI/scene/scenes/MainMenu.h"
 #include "core/UI/scene/scenes/Pause.h"
 #include "core/UI/scene/scenes/Settings.h"
@@ -14,7 +15,7 @@ Game *Game::instance = NULL;
 Game::Game(float width, float height) : state(ACTIVE), width(width), height(height),
                                         window(NULL), shader(NULL), texture(NULL), renderer(NULL), batch(NULL), text(NULL),
                                         camera(new Camera(width, height)),
-                                        input(NULL), scenes(NULL) {
+                                        input(NULL), scenes(NULL), replay(NULL) {
     srand(time(NULL));
 
     if (!std::filesystem::exists("saves")) {
@@ -33,6 +34,7 @@ Game::~Game() {
 
     delete input;
     delete scenes;
+    delete replay;
 }
 
 Game *Game::getInstance(float width, float height) {
@@ -126,6 +128,7 @@ bool Game::init() {
 
     input = new InputHandler();
     scenes = new SceneManager();
+    replay = new ReplayManager();
 
     texture = Texture::Create("../assets/sprites/sheet.png", true);
 
@@ -139,6 +142,7 @@ bool Game::init() {
     scenes -> addScene("WORLD_SELECTION", std::make_unique<WorldSelection>());
     scenes -> addScene("SETTINGS", std::make_unique<Settings>());
     scenes -> addScene("PAUSE", std::make_unique<Pause>());
+    scenes -> addScene("IN_REPLAY", std::make_unique<InReplay>());
 
     scenes -> switchScene("MAIN_MENU");
 

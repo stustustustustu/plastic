@@ -17,15 +17,24 @@ void World::init() {
     turret = std::make_unique<TurretManager>();
     player = std::make_unique<Player>();
 
+    replay = std::make_unique<Replay>();
+
     wave -> startNextWave();
 }
 
-void World::save(const std::string &path) {
-    std::ofstream file(path, std::ios::binary);
+void World::save(const std::string &world) {
+    std::filesystem::path folder = std::filesystem::path("saves") / world;
+    if (!std::filesystem::exists(folder)) {
+        std::filesystem::create_directories(folder);
+    }
+
+    std::filesystem::path path = folder / "save.bin";
+    std::ofstream file(folder / "save.bin", std::ios::binary);
     if (!file.is_open()) {
         std::cerr << "Failed to save world: " << path << std::endl;
         return;
     }
+
 
     // name
     size_t nameLength = name.size();
@@ -112,13 +121,22 @@ void World::save(const std::string &path) {
     }
 
     file.close();
+
+    std::filesystem::path replayPath = folder / "replay.bin";
+    replay -> save(replayPath.string());
 }
 
-void World::load(const std::string &path) {
-    std::ifstream file(path, std::ios::binary);
+void World::load(const std::string &world) {
+    std::filesystem::path folder = std::filesystem::path("saves") / world;
+    std::filesystem::path savePath = folder / "save.bin";
+    if (!std::filesystem::exists(savePath)) {
+        std::cerr << "Save file does not exist: " << savePath << std::endl;
+        return;
+    }
+
+    std::ifstream file(savePath, std::ios::binary);
     if (!file.is_open()) {
-        std::cerr << "Failed to load world: " << path << std::endl;
-        std::cerr << "Error: " << strerror(errno) << std::endl;
+        std::cerr << "Failed to load world: " << savePath << std::endl;
         return;
     }
 
@@ -250,6 +268,9 @@ void World::load(const std::string &path) {
     wave -> setCurrentEnemies(*enemies);
 
     file.close();
+
+    std::filesystem::path replayPath = folder / "replay.bin";
+    replay -> load(replayPath.string());
 }
 
 void World::update() {
@@ -261,10 +282,9 @@ void World::update() {
 
     projectiles.erase(
         std::remove_if(projectiles.begin(), projectiles.end(),
-            [](const std::unique_ptr<Projectile> &projectile) {
+        [](const std::unique_ptr<Projectile> &projectile) {
                 return projectile -> isMarked();
-            }),
-        projectiles.end()
+            }), projectiles.end()
     );
 
     for (auto &explosion : explosions) {
