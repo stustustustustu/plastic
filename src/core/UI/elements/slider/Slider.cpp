@@ -35,6 +35,8 @@ void Slider::update() {
             }
 
             value = std::max(min, std::min(max, value));
+
+            executeAction();
         } else {
             dragging = false;
         }

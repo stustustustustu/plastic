@@ -17,14 +17,16 @@ class ReplayManager  {
         ReplayManager();
 
         void loadReplay(const std::string& path);
-        void play();
-        void pause();
         void seek(std::chrono::milliseconds time);
+
         void setPlaybackSpeed(float speed);
+        float getPlaybackSpeed() const;
 
         std::chrono::milliseconds getCurrentTime() const;
         std::chrono::milliseconds getCurrentReplayDuration() const;
+
         bool isPlaying() const;
+        void setPlaying(bool playing);
 
         void update(World& world);
 };

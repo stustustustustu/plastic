@@ -9,20 +9,16 @@ void ReplayManager::loadReplay(const std::string &path) {
     this -> currentReplay -> load(path);
 }
 
-void ReplayManager::play() {
-    this -> playing = true;
-}
-
-void ReplayManager::pause() {
-    this -> playing = false;
-}
-
 void ReplayManager::seek(std::chrono::milliseconds time) {
     this -> currentTime = time;
 }
 
 void ReplayManager::setPlaybackSpeed(float speed) {
     this -> playbackSpeed = speed;
+}
+
+float ReplayManager::getPlaybackSpeed() const {
+    return this -> playbackSpeed;
 }
 
 std::chrono::milliseconds ReplayManager::getCurrentTime() const {
@@ -38,6 +34,10 @@ std::chrono::milliseconds ReplayManager::getCurrentReplayDuration() const {
 
 bool ReplayManager::isPlaying() const {
     return this -> playing;
+}
+
+void ReplayManager::setPlaying(bool playing) {
+    this -> playing = playing;
 }
 
 void ReplayManager::update(World &world) {

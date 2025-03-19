@@ -13,7 +13,7 @@ class InReplay : public Scene {
 
     private:
         std::unique_ptr<Button> speedButton;
-        std::unique_ptr<Toggle> pauseToggle;
+        std::unique_ptr<Button> pauseToggle;
         std::unique_ptr<Slider> timeline;
 
     public:

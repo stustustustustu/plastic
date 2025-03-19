@@ -16,6 +16,8 @@ class Button : public Element {
 
         void render() override;
         void update() override;
+
+        void setLabel(const std::string &label) { this -> label = label; }
 };
 
 #endif //BUTTON_H
