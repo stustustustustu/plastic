@@ -339,7 +339,7 @@ void World::update() {
         }
     }
 
-    Player::Movement();
+    player -> Movement();
 
     turret -> update();
 }
@@ -369,7 +369,7 @@ void World::render() {
         }
     }
 
-    Player::drawLaser();
+    player -> drawLaser();
 
     turret -> render();
 }

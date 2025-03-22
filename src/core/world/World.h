@@ -27,6 +27,7 @@ class World {
         unsigned int seed;
         Difficulty difficulty;
 
+    public:
         std::unique_ptr<Replay> replay;
 
     public:

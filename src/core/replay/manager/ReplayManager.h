@@ -16,7 +16,6 @@ class ReplayManager  {
 
         std::unique_ptr<World> tempWorld;
 
-
     public:
         ReplayManager();
 
@@ -31,6 +30,8 @@ class ReplayManager  {
 
         bool isPlaying() const;
         void setPlaying(bool playing);
+
+        void applyEvent(World &world, const Event &event);
 
         void update(World& world);
 

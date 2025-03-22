@@ -17,14 +17,14 @@ class Player : public Entity {
 
         std::pair<int, int> calculateSpawnTile();
 
-        static void Movement();
-        static void shoot();
+        void Movement();
+        void shoot(const glm::vec2& cursorPos);
 
-        static void drawLaser();
+        void drawLaser();
 
-        static bool canMove(glm::vec2 &delta);
+        bool canMove(glm::vec2 &delta);
 
-        static bool isMouseOver(double mouseX, double mouseY);
+        bool isMouseOver(double mouseX, double mouseY);
 };
 
 #endif //PLAYER_H

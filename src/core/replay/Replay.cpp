@@ -48,6 +48,22 @@ void Replay::save(const std::string& path) {
 
     file.write(reinterpret_cast<const char*>(&duration), sizeof(duration));
 
+    size_t eventCount = events.size();
+    file.write(reinterpret_cast<const char*>(&eventCount), sizeof(eventCount));
+
+    for (const auto& event : events) {
+        file.write(reinterpret_cast<const char*>(&event.timestamp), sizeof(event.timestamp));
+
+        file.write(reinterpret_cast<const char*>(&event.type), sizeof(event.type));
+
+        size_t dataSize = event.data.size();
+        file.write(reinterpret_cast<const char*>(&dataSize), sizeof(dataSize));
+
+        if (dataSize > 0) {
+            file.write(reinterpret_cast<const char*>(event.data.data()), dataSize);
+        }
+    }
+
     file.close();
 }
 
@@ -67,6 +83,30 @@ void Replay::load(const std::string& path) {
     file.read(reinterpret_cast<char*>(&initial.windowSize), sizeof(initial.windowSize));
 
     file.read(reinterpret_cast<char*>(&duration), sizeof(duration));
+
+    size_t eventCount;
+    file.read(reinterpret_cast<char*>(&eventCount), sizeof(eventCount));
+
+    events.clear();
+    events.reserve(eventCount);
+
+    for (size_t i = 0; i < eventCount; ++i) {
+        Event event;
+
+        file.read(reinterpret_cast<char*>(&event.timestamp), sizeof(event.timestamp));
+
+        file.read(reinterpret_cast<char*>(&event.type), sizeof(event.type));
+
+        size_t dataSize;
+        file.read(reinterpret_cast<char*>(&dataSize), sizeof(dataSize));
+
+        if (dataSize > 0) {
+            event.data.resize(dataSize);
+            file.read(reinterpret_cast<char*>(event.data.data()), dataSize);
+        }
+
+        events.push_back(event);
+    }
 
     file.close();
 }

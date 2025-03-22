@@ -18,7 +18,7 @@ void InputHandler::InitBindings() {
     bindKeyCombo( {GLFW_MOUSE_BUTTON_1}, "SHOOT");
 
     // turret
-    bindKeyCombo( {GLFW_MOUSE_BUTTON_2}, "PLACE_TURRET");
+    bindKeyCombo( {GLFW_MOUSE_BUTTON_2}, "PLACE_TURRET", true);
     bindKeyCombo( {GLFW_KEY_ESCAPE}, "CANCEL_PLACEMENT", true);
 
     // camera

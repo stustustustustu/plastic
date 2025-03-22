@@ -143,8 +143,22 @@ void TurretManager::placeTurret(const glm::vec2& position) {
 
     if (game -> getCurrentWorld() -> inventory -> hasEnoughCoins(Turret::getCost(placingTurretType))) {
         if (game -> getCurrentWorld() -> inventory -> spendCoins(Turret::getCost(placingTurretType))) {
-            auto turret = std::make_shared<Turret>(position, placingTurretType);
-            turrets.push_back(turret);
+            addTurret(placingTurretType, position);
+
+            Event event;
+            event.timestamp = std::chrono::duration_cast<std::chrono::milliseconds>(
+                std::chrono::steady_clock::now() - game -> getCurrentWorld() -> replay -> getStartTime()
+            );
+            event.type = EventType::TURRET_PLACE;
+
+            event.data.resize(sizeof(TurretType) + sizeof(glm::vec2));
+            memcpy(event.data.data(), &placingTurretType, sizeof(TurretType));
+            memcpy(event.data.data() + sizeof(TurretType), &position, sizeof(glm::vec2));
+
+            game -> getCurrentWorld() -> replay -> addEvent(event);
+
+            std::cout << "Recorded TURRET_PLACE event: type=" << static_cast<int>(placingTurretType)
+                      << ", position=(" << position.x << ", " << position.y << ")" << std::endl;
         }
     } else {
         std::cout << "Not enough coins to place turret." << std::endl;

@@ -10,6 +10,12 @@ enum class EventType {
     TURRET_PLACE,
     TURRET_UPGRADE,
     ENEMY_SPAWN,
+    ENEMY_MOVE,
+    ENEMY_DIE,
+    PROJECTILE_FIRE,
+    PROJECTILE_HIT,
+    WAVE_START,
+    WAVE_END
 };
 
 struct InitialState {

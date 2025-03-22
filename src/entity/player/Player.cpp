@@ -106,37 +106,63 @@ void Player::Movement() {
 
     // Shooting
     if (game -> input -> getActionManager().getActionState("SHOOT")) {
-        shoot();
+        glm::vec2 cursorWorldPos = game -> camera -> screenToWorld(InputHandler::getMousePosition());
+
+        shoot(cursorWorldPos);
+
+        Event event;
+
+        event.timestamp = std::chrono::duration_cast<std::chrono::milliseconds>(
+            std::chrono::steady_clock::now() - game -> getCurrentWorld() -> replay -> getStartTime()
+        );
+
+        event.type = EventType::PLAYER_SHOOT;
+        event.data.resize(sizeof(glm::vec2));
+        memcpy(event.data.data(), &laserEnd, sizeof(glm::vec2));
+        game -> getCurrentWorld() -> replay -> addEvent(event);
     } else {
         shooting = false;
     }
 
     if (canMove(delta)) {
         game -> getCurrentWorld() -> player -> move(delta);
+
+        Event event;
+
+        event.timestamp = std::chrono::duration_cast<std::chrono::milliseconds>(
+            std::chrono::steady_clock::now() - game -> getCurrentWorld() -> replay -> getStartTime()
+        );
+        event.type = EventType::PLAYER_MOVE;
+
+        glm::vec2 position = getPosition();
+        event.data.resize(sizeof(glm::vec2));
+        memcpy(event.data.data(), &position, sizeof(glm::vec2));
+
+        game -> getCurrentWorld() -> replay -> addEvent(event);
     }
 }
 
-void Player::shoot() {
+void Player::shoot(const glm::vec2& cursorPos) {
     shooting = true;
 
-    glm::vec2 cursorWorldPos = game -> camera -> screenToWorld(InputHandler::getMousePosition());
-
     laserStart = {
-        game -> getCurrentWorld() -> player -> getPosition().x + 16,
-        game -> getCurrentWorld() -> player -> getPosition().y + 16
+        getPosition().x + 16,
+        getPosition().y + 16
     };
 
     laserEnd = {
-        cursorWorldPos.x,
-        cursorWorldPos.y
+        cursorPos.x,
+        cursorPos.y
     };
 
-    for (auto& enemy : *game -> getCurrentWorld() -> enemies) {
-        glm::vec2 enemyCenter = enemy.getPosition() + glm::vec2(16.0f, 16.0f);
-        glm::vec2 enemyHalfDimensions = {16.0f, 16.0f}; // 32x32
+    if (game -> getCurrentWorld()) {
+        for (auto& enemy : *game -> getCurrentWorld() -> enemies) {
+            glm::vec2 enemyCenter = enemy.getPosition() + glm::vec2(16.0f, 16.0f);
+            glm::vec2 enemyHalfDimensions = {16.0f, 16.0f};
 
-        if (Collision::lineRectangleIntersection(laserStart, laserEnd, enemyCenter, enemyHalfDimensions)) {
-            enemy.hit(game -> getCurrentWorld() -> player -> getDamage() * 0.5f, false);
+            if (Collision::lineRectangleIntersection(laserStart, laserEnd, enemyCenter, enemyHalfDimensions)) {
+                enemy.hit(getDamage() * 0.5f, false);
+            }
         }
     }
 }
