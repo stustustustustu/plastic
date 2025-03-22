@@ -5,9 +5,9 @@
 const auto game = Game::getInstance();
 
 InReplay::InReplay() : Scene("IN_REPLAY") {
-    speedButton = std::make_unique<Button>(glm::vec2(border, game -> getSize().at(1) - 2 * (48 + border)), glm::vec2(48, 48), std::to_string(static_cast<int>(game -> replay -> getPlaybackSpeed())) + "x", HEXtoRGB(0x3F3F3F));
-    pauseToggle = std::make_unique<Button>(glm::vec2(border, game -> getSize().at(1) - 48 - border), glm::vec2(48, 48), "", HEXtoRGB(0x2F2F2F));
-    timeline = std::make_unique<Slider>(glm::vec2(2 * border + 48, game -> getSize().at(1) - 24 - border), glm::vec2(game -> getSize().at(0) - 3 * border - 48, 24), 0, std::chrono::duration_cast<std::chrono::seconds>(game -> replay -> getCurrentReplayDuration()).count(), 0, false);
+    speedButton = std::make_unique<Button>(glm::vec2(border, game -> getSize().y - 2 * (48 + border)), glm::vec2(48, 48), std::to_string(static_cast<int>(game -> replay -> getPlaybackSpeed())) + "x", HEXtoRGB(0x3F3F3F));
+    pauseToggle = std::make_unique<Button>(glm::vec2(border, game -> getSize().y - 48 - border), glm::vec2(48, 48), "", HEXtoRGB(0x2F2F2F));
+    timeline = std::make_unique<Slider>(glm::vec2(2 * border + 48, game -> getSize().y - 24 - border), glm::vec2(game -> getSize().x - 3 * border - 48, 24), 0, std::chrono::duration_cast<std::chrono::seconds>(game -> replay -> getCurrentReplayDuration()).count(), 0, false);
 
     speedButton -> addCallback([this]() {
         static float speeds[] = {0.5f, 1.0f, 2.0f, 4.0f};
@@ -113,10 +113,10 @@ void InReplay::update() {
 }
 
 void InReplay::resize() {
-    speedButton -> setPosition(glm::vec2(border, game -> getSize().at(1) - 2 * (48 + border)));
-    pauseToggle -> setPosition(glm::vec2(border, game -> getSize().at(1) - 48 - border));
+    speedButton -> setPosition(glm::vec2(border, game -> getSize().y - 2 * (48 + border)));
+    pauseToggle -> setPosition(glm::vec2(border, game -> getSize().y - 48 - border));
 
-    timeline -> setPosition(glm::vec2(2 * border + 48, game -> getSize().at(1) - 24 - border));
-    timeline -> setSize(glm::vec2(game -> getSize().at(0) - 3 * border - 48, 24));
+    timeline -> setPosition(glm::vec2(2 * border + 48, game -> getSize().y - 24 - border));
+    timeline -> setSize(glm::vec2(game -> getSize().x - 3 * border - 48, 24));
     timeline -> setConstraints(0, game -> replay -> getCurrentReplayDuration().count(), false);
 }

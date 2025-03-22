@@ -72,7 +72,7 @@ void Game::setState(GameState state) {
     this -> state = state;
 }
 
-std::vector<float> Game::getSize() {
+glm::vec2 Game::getSize() {
     return {width, height};
 }
 
@@ -109,7 +109,7 @@ void Game::setVolume(float volume) {
 bool Game::init() {
     srand(time(NULL));
 
-    if (!renderer -> initializeWindow(window, getSize().at(0), getSize().at(1), "plastic")) {
+    if (!renderer -> initializeWindow(window, getSize().x, getSize().y, "plastic")) {
         return false;
     }
 

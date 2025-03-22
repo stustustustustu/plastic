@@ -1,35 +1,32 @@
 #ifndef COLLISION_H
 #define COLLISION_H
 
-#include <../src/config.h>
-
-#include <cmath>
+#include <glm/glm.hpp>
+#include <vector>
+#include <limits>
 
 class Collision {
     public:
-        // vector basics
-        static std::vector<float> addVectors(const std::vector<float>& v1, const std::vector<float>& v2);
-        static std::vector<float> subtractVectors(const std::vector<float>& v1, const std::vector<float>& v2);
-        static std::vector<float> multiplyVectorByScalar(const std::vector<float>& v, float scalar);
-        static std::vector<float> divideVectorByScalar(const std::vector<float>& v, float scalar);
-        static float dotProduct(const std::vector<float>& v1, const std::vector<float>& v2);
-        static float magnitude(const std::vector<float>& v);
-        static std::vector<float> normalize(const std::vector<float>& v);
+        // Vector basics
+        static glm::vec2 addVectors(const glm::vec2& v1, const glm::vec2& v2);
+        static glm::vec2 subtractVectors(const glm::vec2& v1, const glm::vec2& v2);
+        static glm::vec2 multiplyVectorByScalar(const glm::vec2& v, float scalar);
+        static glm::vec2 divideVectorByScalar(const glm::vec2& v, float scalar);
+        static float dotProduct(const glm::vec2& v1, const glm::vec2& v2);
+        static float magnitude(const glm::vec2& v);
+        static glm::vec2 normalize(const glm::vec2& v);
 
-        // collision detection and distance
-        static float distance(const std::vector<float>& p1, const std::vector<float>& p2);
-        static bool isPointInRectangle(const std::vector<float>& p, const std::vector<float>& center, const std::vector<float>& halfDimensions);
-        static bool lineRectangleIntersection(const std::vector<float>& lineStart,const std::vector<float>& lineEnd, const std::vector<float>& rectCenter, const std::vector<float>& rectHalfDimensions);
-        static bool satCollision(const std::vector<std::vector<float>>& A, const std::vector<std::vector<float>>& B);
-        static bool AABBCollision(const std::vector<std::vector<float>> &A, const std::vector<std::vector<float>> &B);
-
+        // Collision detection and distance
+        static float distance(const glm::vec2& p1, const glm::vec2& p2);
+        static bool isPointInRectangle(const glm::vec2& p, const glm::vec2& center, const glm::vec2& halfDimensions);
+        static bool lineRectangleIntersection(const glm::vec2& lineStart, const glm::vec2& lineEnd, const glm::vec2& rectCenter, const glm::vec2& rectHalfDimensions);
+        static bool satCollision(const std::vector<glm::vec2>& A, const std::vector<glm::vec2>& B);
+        static bool AABBCollision(const std::vector<glm::vec2>& A, const std::vector<glm::vec2>& B);
 
     private:
-        // helpers
-        static std::vector<std::vector<float>> getAxes(const std::vector<std::vector<float>>& polygon);
-        static void projectPolygon(const std::vector<std::vector<float>>& polygon, const std::vector<float>& axis, float& minProj, float& maxProj);
+        // Helpers
+        static std::vector<glm::vec2> getAxes(const std::vector<glm::vec2>& polygon);
+        static void projectPolygon(const std::vector<glm::vec2>& polygon, const glm::vec2& axis, float& minProj, float& maxProj);
 };
 
-
-
-#endif //COLLISION_H
+#endif // COLLISION_H

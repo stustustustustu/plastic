@@ -1,18 +1,17 @@
 #include "Player.h"
-
 #include "../src/Game.h"
 
 const auto game = Game::getInstance();
 
 bool Player::shooting = false;
-std::vector<float> Player::laserStart = {0, 0};
-std::vector<float> Player::laserEnd = {0, 0};
+glm::vec2 Player::laserStart = {0, 0};
+glm::vec2 Player::laserEnd = {0, 0};
 
 Player::Player() : Entity({0, 0}) {}
 
 std::pair<int, int> Player::calculateSpawnTile() {
-    int screenCenterX = game -> getSize().at(0) / 2;
-    int screenCenterY = game -> getSize().at(1) / 2;
+    int screenCenterX = game -> getSize().x / 2;
+    int screenCenterY = game -> getSize().y / 2;
 
     auto [tileX, tileY] = game -> getCurrentWorld() -> island -> findNearestLandTile(screenCenterX, screenCenterY);
 
@@ -84,26 +83,25 @@ std::pair<int, int> Player::calculateSpawnTile() {
 }
 
 void Player::Movement() {
-    std::vector<float> delta {0, 0};
+    glm::vec2 delta {0, 0};
 
     // Movement logic
     if (game -> input -> getActionManager().getActionState("UP")) {
-        delta.at(1) -= 1; // Up
+        delta.y -= 1; // Up
     }
     if (game -> input -> getActionManager().getActionState("DOWN")) {
-        delta.at(1) += 1; // Down
+        delta.y += 1; // Down
     }
     if (game -> input -> getActionManager().getActionState("LEFT")) {
-        delta.at(0) -= 1; // Left
+        delta.x -= 1; // Left
     }
     if (game -> input -> getActionManager().getActionState("RIGHT")) {
-        delta.at(0) += 1; // Right
+        delta.x += 1; // Right
     }
 
-   float magnitude = Collision::magnitude(delta);
+    float magnitude = glm::length(delta);
     if (magnitude > 0) {
-        delta[0] /= magnitude;
-        delta[1] /= magnitude;
+        delta /= magnitude;
     }
 
     // Shooting
@@ -124,8 +122,8 @@ void Player::shoot() {
     glm::vec2 cursorWorldPos = game -> camera -> screenToWorld(InputHandler::getMousePosition());
 
     laserStart = {
-        game -> getCurrentWorld() -> player -> getPosition()[0] + 16,
-        game -> getCurrentWorld() -> player -> getPosition()[1] + 16
+        game -> getCurrentWorld() -> player -> getPosition().x + 16,
+        game -> getCurrentWorld() -> player -> getPosition().y + 16
     };
 
     laserEnd = {
@@ -134,8 +132,8 @@ void Player::shoot() {
     };
 
     for (auto& enemy : *game -> getCurrentWorld() -> enemies) {
-        std::vector<float> enemyCenter = {enemy.getPosition().at(0) + 16.0f, enemy.getPosition().at(1) + 16.0f};
-        std::vector<float> enemyHalfDimensions = {16.0f, 16.0f}; // 32x32
+        glm::vec2 enemyCenter = enemy.getPosition() + glm::vec2(16.0f, 16.0f);
+        glm::vec2 enemyHalfDimensions = {16.0f, 16.0f}; // 32x32
 
         if (Collision::lineRectangleIntersection(laserStart, laserEnd, enemyCenter, enemyHalfDimensions)) {
             enemy.hit(game -> getCurrentWorld() -> player -> getDamage() * 0.5f, false);
@@ -147,19 +145,19 @@ void Player::drawLaser() {
     if (!shooting) return;
 
     game -> renderer -> DrawLine(
-        glm::vec2(laserStart[0], laserStart[1]),
-        glm::vec2(laserEnd[0], laserEnd[1]),
+        laserStart,
+        laserEnd,
         2.0f,
         glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)
     );
 }
 
-bool Player::canMove(std::vector<float>& delta) {
-    std::vector<float> position = game -> getCurrentWorld() -> player -> getPosition();
+bool Player::canMove(glm::vec2& delta) {
+    glm::vec2 position = game -> getCurrentWorld() -> player -> getPosition();
     const float speed = game -> getCurrentWorld() -> player -> getSpeed();
 
-    const float newX = position[0] + delta[0] * speed;
-    const float newY = position[1] + delta[1] * speed;
+    const float newX = position.x + delta.x * speed;
+    const float newY = position.y + delta.y * speed;
 
     auto checkPosition = [&](float x, float y) {
         int tileX = static_cast<int>(x) / Island::TILE_SIZE;
@@ -186,19 +184,19 @@ bool Player::canMove(std::vector<float>& delta) {
     };
 
     bool xValid = true;
-    if (delta[0] != 0) {
-        xValid = checkPosition(newX, position[1]) && checkPosition(newX, position[1] + 31) &&
-                 checkPosition(newX + 31, position[1]) && checkPosition(newX + 31, position[1] + 31);
+    if (delta.x != 0) {
+        xValid = checkPosition(newX, position.y) && checkPosition(newX, position.y + 31) &&
+                 checkPosition(newX + 31, position.y) && checkPosition(newX + 31, position.y + 31);
     }
 
     bool yValid = true;
-    if (delta[1] != 0) {
-        yValid = checkPosition(position[0], newY) && checkPosition(position[0] + 31, newY) &&
-                 checkPosition(position[0], newY + 31) && checkPosition(position[0] + 31, newY + 31);
+    if (delta.y != 0) {
+        yValid = checkPosition(position.x, newY) && checkPosition(position.x + 31, newY) &&
+                 checkPosition(position.x, newY + 31) && checkPosition(position.x + 31, newY + 31);
     }
 
-    if (!xValid) delta[0] = 0;
-    if (!yValid) delta[1] = 0;
+    if (!xValid) delta.x = 0;
+    if (!yValid) delta.y = 0;
 
     return xValid || yValid;
 }

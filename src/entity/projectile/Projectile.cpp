@@ -5,7 +5,7 @@ const auto game = Game::getInstance();
 
 int Projectile::ACTIVE_PROJECTILES = 0;
 
-Projectile::Projectile(std::vector<float> position, ProjectileType type, std::vector<float> direction, float damage)
+Projectile::Projectile(glm::vec2 position, ProjectileType type, glm::vec2 direction, float damage)
     : Entity(position), type(type), direction(direction) {
 
     if (type != LASER) {
@@ -33,7 +33,7 @@ Projectile::Projectile(std::vector<float> position, ProjectileType type, std::ve
     updateBounds();
 }
 
-Projectile::Projectile(std::vector<float> position, ProjectileType type, std::shared_ptr<Enemy> target, float damage)
+Projectile::Projectile(glm::vec2 position, ProjectileType type, std::shared_ptr<Enemy> target, float damage)
     : Entity(position), type(type), target(target) {
 
     if (type != LASER) {
@@ -42,8 +42,8 @@ Projectile::Projectile(std::vector<float> position, ProjectileType type, std::sh
     }
 
     direction = {
-        (target -> getPosition()[0] + 16) - (getPosition()[0] + 16),
-        (target -> getPosition()[1] + 16) - (getPosition()[1] + 16)
+        (target -> getPosition().x + 16) - (getPosition().x + 16),
+        (target -> getPosition().y + 16) - (getPosition().y + 16)
     };
 
     switch (type) {
@@ -129,7 +129,7 @@ void Projectile::render() {
     }
 
     if (type != LASER) {
-        game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(getRenderPosition().at(0), getRenderPosition().at(1)), 0, 32, 32, size, 0, HEXtoRGB(hex));
+        game -> renderer -> DrawSpriteSheet(*game -> texture, getRenderPosition(), 0, 32, 32, size, 0, HEXtoRGB(hex));
     }
 }
 
@@ -138,23 +138,19 @@ void Projectile::move() {
 
     if (type == HOMING_MISSILE && target) {
         direction = {
-            (target -> getPosition()[0] + 16) - (getPosition()[0] + 16),
-            (target -> getPosition()[1] + 16) - (getPosition()[1] + 16)
+            (target -> getPosition().x + 16) - (getPosition().x + 16),
+            (target -> getPosition().y + 16) - (getPosition().y + 16)
         };
     }
 
     // Normalize direction
-    float magnitude = std::sqrt(direction[0] * direction[0] + direction[1] * direction[1]);
+    float magnitude = glm::length(direction);
     if (magnitude > 0) {
-        direction[0] /= magnitude;
-        direction[1] /= magnitude;
+        direction /= magnitude;
     }
 
     // Move the projectile
-    setPosition({
-        getPosition()[0] + direction[0] * getSpeed(),
-        getPosition()[1] + direction[1] * getSpeed()
-    });
+    setPosition(getPosition() + direction * getSpeed());
 
     updateBounds();
 }
@@ -166,20 +162,20 @@ void Projectile::updateBounds() {
         break;
         case AMMO:
             setBounds({
-            {getPosition()[0] - 4, getPosition()[1] - 4},
-            {getPosition()[0] + 4, getPosition()[1] + 4}
+            {getPosition().x - 4, getPosition().y - 4},
+            {getPosition().x + 4, getPosition().y + 4}
             });
         break;
         case HOMING_MISSILE:
             setBounds({
-            {getPosition()[0] - 8, getPosition()[1] - 8},
-            {getPosition()[0] + 8, getPosition()[1] + 8}
+            {getPosition().x - 8, getPosition().y - 8},
+            {getPosition().x + 8, getPosition().y + 8}
             });
         break;
         case BOMB:
             setBounds({
-            {getPosition()[0] - 12, getPosition()[1] - 12},
-            {getPosition()[0] + 12, getPosition()[1] + 12}
+            {getPosition().x - 12, getPosition().y - 12},
+            {getPosition().x + 12, getPosition().y + 12}
             });
         break;
     }

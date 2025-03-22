@@ -3,7 +3,8 @@
 
 auto const game = Game::getInstance();
 
-Enemy::Enemy(EnemyType type, const std::vector<float>& position, float health, float damage, float speed) : Entity(position, speed * 0.5f, damage, health), type(type) {
+Enemy::Enemy(EnemyType type, const glm::vec2& position, float health, float damage, float speed)
+    : Entity(position, speed * 0.5f, damage, health), type(type) {
     setCoins(std::max(5, rand() % static_cast<int>(health) / 10));
 
     switch (game -> getCurrentWorld() -> getDifficulty()) {
@@ -41,7 +42,7 @@ Enemy::Enemy(EnemyType type, const std::vector<float>& position, float health, f
 }
 
 std::vector<Enemy> Enemy::generateEnemies(int index, int totalWeight) {
-    auto window = Game::getInstance()->window;
+    auto window = Game::getInstance() -> window;
     int screenWidth, screenHeight;
     glfwGetFramebufferSize(window, &screenWidth, &screenHeight);
 
@@ -75,7 +76,7 @@ std::vector<Enemy> Enemy::generateEnemies(int index, int totalWeight) {
 
         } while (game -> getCurrentWorld() -> island -> distanceToNearestLand(x, y) < minDist);
 
-        enemies.emplace_back(type, std::vector<float>{x, y}, health, damage, speed);
+        enemies.emplace_back(type, glm::vec2(x, y), health, damage, speed);
         totalWeight -= weight;
     }
 
@@ -104,29 +105,21 @@ EnemyType Enemy::getType() const {
     return this -> type;
 }
 
-void Enemy::moveTowards(const std::vector<float>& targetPos) {
-    auto currentPos = this->getPosition();
-    std::vector<float> direction = {
-        targetPos[0] - currentPos[0],
-        targetPos[1] - currentPos[1]
-    };
+void Enemy::moveTowards(const glm::vec2& targetPos) {
+    auto currentPos = this -> getPosition();
+    glm::vec2 direction = targetPos - currentPos;
 
-    float magnitude = std::sqrt(direction[0] * direction[0] + direction[1] * direction[1]);
+    float magnitude = glm::length(direction);
     if (magnitude > 0) {
-        direction[0] /= magnitude;
-        direction[1] /= magnitude;
+        direction /= magnitude;
 
-        std::vector<float> delta = {
-            direction[0] * getSpeed(),
-            direction[1] * getSpeed()
-        };
-
-        this->move(delta);
+        glm::vec2 delta = direction * getSpeed();
+        this -> move(delta);
     }
 
     updateBounds();
 }
 
-float Enemy::calculateDistance(const std::vector<float>& pos1, const std::vector<float>& pos2) {
-    return std::sqrt(std::pow(pos1[0] - pos2[0], 2) + std::pow(pos1[1] - pos2[1], 2));
+float Enemy::calculateDistance(const glm::vec2& pos1, const glm::vec2& pos2) {
+    return glm::length(pos1 - pos2);
 }

@@ -3,7 +3,8 @@
 
 const auto game = Game::getInstance();
 
-Turret::Turret(std::vector<float> position, TurretType type) : Entity(position), type(type), target(NULL), currentAngle(0.0f), timeSinceLastShot(0.0f), lastUpdateTime(std::chrono::steady_clock::now()) {
+Turret::Turret(glm::vec2 position, TurretType type)
+    : Entity(position), type(type), target(NULL), currentAngle(0.0f), timeSinceLastShot(0.0f), lastUpdateTime(std::chrono::steady_clock::now()) {
     switch (type) {
         case TurretType::LASER:
             fireRate = 10.0f;
@@ -43,7 +44,7 @@ void Turret::rotateTowardsTarget() {
 
     auto pos = getPosition();
     auto targetPos = target -> getPosition();
-    float targetAngle = std::atan2(targetPos[1] - pos[1], targetPos[0] - pos[0]) * 180.0f / M_PI;
+    float targetAngle = std::atan2(targetPos.y - pos.y, targetPos.x - pos.x) * 180.0f / M_PI;
 
     float angleDiff = targetAngle - currentAngle;
     if (angleDiff > 180.0f) angleDiff -= 360.0f;
@@ -80,7 +81,7 @@ void Turret::shoot() {
         std::shared_ptr<Enemy> sharedTarget = std::make_shared<Enemy>(*target);
         std::unique_ptr<Projectile> newProjectile = nullptr;
 
-        auto pos = {getPosition().at(0) + 16, getPosition().at(1) + 16};
+        auto pos = getPosition() + glm::vec2(16, 16);
 
         switch (type) {
             case TurretType::RIFLE:
@@ -103,8 +104,8 @@ void Turret::render(Texture *texture) const {
     int hex;
     switch (type) {
         case TurretType::LASER:
-            if (target && target -> getRenderPosition().size() > 0 && target -> getRenderPosition().capacity() > 0)
-                game -> renderer -> DrawLine(glm::vec2(getRenderPosition().at(0) + 16, getRenderPosition().at(1) + 16), glm::vec2(target -> getRenderPosition().at(0) + 16, target -> getRenderPosition().at(1) + 16), 2.0f, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+            if (target)
+                game -> renderer -> DrawLine(getRenderPosition() + glm::ivec2(16), target -> getRenderPosition() + glm::ivec2(16), 2.0f, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
             hex = 0xFF5733;
             break;
         case TurretType::RIFLE:
@@ -115,7 +116,7 @@ void Turret::render(Texture *texture) const {
             break;
     }
 
-    game -> renderer -> DrawSpriteSheet(*texture, glm::vec2(getRenderPosition().at(0), getRenderPosition().at(1)), 2, 32, 32, glm::vec2(32.0f), currentAngle, HEXtoRGB(hex));
+    game -> renderer -> DrawSpriteSheet(*texture, getRenderPosition(), 2, 32, 32, glm::vec2(32.0f), currentAngle, HEXtoRGB(hex));
 }
 
 int Turret::getCost(TurretType type) {
@@ -135,6 +136,6 @@ TurretType Turret::getType() const {
     return this -> type;
 }
 
-float Turret::calculateDistance(const std::vector<float>& a, const std::vector<float>& b) {
-    return std::sqrt(std::pow(b[0] - a[0], 2) + std::pow(b[1] - a[1], 2));
+float Turret::calculateDistance(const glm::vec2& a, const glm::vec2& b) {
+    return glm::length(b - a);
 }

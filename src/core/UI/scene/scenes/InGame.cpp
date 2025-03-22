@@ -5,7 +5,7 @@
 const auto game = Game::getInstance();
 
 InGame::InGame() : Scene("IN_GAME"),
-                    turretShopToggle(glm::vec2(game -> getSize().at(0) - 2 - portrait / 2, portrait), glm::vec2(portrait / 2, portrait / 2), "", HEXtoRGB(0x2F2F2F)),
+                    turretShopToggle(glm::vec2(game -> getSize().x - 2 - portrait / 2, portrait), glm::vec2(portrait / 2, portrait / 2), "", HEXtoRGB(0x2F2F2F)),
                     portraitToggle(glm::vec2(border, border), glm::vec2(portrait, portrait), "", HEXtoRGB(0x2F2F2F)),
                     playerShopToggle(glm::vec2(border + border / 2, portrait + (border + border / 2)), glm::vec2(portrait / 2, portrait / 2), "", HEXtoRGB(0x2F2F2F)),
                     turretUpgradeClose(glm::vec2(0, 0), glm::vec2(24), "", HEXtoRGB(0x3F3F3F)) {
@@ -33,7 +33,7 @@ InGame::InGame() : Scene("IN_GAME"),
     }
 
     glm::vec2 panelSize(2 * portrait + border + width, 6 * portrait / 3 - border);
-    glm::vec2 panelPosition(game -> getSize().at(0) - (2 * portrait + border + width) - 4, portrait);
+    glm::vec2 panelPosition(game -> getSize().x - (2 * portrait + border + width) - 4, portrait);
 
     shopPanels.push_back(std::make_unique<ShopPanel>(panelPosition, panelSize, TurretType::LASER));
     shopPanels.push_back(std::make_unique<ShopPanel>(panelPosition + glm::vec2(0, panelSize.y + border), panelSize, TurretType::RIFLE));
@@ -44,7 +44,7 @@ void InGame::resize() {
     refreshUpgradePanels();
 
     glm::vec2 panelSize(2 * portrait + border + width, 6 * portrait / 3 - border);
-    glm::vec2 panelPosition(game -> getSize().at(0) - (2 * portrait + border + width) - 4, portrait);
+    glm::vec2 panelPosition(game -> getSize().x - (2 * portrait + border + width) - 4, portrait);
 
     for (int i = 0; i < shopPanels.size(); ++i) {
         shopPanels[i] -> setPosition(panelPosition + glm::vec2(0, i * (panelSize.y + border)));
@@ -103,9 +103,9 @@ void InGame::update() {
         for (auto &panel : shopPanels) {
             panel -> update();
         }
-        turretShopToggle.setPosition(glm::vec2(game -> getSize().at(0) - (2 * portrait + border + width) - 4 - portrait / 2, portrait));
+        turretShopToggle.setPosition(glm::vec2(game -> getSize().x - (2 * portrait + border + width) - 4 - portrait / 2, portrait));
     } else {
-        turretShopToggle.setPosition(glm::vec2(game -> getSize().at(0) - 2 - portrait / 2, portrait));
+        turretShopToggle.setPosition(glm::vec2(game -> getSize().x - 2 - portrait / 2, portrait));
     }
 
     if (game -> getCurrentWorld() -> turret -> isUpgrading()) {
@@ -245,7 +245,7 @@ void InGame::renderPlayerShop() {
 }
 
 void InGame::renderTurretShop() {
-    auto screenWidth = game -> getSize().at(0);
+    auto screenWidth = game -> getSize().x;
     glm::vec2 size(2 * portrait + border + width, 6 * portrait);
 
     if (isTurretShopOpen) {
@@ -315,7 +315,7 @@ void InGame::renderTurretUpgrades() {
 }
 
 void InGame::renderWaveInfo() {
-    game -> renderer -> DrawText("Enemies alive: " + std::to_string(game -> getCurrentWorld() -> wave -> getCurrentEnemies() -> size()), glm::vec2((game -> getSize().at(0) / 2) - 50, 40), 24.0f, true);
+    game -> renderer -> DrawText("Enemies alive: " + std::to_string(game -> getCurrentWorld() -> wave -> getCurrentEnemies() -> size()), glm::vec2((game -> getSize().x / 2) - 50, 40), 24.0f, true);
 }
 
 void InGame::renderPopup(const std::string &text, const glm::vec2 &position, const glm::vec3 &color) {

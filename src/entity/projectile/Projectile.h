@@ -2,6 +2,7 @@
 #define PROJECTILE_H
 
 #include "../enemy/Enemy.h"
+#include <glm/glm.hpp>
 
 enum ProjectileType {
     LASER,
@@ -14,7 +15,7 @@ class Projectile : public Entity {
     private:
         ProjectileType type;
         std::shared_ptr<Enemy> target;
-        std::vector<float> direction;
+        glm::vec2 direction;
 
         float splashRadius = 0; // for homing missiles and bombs
 
@@ -28,8 +29,8 @@ class Projectile : public Entity {
         static int ACTIVE_PROJECTILES;
 
     public:
-        Projectile(std::vector<float> position, ProjectileType type, std::vector<float> direction, float damage);
-        Projectile(std::vector<float> position, ProjectileType type, std::shared_ptr<Enemy> target, float damage);
+        Projectile(glm::vec2 position, ProjectileType type, glm::vec2 direction, float damage);
+        Projectile(glm::vec2 position, ProjectileType type, std::shared_ptr<Enemy> target, float damage);
 
         void update();
         void render();
@@ -38,9 +39,9 @@ class Projectile : public Entity {
 
         void mark() { this -> marked = true; }
 
-    private:
+        private:
         void move(); // based on type
         void updateBounds();
 };
 
-#endif //PROJECTILE_H
+#endif // PROJECTILE_H

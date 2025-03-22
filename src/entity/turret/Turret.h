@@ -23,7 +23,7 @@ class Turret : public Entity {
         std::chrono::steady_clock::time_point lastUpdateTime;
 
     public:
-        Turret(std::vector<float> position, TurretType type);
+        Turret(glm::vec2 position, TurretType type);
 
         void findTarget();
 
@@ -37,7 +37,7 @@ class Turret : public Entity {
         TurretType getType() const;
 
     private:
-        static float calculateDistance(const std::vector<float>& a, const std::vector<float>& b);
+        static float calculateDistance(const glm::vec2& a, const glm::vec2& b);
 };
 
 #endif //TURRET_H

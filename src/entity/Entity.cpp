@@ -19,7 +19,7 @@ const auto game = Game::getInstance();
  * @param targets The number of current targets (default is 0).
  */
 Entity::Entity(
-    std::vector<float> position,
+    glm::vec2 position,
     float speed,
     float damage,
 
@@ -35,7 +35,7 @@ Entity::Entity(
     int targets,
     int maxTargets,
 
-    const std::vector<std::vector<float>> bounds
+    const std::vector<glm::vec2> bounds
 ) : position(position), speed(speed), damage(damage), health(health), maxHealth(maxHealth), shield(shield), maxShield(maxShield), level(level), coins(coins), targets(targets), maxTargets(maxTargets), bounds(bounds) {}
 
 /**
@@ -44,7 +44,7 @@ Entity::Entity(
  * @param hex The color of the entity to draw.
  */
 void Entity::drawEntity(Texture *texture) const {
-    game -> renderer -> DrawSpriteSheet(*texture, glm::vec2(getRenderPosition().at(0), getRenderPosition().at(1)), 0, 32, 32);
+    game -> renderer -> DrawSpriteSheet(*texture, getPosition(), 0, 32, 32);
 }
 
 /**
@@ -53,14 +53,14 @@ void Entity::drawEntity(Texture *texture) const {
  * @param hex The color of the line to draw.
  */
 void Entity::drawTargetLine(Entity target, float thickness, int hex) const {
-    game -> renderer -> DrawLine(this -> getRenderPosition().at(0) + 16, this -> getRenderPosition().at(1) + 16, target.getRenderPosition().at(0) + 16, target.getRenderPosition().at(1) + 16, thickness, HEXtoRGB(hex));
+    game -> renderer -> DrawLine(getPosition() + glm::vec2(16), target.getPosition() + glm::vec2(16), thickness, HEXtoRGB(hex));
 }
 
-std::vector<std::vector<float>> Entity::getBounds() const {
+std::vector<glm::vec2> Entity::getBounds() const {
     return this -> bounds;
 }
 
-void Entity::setBounds(const std::vector<std::vector<float>> &bounds) {
+void Entity::setBounds(const std::vector<glm::vec2> &bounds) {
     this -> bounds = bounds;
 }
 
@@ -85,10 +85,7 @@ void Entity::updateBounds() {
  *
  * @return A vector of floats representing the Entity's position.
  */
-std::vector<float> Entity::getPosition() const {
-    if (position.size() < 2) {
-        return {0, 0};
-    }
+glm::vec2 Entity::getPosition() const {
     return this -> position;
 }
 
@@ -97,11 +94,8 @@ std::vector<float> Entity::getPosition() const {
  *
  * @return A vector of integers representing the Entity's render position.
  */
-std::vector<int> Entity::getRenderPosition() const {
-    if (position.size() < 2) {
-        return {0, 0};
-    }
-    return {static_cast<int>(std::round(position[0])), static_cast<int>(std::round(position[1]))};
+glm::ivec2 Entity::getRenderPosition() const {
+    return {static_cast<int>(std::round(position.x)), static_cast<int>(std::round(position.y))};
 }
 
 /**
@@ -109,7 +103,7 @@ std::vector<int> Entity::getRenderPosition() const {
  *
  * @param position A vector representing the new position of the Entity.
  */
-void Entity::setPosition(std::vector<float> position) {
+void Entity::setPosition(glm::vec2 position) {
     this -> position = position;
 }
 
@@ -118,14 +112,14 @@ void Entity::setPosition(std::vector<float> position) {
  *
  * @param delta A vector representing the change in position.
  */
-void Entity::move(std::vector<int> delta) {
-    position.at(0) += delta.at(0) * getSpeed();
-    position.at(1) += delta.at(1) * getSpeed();
+void Entity::move(const glm::ivec2& delta) {
+    position.x += delta.x * getSpeed();
+    position.y += delta.y * getSpeed();
 }
 
-void Entity::move(const std::vector<float>& delta) {
-    position.at(0) += delta.at(0) * getSpeed();
-    position.at(1) += delta.at(1) * getSpeed();
+void Entity::move(const glm::vec2& delta) {
+    position.x += delta.x * getSpeed();
+    position.y += delta.y * getSpeed();
 }
 
 /**

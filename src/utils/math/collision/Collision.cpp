@@ -1,55 +1,54 @@
 #include "Collision.h"
+#include <glm/glm.hpp>
+#include <cmath>
 
-std::vector<float> Collision::addVectors(const std::vector<float>& v1, const std::vector<float>& v2) {
-    return {v1[0] + v2[0], v1[1] + v2[1]};
+glm::vec2 Collision::addVectors(const glm::vec2& v1, const glm::vec2& v2) {
+    return v1 + v2;
 }
 
-std::vector<float> Collision::subtractVectors(const std::vector<float>& v1, const std::vector<float>& v2) {
-    return {v1[0] - v2[0], v1[1] - v2[1]};
+glm::vec2 Collision::subtractVectors(const glm::vec2& v1, const glm::vec2& v2) {
+    return v1 - v2;
 }
 
-std::vector<float> Collision::multiplyVectorByScalar(const std::vector<float>& v, float scalar) {
-    return {v[0] * scalar, v[1] * scalar};
+glm::vec2 Collision::multiplyVectorByScalar(const glm::vec2& v, float scalar) {
+    return v * scalar;
 }
 
-std::vector<float> Collision::divideVectorByScalar(const std::vector<float>& v, float scalar) {
-    return {v[0] / scalar, v[1] / scalar};
+glm::vec2 Collision::divideVectorByScalar(const glm::vec2& v, float scalar) {
+    return v / scalar;
 }
 
-float Collision::dotProduct(const std::vector<float>& v1, const std::vector<float>& v2) {
-    return v1[0] * v2[0] + v1[1] * v2[1];
+float Collision::dotProduct(const glm::vec2& v1, const glm::vec2& v2) {
+    return glm::dot(v1, v2);
 }
 
-float Collision::magnitude(const std::vector<float>& v) {
-    return std::sqrt(dotProduct(v, v));
+float Collision::magnitude(const glm::vec2& v) {
+    return glm::length(v);
 }
 
-std::vector<float> Collision::normalize(const std::vector<float>& v) {
-    float len = magnitude(v);
-    if (len > 0) return divideVectorByScalar(v, len);
-    return v;
+glm::vec2 Collision::normalize(const glm::vec2& v) {
+    return glm::normalize(v);
 }
 
-float Collision::distance(const std::vector<float> &p1, const std::vector<float> &p2) {
-    std::vector<float> difference = subtractVectors(p1, p2);
-    return magnitude(difference);
+float Collision::distance(const glm::vec2& p1, const glm::vec2& p2) {
+    return glm::length(p1 - p2);
 }
 
-bool Collision::isPointInRectangle(const std::vector<float> &p, const std::vector<float> &center, const std::vector<float> &halfDimensions) {
-    return (std::abs(p[0] - center[0]) <= halfDimensions[0] &&
-            std::abs(p[1] - center[1]) <= halfDimensions[1]);
+bool Collision::isPointInRectangle(const glm::vec2& p, const glm::vec2& center, const glm::vec2& halfDimensions) {
+    return (std::abs(p.x - center.x) <= halfDimensions.x &&
+            std::abs(p.y - center.y) <= halfDimensions.y);
 }
 
-bool Collision::lineRectangleIntersection(const std::vector<float> &lineStart, const std::vector<float> &lineEnd, const std::vector<float> &rectCenter, const std::vector<float> &rectHalfDimensions) {
-    float rectLeft = rectCenter[0] - rectHalfDimensions[0];
-    float rectRight = rectCenter[0] + rectHalfDimensions[0];
-    float rectTop = rectCenter[1] - rectHalfDimensions[1];
-    float rectBottom = rectCenter[1] + rectHalfDimensions[1];
+bool Collision::lineRectangleIntersection(const glm::vec2& lineStart, const glm::vec2& lineEnd, const glm::vec2& rectCenter, const glm::vec2& rectHalfDimensions) {
+    float rectLeft = rectCenter.x - rectHalfDimensions.x;
+    float rectRight = rectCenter.x + rectHalfDimensions.x;
+    float rectTop = rectCenter.y - rectHalfDimensions.y;
+    float rectBottom = rectCenter.y + rectHalfDimensions.y;
 
-    float x1 = lineStart[0];
-    float y1 = lineStart[1];
-    float x2 = lineEnd[0];
-    float y2 = lineEnd[1];
+    float x1 = lineStart.x;
+    float y1 = lineStart.y;
+    float x2 = lineEnd.x;
+    float y2 = lineEnd.y;
 
     if (isPointInRectangle(lineStart, rectCenter, rectHalfDimensions)) return true;
     if (isPointInRectangle(lineEnd, rectCenter, rectHalfDimensions)) return true;
@@ -86,13 +85,13 @@ bool Collision::lineRectangleIntersection(const std::vector<float> &lineStart, c
     return false;
 }
 
-bool Collision::satCollision(const std::vector<std::vector<float>> &A, const std::vector<std::vector<float>> &B) {
+bool Collision::satCollision(const std::vector<glm::vec2>& A, const std::vector<glm::vec2>& B) {
     if (A.empty() || B.empty()) {
         return false;
     }
 
-    std::vector<std::vector<float>> axes = getAxes(A);
-    std::vector<std::vector<float>> axesB = getAxes(B);
+    std::vector<glm::vec2> axes = getAxes(A);
+    std::vector<glm::vec2> axesB = getAxes(B);
     axes.insert(axes.end(), axesB.begin(), axesB.end());
 
     for (const auto& axis : axes) {
@@ -108,30 +107,28 @@ bool Collision::satCollision(const std::vector<std::vector<float>> &A, const std
     return true;
 }
 
-bool Collision::AABBCollision(const std::vector<std::vector<float>>& A, const std::vector<std::vector<float>>& B) {
+bool Collision::AABBCollision(const std::vector<glm::vec2>& A, const std::vector<glm::vec2>& B) {
     if (A.empty() || B.empty()) return false;
 
-    float minA_x = A[0][0];
-    float minA_y = A[0][1];
-    float maxA_x = A[1][0];
-    float maxA_y = A[1][1];
+    float minA_x = A[0].x;
+    float minA_y = A[0].y;
+    float maxA_x = A[1].x;
+    float maxA_y = A[1].y;
 
-    float minB_x = B[0][0];
-    float minB_y = B[0][1];
-    float maxB_x = B[1][0];
-    float maxB_y = B[1][1];
+    float minB_x = B[0].x;
+    float minB_y = B[0].y;
+    float maxB_x = B[1].x;
+    float maxB_y = B[1].y;
 
     return (minA_x <= maxB_x && maxA_x >= minB_x && minA_y <= maxB_y && maxA_y >= minB_y);
 }
 
-
-
-std::vector<std::vector<float>> Collision::getAxes(const std::vector<std::vector<float>> &polygon) {
-    std::vector<std::vector<float>> axes;
+std::vector<glm::vec2> Collision::getAxes(const std::vector<glm::vec2>& polygon) {
+    std::vector<glm::vec2> axes;
 
     for (size_t i = 0; i < polygon.size(); i++) {
-        std::vector<float> edge = subtractVectors(polygon[(i + 1) % polygon.size()], polygon[i]);
-        std::vector<float> normal = normalize({-edge[1], edge[0]});
+        glm::vec2 edge = subtractVectors(polygon[(i + 1) % polygon.size()], polygon[i]);
+        glm::vec2 normal = normalize(glm::vec2(-edge.y, edge.x));
         if (magnitude(normal) > 0) { // Ensure the normal is valid
             axes.push_back(normal);
         }
@@ -140,7 +137,7 @@ std::vector<std::vector<float>> Collision::getAxes(const std::vector<std::vector
     return axes;
 }
 
-void Collision::projectPolygon(const std::vector<std::vector<float>> &polygon, const std::vector<float> &axis, float &minProj, float &maxProj) {
+void Collision::projectPolygon(const std::vector<glm::vec2>& polygon, const glm::vec2& axis, float& minProj, float& maxProj) {
     if (polygon.empty()) {
         minProj = 0;
         maxProj = 0;

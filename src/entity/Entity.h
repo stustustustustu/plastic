@@ -10,7 +10,7 @@
 class Entity {
     private:
         // Position vector
-        std::vector<float> position;
+        glm::vec2 position;
 
         // Entity attributes with default values
         float speed;
@@ -27,11 +27,11 @@ class Entity {
 
         int targets;
         int maxTargets;
-        std::vector<std::vector<float>> bounds;
+        std::vector<glm::vec2> bounds;
 
     public:
         Entity(
-            std::vector<float> position,
+            glm::vec2 position,
 
             float speed = 1.0f,
             float damage = 1.0f,
@@ -48,23 +48,23 @@ class Entity {
             int targets = 0,
             int maxTargets = 1,
 
-            std::vector<std::vector<float>> bounds = {{0, 0}, {32, 0}, {32, 32}, {0, 32}}
+            std::vector<glm::vec2> bounds = {{0, 0}, {32, 0}, {32, 32}, {0, 32}}
         );
 
         void drawEntity(Texture *texture) const;
 
         void drawTargetLine(Entity target, float thickness, int hex) const;
 
-        std::vector<std::vector<float>> getBounds() const;
-        void setBounds(const std::vector<std::vector<float>>&);
+        std::vector<glm::vec2> getBounds() const;
+        void setBounds(const std::vector<glm::vec2>&);
         bool checkCollision(const Entity&) const;
         void updateBounds();
 
-        std::vector<float> getPosition() const;
-        std::vector<int> getRenderPosition() const;
-        void setPosition(std::vector<float>);
-        void move(std::vector<int>);
-        void move(const std::vector<float>&);
+        glm::vec2 getPosition() const;
+        glm::ivec2 getRenderPosition() const;
+        void setPosition(glm::vec2);
+        void move(const glm::ivec2&);
+        void move(const glm::vec2&);
 
         float getSpeed() const;
         void setSpeed(float);

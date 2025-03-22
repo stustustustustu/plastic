@@ -9,8 +9,8 @@
 class Player : public Entity {
     private:
         static bool shooting;
-        static std::vector<float> laserStart;
-        static std::vector<float> laserEnd;
+        static glm::vec2 laserStart;
+        static glm::vec2 laserEnd;
 
     public:
         Player();
@@ -22,7 +22,7 @@ class Player : public Entity {
 
         static void drawLaser();
 
-        static bool canMove(std::vector<float> &delta);
+        static bool canMove(glm::vec2 &delta);
 
         static bool isMouseOver(double mouseX, double mouseY);
 };

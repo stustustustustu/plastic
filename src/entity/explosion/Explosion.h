@@ -12,7 +12,7 @@ class Explosion : public Entity {
         float elapsedTime;
 
     public:
-        Explosion(std::vector<float> position, float size, float damage, float duration);
+        Explosion(glm::vec2 position, float size, float damage, float duration);
 
         void update();
         void render() const;

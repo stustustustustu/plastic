@@ -7,8 +7,8 @@
 const auto game = Game::getInstance();
 
 WorldSelection::WorldSelection() : Scene("WORLD_SELECTION") {
-    backButton = std::make_unique<Button>(glm::vec2(game -> getSize().at(0), game -> getSize().at(1)) - glm::vec2(175, 75), glm::vec2(150, 50), "Cancel", HEXtoRGB(0xFF4444));
-    createWorldButton = std::make_unique<Button>(glm::vec2(25, game -> getSize().at(1)) - glm::vec2(0, 75), glm::vec2(200, 50), "New World", HEXtoRGB(0x4444FF));
+    backButton = std::make_unique<Button>(game -> getSize() - glm::vec2(175, 75), glm::vec2(150, 50), "Cancel", HEXtoRGB(0xFF4444));
+    createWorldButton = std::make_unique<Button>(glm::vec2(25, game -> getSize().y) - glm::vec2(0, 75), glm::vec2(200, 50), "New World", HEXtoRGB(0x4444FF));
 
     backButton -> addCallback([]() {
         game -> scenes -> goBack();
@@ -150,7 +150,7 @@ void WorldSelection::render() {
         game -> renderer -> DrawText(worldNames[i], glm::vec2(25 + border / 2, 50 + i * (100 + border)), 24.0f, true);
         game -> renderer -> DrawText("Difficulty: " + worldDifficulties[i], glm::vec2(25 + border / 2, 80 + i * (100 + border)), 16.0f, true);
         game -> renderer -> DrawText("Wave: " + std::to_string(waveIndices[i]), glm::vec2(25 + border / 2, 100 + i * (100 + border)), 16.0f, true);
-        game -> renderer -> DrawText("Window size: " + std::to_string(static_cast<int>(game -> getSize().at(0))) + "x" + std::to_string(static_cast<int>(game -> getSize().at(1))), glm::vec2(25 + border / 2, 120 + i * (100 + border)), 16.0f, true);
+        game -> renderer -> DrawText("Window size: " + std::to_string(static_cast<int>(game -> getSize().x)) + "x" + std::to_string(static_cast<int>(game -> getSize().y)), glm::vec2(25 + border / 2, 120 + i * (100 + border)), 16.0f, true);
 
         playButtons[i] -> render();
         replayButtons[i] -> render();
@@ -176,6 +176,6 @@ void WorldSelection::update() {
 void WorldSelection::resize() {
     createWorldButtons();
 
-    backButton -> setPosition(glm::vec2(game -> getSize().at(0), game -> getSize().at(1)) - glm::vec2(175, 75));
-    createWorldButton -> setPosition(glm::vec2(25, game -> getSize().at(1)) - glm::vec2(0, 75));
+    backButton -> setPosition(game -> getSize() - glm::vec2(175, 75));
+    createWorldButton -> setPosition(glm::vec2(25, game -> getSize().y) - glm::vec2(0, 75));
 }

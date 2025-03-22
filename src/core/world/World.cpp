@@ -1,11 +1,11 @@
 #include "World.h"
-
 #include "../../Game.h"
 #include "../UI/scene/scenes/InGame.h"
 
 const auto game = Game::getInstance();
 
-World::World(std::string name, unsigned int seed, Difficulty difficulty) : name(name), seed(seed), difficulty(difficulty), enemies(new std::vector<Enemy>()) {}
+World::World(std::string name, unsigned int seed, Difficulty difficulty)
+    : name(name), seed(seed), difficulty(difficulty), enemies(new std::vector<Enemy>()) {}
 
 void World::init() {
     island = std::make_unique<Island>(seed);
@@ -16,7 +16,7 @@ void World::init() {
     player = std::make_unique<Player>();
 
     replay = std::make_unique<Replay>();
-    replay->setStartTime(std::chrono::steady_clock::now());
+    replay -> setStartTime(std::chrono::steady_clock::now());
 
     wave -> startNextWave();
 }
@@ -30,7 +30,7 @@ void World::initial() {
     InitialState state;
     state.name = name;
     state.seed = seed;
-    state.windowSize = {game -> getSize().at(0), game -> getSize().at(1)};
+    state.windowSize = game -> getSize(); // Now returns glm::vec2
 
     replay -> setInitialWorldState(state);
 
@@ -62,10 +62,9 @@ void World::save(const std::string &world) {
     int currentWaveIndex = wave -> getCurrentWaveIndex();
     file.write(reinterpret_cast<const char*>(&currentWaveIndex), sizeof(currentWaveIndex));
 
-    // window size
-    auto windowSize = game -> getSize();
-    file.write(reinterpret_cast<const char*>(&windowSize[0]), sizeof(windowSize[0]));
-    file.write(reinterpret_cast<const char*>(&windowSize[1]), sizeof(windowSize[1]));
+    // window size (glm::vec2)
+    glm::vec2 windowSize = game -> getSize();
+    file.write(reinterpret_cast<const char*>(&windowSize), sizeof(windowSize));
 
     // player data
     float playerHealth = player -> getHealth();
@@ -79,7 +78,7 @@ void World::save(const std::string &world) {
 
     int playerCoins = player -> getCoins();
 
-    glm::vec2 playerPosition = glm::vec2(player -> getPosition().at(0), player -> getPosition().at(1));
+    glm::vec2 playerPosition = player -> getPosition();
 
     file.write(reinterpret_cast<const char*>(&playerHealth), sizeof(playerHealth));
     file.write(reinterpret_cast<const char*>(&playerMaxHealth), sizeof(playerMaxHealth));
@@ -110,7 +109,7 @@ void World::save(const std::string &world) {
 
     for (const auto& turretInstance : turret -> getTurrets()) {
         TurretType type = turretInstance -> getType();
-        glm::vec2 position = glm::vec2(turretInstance -> getPosition().at(0), turretInstance -> getPosition().at(1));
+        glm::vec2 position = turretInstance -> getPosition();
 
         file.write(reinterpret_cast<const char*>(&type), sizeof(type));
         file.write(reinterpret_cast<const char*>(&position), sizeof(position));
@@ -124,7 +123,7 @@ void World::save(const std::string &world) {
         EnemyType type = enemy.getType();
         file.write(reinterpret_cast<const char*>(&type), sizeof(type));
 
-        glm::vec2 position = glm::vec2(enemy.getPosition().at(0), enemy.getPosition().at(1));
+        glm::vec2 position = enemy.getPosition();
         file.write(reinterpret_cast<const char*>(&position), sizeof(position));
 
         float health = enemy.getHealth();
@@ -173,10 +172,9 @@ void World::load(const std::string &world) {
     file.read(reinterpret_cast<char*>(&currentWaveIndex), sizeof(currentWaveIndex));
 
     // window size
-    float windowWidth, windowHeight;
-    file.read(reinterpret_cast<char*>(&windowWidth), sizeof(windowWidth));
-    file.read(reinterpret_cast<char*>(&windowHeight), sizeof(windowHeight));
-    game -> setSize(std::to_string(windowWidth) + "x" + std::to_string(windowHeight));
+    glm::vec2 windowSize;
+    file.read(reinterpret_cast<char*>(&windowSize), sizeof(windowSize));
+    game -> setSize(std::to_string(windowSize.x) + "x" + std::to_string(windowSize.y));
 
     init();
 
@@ -220,7 +218,7 @@ void World::load(const std::string &world) {
 
     player -> setCoins(playerCoins);
 
-    player -> setPosition({playerPosition.x, playerPosition.y});
+    player -> setPosition(playerPosition);
 
     // player upgrades
     size_t upgradeCount;
@@ -259,7 +257,7 @@ void World::load(const std::string &world) {
         file.read(reinterpret_cast<char*>(&type), sizeof(type));
         file.read(reinterpret_cast<char*>(&position), sizeof(position));
 
-        turret -> addTurret(type, {position.x, position.y});
+        turret -> addTurret(type, position);
     }
 
     // waves and enemies data
@@ -280,7 +278,7 @@ void World::load(const std::string &world) {
         file.read(reinterpret_cast<char*>(&damage), sizeof(damage));
         file.read(reinterpret_cast<char*>(&speed), sizeof(speed));
 
-        Enemy enemy(type, {position.x, position.y}, health, damage, speed * 2);
+        Enemy enemy(type, position, health, damage, speed * 2);
         enemies -> push_back(enemy);
     }
 
@@ -321,7 +319,8 @@ void World::update() {
     for (int i = 0; i < enemies -> size();) {
         (*enemies)[i].moveTowards(player -> getPosition());
 
-        if (island -> isLand(static_cast<int>((*enemies)[i].getPosition().at(0)) / Island::TILE_SIZE, static_cast<int>((*enemies)[i].getPosition().at(1)) / Island::TILE_SIZE)) {
+        if (island -> isLand(static_cast<int>((*enemies)[i].getPosition().x / Island::TILE_SIZE),
+                            static_cast<int>((*enemies)[i].getPosition().y / Island::TILE_SIZE))) {
             player -> hit((*enemies)[i].getDamage(), false);
             enemies -> erase(enemies -> begin() + i);
         }

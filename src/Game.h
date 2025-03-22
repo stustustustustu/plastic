@@ -67,7 +67,7 @@ class Game {
         GameState getState() const;
         void setState(GameState state);
 
-        std::vector<float> getSize();
+        glm::vec2 getSize();
         void setSize(const std::string &size);
 
         float getVolume() const;

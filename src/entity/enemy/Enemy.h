@@ -24,8 +24,8 @@ class Enemy : public Entity {
         EnemyType type;
 
     public:
-        Enemy(EnemyType type, const std::vector<float>& position, float health, float damage, float speed);
-        void moveTowards(const std::vector<float>& targetPos);
+        Enemy(EnemyType type, const glm::vec2& position, float health, float damage, float speed);
+        void moveTowards(const glm::vec2& targetPos);
 
         static std::map<EnemyType, std::tuple<float, float, float, float>> getEnemyData();
         EnemyType getType() const;
@@ -33,7 +33,7 @@ class Enemy : public Entity {
         static std::vector<Enemy> generateEnemies(int index, int totalWeight);
 
     private:
-        static float calculateDistance(const std::vector<float>& pos1, const std::vector<float>& pos2);
+        static float calculateDistance(const glm::vec2& pos1, const glm::vec2& pos2);
 
 };
 

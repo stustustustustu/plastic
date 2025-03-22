@@ -4,6 +4,7 @@
 #include "../../../core/upgrades/manager/UpgradeManager.h"
 #include "../../../core/upgrades/turret/TurretUpgradeManager.h"
 #include "../Turret.h"
+#include <glm/glm.hpp>
 
 class TurretManager {
     private:
@@ -30,28 +31,27 @@ class TurretManager {
         std::map<Upgrade*, glm::vec2> calculateNodePositions() const;
 
         std::vector<std::shared_ptr<Turret>> getTurrets() const;
-        void addTurret(TurretType type, std::vector<float> position);
+        void addTurret(TurretType type, const glm::vec2& position);
 
         void renderPreview(const glm::vec2& position) const;
 
         void startPlacingTurret(TurretType type);
-        void placeTurret(const std::vector<float>& position);
+        void placeTurret(const glm::vec2& position);
         void cancelPlacingTurret();
         bool isPlacing() const;
 
         void openUpgradeMenu(std::shared_ptr<Turret> turret);
         void closeUpgradeMenu();
         bool isUpgrading() const;
-        bool isMouseInsideMenu(const glm::vec2 &mousePos) const;
+        bool isMouseInsideMenu(const glm::vec2& mousePos) const;
 
         void handleClick(const glm::vec2& mousePos);
-        bool isValidPlacement(const std::vector<float>& position) const;
+        bool isValidPlacement(const glm::vec2& position) const;
 
         std::shared_ptr<Turret> getSelectedTurret() const;
 
         TurretUpgradeManager& getUpgradeManager();
         bool unlockTurretUpgrade(const std::string& upgradeName);
-
 };
 
 #endif // TURRETMANAGER_H

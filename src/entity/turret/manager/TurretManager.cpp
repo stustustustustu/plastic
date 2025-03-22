@@ -92,7 +92,7 @@ std::vector<std::shared_ptr<Turret>> TurretManager::getTurrets() const {
     return this -> turrets;
 }
 
-void TurretManager::addTurret(TurretType type, std::vector<float> position) {
+void TurretManager::addTurret(TurretType type, const glm::vec2& position) {
     auto turret = std::make_shared<Turret>(position, type);
     turrets.push_back(turret);
 }
@@ -138,7 +138,7 @@ void TurretManager::startPlacingTurret(TurretType type) {
     placingTurretType = type;
 }
 
-void TurretManager::placeTurret(const std::vector<float>& position) {
+void TurretManager::placeTurret(const glm::vec2& position) {
     if (!isPlacingTurret || !isValidPlacement(position)) return;
 
     if (game -> getCurrentWorld() -> inventory -> hasEnoughCoins(Turret::getCost(placingTurretType))) {
@@ -180,7 +180,7 @@ void TurretManager::handleClick(const glm::vec2& mousePos) {
 
     for (const auto &turret : turrets) {
         auto turretPos = turret -> getPosition();
-        if (Collision::isPointInRectangle({ worldPos.x, worldPos.y }, { turret -> getPosition().at(0) + 16 / 2, turret -> getPosition().at(1) + 16 / 2 }, {16, 16}) && glfwGetMouseButton(game -> window, GLFW_MOUSE_BUTTON_1)) {
+        if (Collision::isPointInRectangle({ worldPos.x, worldPos.y }, { turret -> getPosition().x + 16 / 2, turret -> getPosition().y + 16 / 2 }, {16, 16}) && glfwGetMouseButton(game -> window, GLFW_MOUSE_BUTTON_1)) {
             openUpgradeMenu(turret);
             return;
         }
@@ -194,7 +194,7 @@ void TurretManager::openUpgradeMenu(std::shared_ptr<Turret> turret) {
     this -> isUpgradeMenuOpen = true;
 
     auto turretPos = turret -> getPosition();
-    auto screenCenter = glm::vec2(game -> getSize().at(0) / 2, game -> getSize().at(1) / 2);
+    auto screenCenter = glm::vec2(game -> getSize().x / 2, game -> getSize().y / 2);
 
     menuSize = glm::vec2(400, 200);
 
@@ -220,11 +220,11 @@ bool TurretManager::isMouseInsideMenu(const glm::vec2 &mousePos) const {
     auto worldPos = game -> camera -> screenToWorld(mousePos);
 
     return Collision::isPointInRectangle({mousePos.x, mousePos.y}, {menuPosition.x + menuSize.x / 2, menuPosition.y + menuSize.y / 2}, {menuSize.x / 2, menuSize.y / 2}) ||
-           Collision::isPointInRectangle({ worldPos.x, worldPos.y }, { selectedTurret -> getPosition().at(0) + 16 / 2, selectedTurret -> getPosition().at(1) + 16 / 2 }, {16, 16});
+           Collision::isPointInRectangle({ worldPos.x, worldPos.y }, { selectedTurret -> getPosition().x + 16 / 2, selectedTurret -> getPosition().y + 16 / 2 }, {16, 16});
 }
 
 
-bool TurretManager::isValidPlacement(const std::vector<float>& position) const {
+bool TurretManager::isValidPlacement(const glm::vec2& position) const {
     int tileX = static_cast<int>(position[0] / Island::TILE_SIZE);
     int tileY = static_cast<int>(position[1] / Island::TILE_SIZE);
 

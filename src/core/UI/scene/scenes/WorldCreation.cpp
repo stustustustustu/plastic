@@ -7,7 +7,7 @@
 auto const game = Game::getInstance();
 
 WorldCreation::WorldCreation() : Scene("WORLD_CREATION"), islandPreview(0) {
-    backButton = std::make_unique<Button>(glm::vec2(game -> getSize().at(0), game -> getSize().at(1)) - glm::vec2(175, 75), glm::vec2(150, 50), "Cancel", HEXtoRGB(0xFF4444));
+    backButton = std::make_unique<Button>(game -> getSize() - glm::vec2(175, 75), glm::vec2(150, 50), "Cancel", HEXtoRGB(0xFF4444));
 
     worldNameInput = std::make_unique<Textbox>(glm::vec2(25, 25), glm::vec2(200, 50), "World Name");
     seedInput = std::make_unique<Textbox>(glm::vec2(25, 85), glm::vec2(200, 50), "Seed");
@@ -20,7 +20,7 @@ WorldCreation::WorldCreation() : Scene("WORLD_CREATION"), islandPreview(0) {
     difficultyDropdown -> addOption("Expert");
     difficultyDropdown -> addOption("Impossible");
 
-    createWorldButton = std::make_unique<Button>(glm::vec2(25, game -> getSize().at(1)) - glm::vec2(0, 75), glm::vec2(200, 50), "Create World", HEXtoRGB(0x4444FF));
+    createWorldButton = std::make_unique<Button>(glm::vec2(25, game -> getSize().y) - glm::vec2(0, 75), glm::vec2(200, 50), "Create World", HEXtoRGB(0x4444FF));
 
     currentSeed = std::pow(rand(), 2);
     islandPreview = Island(currentSeed);
@@ -81,8 +81,8 @@ WorldCreation::WorldCreation() : Scene("WORLD_CREATION"), islandPreview(0) {
 }
 
 void WorldCreation::resize() {
-    backButton -> setPosition(glm::vec2(game -> getSize().at(0), game -> getSize().at(1)) - glm::vec2(175, 75));
-    createWorldButton -> setPosition(glm::vec2(25, game -> getSize().at(1)) - glm::vec2(0, 75));
+    backButton -> setPosition(game -> getSize() - glm::vec2(175, 75));
+    createWorldButton -> setPosition(glm::vec2(25, game -> getSize().y) - glm::vec2(0, 75));
 
     updateIslandPreview();
 }
