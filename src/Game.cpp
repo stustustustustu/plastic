@@ -52,6 +52,7 @@ World* Game::getCurrentWorld() const {
 void Game::createNewWorld(std::string name, unsigned int seed, Difficulty difficulty) {
     currentWorld = std::make_unique<World>(name, seed, difficulty);
     currentWorld -> init();
+    currentWorld -> initial();
 
     scenes -> addScene("IN_GAME", std::make_unique<InGame>());
 }
@@ -154,8 +155,12 @@ void Game::update() {
     camera -> Update();
     scenes -> update();
 
-    if (currentWorld && scenes -> getScene() == "IN_GAME") {
-        getCurrentWorld() -> update();
+    if (currentWorld) {
+        if (scenes -> getScene() == "IN_GAME") {
+            currentWorld -> update();
+        } else if (scenes -> getScene() == "IN_REPLAY") {
+            replay -> update(*currentWorld);
+        }
     }
 }
 
@@ -164,6 +169,8 @@ void Game::render() const {
 
     if (currentWorld && (scenes -> getScene() == "IN_GAME" || scenes -> getScene() == "PAUSE")) {
         getCurrentWorld() -> render();
+    } else if (scenes -> getScene() == "IN_REPLAY") {
+        replay -> render(*currentWorld);
     }
 
     scenes -> render();

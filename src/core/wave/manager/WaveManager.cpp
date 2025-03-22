@@ -10,37 +10,39 @@ void WaveManager::startNextWave() {
     int weight = 100 * std::pow(1.2f, currentWaveIndex);
     bool bossfight = false;
 
-    switch (game -> getCurrentWorld() -> getDifficulty()) {
-        case EASY:
-            weight = static_cast<int>(weight * 0.8f);
+    if (game -> getCurrentWorld()) {
+        switch (game -> getCurrentWorld() -> getDifficulty()) {
+            case EASY:
+                weight = static_cast<int>(weight * 0.8f);
             break;
-        case MEDIUM:
-            weight = static_cast<int>(weight * 1.0f);
+            case MEDIUM:
+                weight = static_cast<int>(weight * 1.0f);
             break;
-        case HARD:
-            weight = static_cast<int>(weight * 1.2f);
+            case HARD:
+                weight = static_cast<int>(weight * 1.2f);
             break;
-        case EXPERT:
-            weight = static_cast<int>(weight * 1.4f);
+            case EXPERT:
+                weight = static_cast<int>(weight * 1.4f);
             break;
-        case IMPOSSIBLE:
-            weight = static_cast<int>(weight * 1.6f);
+            case IMPOSSIBLE:
+                weight = static_cast<int>(weight * 1.6f);
             break;
+        }
+
+        if (currentWaveIndex > 0 && rand() % (100 - (currentWaveIndex * 2)) == 0) {
+            weight *= 2;
+            bossfight = true;
+            //std::cout << "Boss wave detected!" << std::endl;
+        }
+
+        Wave wave(currentWaveIndex, weight, bossfight);
+        std::vector<Enemy> generated = Enemy::generateEnemies(wave.getIndex(), wave.getWeight());
+        wave.addEnemies(generated);
+
+        activeWaves.push_back(std::make_shared<Wave>(wave));
+        lastWaveSpawnTime = std::chrono::steady_clock::now();
+        //std::cout << "Starting wave " << wave.getIndex() << " with " << wave.getEnemies().size() << " enemies." << std::endl;
     }
-
-    if (currentWaveIndex > 0 && rand() % (100 - (currentWaveIndex * 2)) == 0) {
-        weight *= 2;
-        bossfight = true;
-        //std::cout << "Boss wave detected!" << std::endl;
-    }
-
-    Wave wave(currentWaveIndex, weight, bossfight);
-    std::vector<Enemy> generated = Enemy::generateEnemies(wave.getIndex(), wave.getWeight());
-    wave.addEnemies(generated);
-
-    activeWaves.push_back(std::make_shared<Wave>(wave));
-    lastWaveSpawnTime = std::chrono::steady_clock::now();
-    //std::cout << "Starting wave " << wave.getIndex() << " with " << wave.getEnemies().size() << " enemies." << std::endl;
 }
 
 void WaveManager::forceNextWave() {

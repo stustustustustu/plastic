@@ -1,7 +1,5 @@
 #include "World.h"
 
-#include <string.h>
-
 #include "../../Game.h"
 #include "../UI/scene/scenes/InGame.h"
 
@@ -18,8 +16,26 @@ void World::init() {
     player = std::make_unique<Player>();
 
     replay = std::make_unique<Replay>();
+    replay->setStartTime(std::chrono::steady_clock::now());
 
     wave -> startNextWave();
+}
+
+void World::initial() {
+    std::filesystem::path folder = std::filesystem::path("saves") / name;
+    if (!std::filesystem::exists(folder)) {
+        std::filesystem::create_directories(folder);
+    }
+
+    InitialState state;
+    state.name = name;
+    state.seed = seed;
+    state.windowSize = {game -> getSize().at(0), game -> getSize().at(1)};
+
+    replay -> setInitialWorldState(state);
+
+    std::filesystem::path replayPath = folder / "replay.bin";
+    replay -> save(replayPath.string());
 }
 
 void World::save(const std::string &world) {
@@ -34,7 +50,6 @@ void World::save(const std::string &world) {
         std::cerr << "Failed to save world: " << path << std::endl;
         return;
     }
-
 
     // name
     size_t nameLength = name.size();
@@ -121,6 +136,10 @@ void World::save(const std::string &world) {
     }
 
     file.close();
+
+    auto currentTime = std::chrono::steady_clock::now();
+    auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - replay->getStartTime());
+    replay->setDuration(replay->getDuration() + elapsedTime);
 
     std::filesystem::path replayPath = folder / "replay.bin";
     replay -> save(replayPath.string());
@@ -271,6 +290,7 @@ void World::load(const std::string &world) {
 
     std::filesystem::path replayPath = folder / "replay.bin";
     replay -> load(replayPath.string());
+    replay -> setStartTime(std::chrono::steady_clock::now());
 }
 
 void World::update() {

@@ -46,3 +46,13 @@ void Slider::update() {
 float Slider::getValue() const {
     return this -> value;
 }
+
+void Slider::setValue(float value) {
+    this -> value = std::max(min, std::min(max, value));
+}
+
+void Slider::setConstraints(float min, float max, float rounding) {
+    this -> min = min;
+    this -> max = max;
+    this -> rounding = rounding;
+}

@@ -48,6 +48,7 @@ class World {
 
         void init();
 
+        void initial();
         void save(const std::string &world);
         void load(const std::string &world);
 

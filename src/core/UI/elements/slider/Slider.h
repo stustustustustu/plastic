@@ -20,6 +20,9 @@ class Slider : public Element {
         void update() override;
 
         float getValue() const;
+        void setValue(float value);
+
+        void setConstraints(float min, float max, float rounding);
 };
 
 #endif //SLIDER_H

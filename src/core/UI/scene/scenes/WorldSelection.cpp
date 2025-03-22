@@ -111,6 +111,7 @@ void WorldSelection::createWorldButtons() {
             if (game -> replay) {
                 game -> replay -> loadReplay("saves/" + worldNames[i] + "/replay.bin");
                 game -> scenes -> switchScene("IN_REPLAY");
+                game -> replay -> setPlaying(true);
             }
         });
 

@@ -12,6 +12,10 @@ class ReplayManager  {
         std::chrono::milliseconds currentTime;
         float playbackSpeed;
         bool playing;
+        std::chrono::steady_clock::time_point lastUpdateTime;
+
+        std::unique_ptr<World> tempWorld;
+
 
     public:
         ReplayManager();
@@ -29,6 +33,8 @@ class ReplayManager  {
         void setPlaying(bool playing);
 
         void update(World& world);
+
+        void render(World &world);
 };
 
 #endif //REPLAYMANAGER_H
