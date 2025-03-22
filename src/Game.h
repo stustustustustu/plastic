@@ -69,6 +69,7 @@ class Game {
 
         glm::vec2 getSize();
         void setSize(const std::string &size);
+        void setSize(const glm::vec2 &size);
 
         float getVolume() const;
         void setVolume(float volume);

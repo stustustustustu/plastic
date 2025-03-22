@@ -88,6 +88,12 @@ void Game::setSize(const std::string &size) {
     }
 }
 
+void Game::setSize(const glm::vec2 &size) {
+    glViewport(0, 0, size.x, size.y);
+
+    resizeWindow(size);
+}
+
 void Game::resizeWindow(glm::ivec2 size) {
     this -> width = size.x;
     this -> height = size.y;

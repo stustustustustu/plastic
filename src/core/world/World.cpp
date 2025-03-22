@@ -174,7 +174,7 @@ void World::load(const std::string &world) {
     // window size
     glm::vec2 windowSize;
     file.read(reinterpret_cast<char*>(&windowSize), sizeof(windowSize));
-    game -> setSize(std::to_string(windowSize.x) + "x" + std::to_string(windowSize.y));
+    game -> setSize(windowSize);
 
     init();
 

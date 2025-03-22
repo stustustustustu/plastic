@@ -2,6 +2,8 @@
 
 #include "../src/Game.h"
 
+auto const game = Game::getInstance();
+
 ReplayManager::ReplayManager(): currentTime(0), playbackSpeed(1.0f), playing(false), lastUpdateTime(std::chrono::steady_clock::now()) {}
 
 void ReplayManager::loadReplay(const std::string &path) {
@@ -9,6 +11,8 @@ void ReplayManager::loadReplay(const std::string &path) {
     this -> currentReplay -> load(path);
 
     const auto& initialState = currentReplay -> getInitialWorldState();
+
+    game -> setSize(initialState.windowSize);
 
     tempWorld = std::make_unique<World>(initialState.name, initialState.seed, MEDIUM);
     tempWorld -> init();
