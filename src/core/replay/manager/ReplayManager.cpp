@@ -7,8 +7,24 @@ auto const game = Game::getInstance();
 ReplayManager::ReplayManager(): currentTime(0), playbackSpeed(1.0f), playing(false), lastUpdateTime(std::chrono::steady_clock::now()) {}
 
 void ReplayManager::loadReplay(const std::string& path) {
-    this -> currentReplay = std::make_unique<Replay>();
-    this -> currentReplay -> load(path);
+    auto newReplay = std::make_unique<Replay>();
+    newReplay -> load(path);
+
+    auto newEvents = newReplay -> getEvents();
+
+    if (currentReplay) {
+        auto currentDuration = currentReplay -> getDuration();
+
+        for (auto& event : newEvents) {
+            event.timestamp += currentDuration;
+        }
+
+        auto existingEvents = currentReplay -> getEvents();
+        existingEvents.insert(existingEvents.end(), newEvents.begin(), newEvents.end());
+        currentReplay -> setDuration(currentDuration + newReplay -> getDuration());
+    } else {
+        currentReplay = std::move(newReplay);
+    }
 
     events = currentReplay -> getEvents();
     currentEventIndex = 0;

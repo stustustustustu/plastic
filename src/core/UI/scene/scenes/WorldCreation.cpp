@@ -76,6 +76,19 @@ WorldCreation::WorldCreation() : Scene("WORLD_CREATION"), islandPreview(0) {
         game -> getCurrentWorld() -> player -> setPosition({static_cast<float>(game -> getCurrentWorld() -> player -> calculateSpawnTile().first * Island::TILE_SIZE + Island::TILE_SIZE / 2),
                                                                static_cast<float>(game -> getCurrentWorld() -> player -> calculateSpawnTile().second) * Island::TILE_SIZE + Island::TILE_SIZE / 2});
 
+        Event event;
+
+        event.timestamp = std::chrono::duration_cast<std::chrono::milliseconds>(
+            std::chrono::steady_clock::now() - game -> getCurrentWorld() -> replay -> getStartTime()
+        );
+        event.type = EventType::PLAYER_MOVE;
+
+        glm::vec2 position = game -> getCurrentWorld() -> player -> getPosition();
+        event.data.resize(sizeof(glm::vec2));
+        memcpy(event.data.data(), &position, sizeof(glm::vec2));
+
+        game -> getCurrentWorld() -> replay -> addEvent(event);
+
         game -> scenes -> switchScene("IN_GAME");
     });
 }

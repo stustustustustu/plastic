@@ -4,7 +4,7 @@ void Replay::addEvent(const Event &event) {
     this -> events.push_back(event);
 }
 
-const std::vector<Event>& Replay::getEvents() const {
+std::vector<Event> Replay::getEvents() const {
     return this -> events;
 }
 
@@ -74,6 +74,8 @@ void Replay::load(const std::string& path) {
         return;
     }
 
+    events.clear();
+
     size_t nameLength;
     file.read(reinterpret_cast<char*>(&nameLength), sizeof(nameLength));
     initial.name.resize(nameLength);
@@ -87,9 +89,7 @@ void Replay::load(const std::string& path) {
     size_t eventCount;
     file.read(reinterpret_cast<char*>(&eventCount), sizeof(eventCount));
 
-    events.clear();
     events.reserve(eventCount);
-
     for (size_t i = 0; i < eventCount; ++i) {
         Event event;
 

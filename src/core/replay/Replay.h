@@ -37,7 +37,8 @@ class Replay {
 
     public:
         void addEvent(const Event &event);
-        const std::vector<Event> &getEvents() const;
+
+        std::vector<Event> getEvents() const;
         std::chrono::milliseconds getDuration() const;
         void setDuration(std::chrono::milliseconds duration);
 
