@@ -21,6 +21,9 @@ class ReplayManager  {
         std::unique_ptr<World> tempWorld;
 
     public:
+        bool debug = false;
+
+    public:
         ReplayManager();
 
         void loadReplay(const std::string& path);
@@ -37,9 +40,8 @@ class ReplayManager  {
 
         void applyEvent(World &world, const Event &event);
 
-        void update(World& world);
-
-        void render(World &world);
+        void update();
+        void render();
 };
 
 #endif //REPLAYMANAGER_H

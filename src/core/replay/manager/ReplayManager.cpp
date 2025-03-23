@@ -169,7 +169,7 @@ void ReplayManager::applyEvent(World& world, const Event& event) {
     }
 }
 
-void ReplayManager::update(World& world) {
+void ReplayManager::update() {
     if (tempWorld && isPlaying()) {
         auto currentTimePoint = std::chrono::steady_clock::now();
         auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTimePoint - lastUpdateTime);
@@ -194,8 +194,19 @@ void ReplayManager::update(World& world) {
     }
 }
 
-void ReplayManager::render(World& world) {
+void ReplayManager::render() {
     if (tempWorld) {
         tempWorld -> render();
+
+        game -> renderer -> SetProjection(game -> camera -> getCameraProjection());
+        if (debug) {
+            for (auto& enemy : *tempWorld -> enemies) {
+                game -> renderer -> DrawLine(
+                    enemy.getRenderPosition() + glm::ivec2(16),
+                    enemy.getRenderPosition() + glm::ivec2(16) + glm::ivec2(normalize(glm::vec2(tempWorld -> player -> getRenderPosition() - enemy.getRenderPosition())) * 100.0f * enemy.getSpeed()),
+                    1.0f, HEXtoRGB(0x000000)
+                );
+            }
+        }
     }
 }

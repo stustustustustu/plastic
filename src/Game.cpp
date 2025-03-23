@@ -165,7 +165,7 @@ void Game::update() {
         if (scenes -> getScene() == "IN_GAME") {
             currentWorld -> update();
         } else if (scenes -> getScene() == "IN_REPLAY") {
-            replay -> update(*currentWorld);
+            replay -> update();
         }
     }
 }
@@ -176,7 +176,7 @@ void Game::render() const {
     if (currentWorld && (scenes -> getScene() == "IN_GAME" || scenes -> getScene() == "PAUSE")) {
         getCurrentWorld() -> render();
     } else if (scenes -> getScene() == "IN_REPLAY") {
-        replay -> render(*currentWorld);
+        replay -> render();
     }
 
     scenes -> render();

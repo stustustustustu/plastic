@@ -11,34 +11,34 @@ Enemy::Enemy(EnemyType type, const glm::vec2& position, float health, float dama
         switch (game -> getCurrentWorld() -> getDifficulty()) {
             case EASY:
                 setHealth(health * 0.8f);
-            setDamage(damage * 0.8f);
-            setSpeed(getSpeed() * 0.8f);
-            setCoins(std::max(1, static_cast<int>(getCoins() * 1.2f)));
-            break;
+                setDamage(damage * 0.8f);
+                setSpeed(getSpeed() * 0.8f);
+                setCoins(std::max(1, static_cast<int>(getCoins() * 1.2f)));
+                break;
             case MEDIUM:
                 setHealth(health * 1.0f);
-            setDamage(damage * 1.0f);
-            setSpeed(getSpeed() * 1.0f);
-            setCoins(std::max(1, static_cast<int>(getCoins() * 1.0f)));
-            break;
+                setDamage(damage * 1.0f);
+                setSpeed(getSpeed() * 1.0f);
+                setCoins(std::max(1, static_cast<int>(getCoins() * 1.0f)));
+                break;
             case HARD:
                 setHealth(health * 1.2f);
-            setDamage(damage * 1.2f);
-            setSpeed(getSpeed() * 1.2f);
-            setCoins(std::max(1, static_cast<int>(getCoins() * 0.8f)));
-            break;
+                setDamage(damage * 1.2f);
+                setSpeed(getSpeed() * 1.2f);
+                setCoins(std::max(1, static_cast<int>(getCoins() * 0.8f)));
+                break;
             case EXPERT:
                 setHealth(health * 1.4f);
-            setDamage(damage * 1.4f);
-            setSpeed(getSpeed() * 1.4f);
-            setCoins(std::max(1, static_cast<int>(getCoins() * 0.6f)));
-            break;
+                setDamage(damage * 1.4f);
+                setSpeed(getSpeed() * 1.4f);
+                setCoins(std::max(1, static_cast<int>(getCoins() * 0.6f)));
+                break;
             case IMPOSSIBLE:
                 setHealth(health * 1.6f);
-            setDamage(damage * 1.6f);
-            setSpeed(getSpeed() * 1.6f);
-            setCoins(std::max(1, static_cast<int>(getCoins() * 0.4f)));
-            break;
+                setDamage(damage * 1.6f);
+                setSpeed(getSpeed() * 1.6f);
+                setCoins(std::max(1, static_cast<int>(getCoins() * 0.4f)));
+                break;
         }
     }
 }
@@ -94,10 +94,6 @@ std::vector<Enemy> Enemy::generateEnemies(int index, int totalWeight) {
         memcpy(event.data.data() + sizeof(EnemyType) + 2 * sizeof(glm::vec2), &speed, sizeof(float));
 
         game -> getCurrentWorld() -> replay -> addEvent(event);
-
-        std::cout << "Recorded ENEMY_SPAWN event: type=" << static_cast<int>(type)
-                  << ", position=(" << pos.x << ", " << pos.y << ")"
-                  << ", speed=" << speed << std::endl;
 
         totalWeight -= weight;
     }

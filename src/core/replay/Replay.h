@@ -14,8 +14,6 @@ enum class EventType {
     ENEMY_SPAWN,
     ENEMY_MOVE,
     ENEMY_DIE,
-    PROJECTILE_FIRE,
-    PROJECTILE_HIT
 };
 
 struct InitialState {
@@ -29,13 +27,6 @@ struct Event {
     EventType type;
     std::vector<uint8_t> data;
 };
-
-struct CompareEvent {
-    bool operator()(const Event& a, const Event& b) {
-        return a.timestamp > b.timestamp;
-    }
-};
-
 
 class Replay {
     private:

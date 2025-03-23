@@ -156,9 +156,6 @@ void TurretManager::placeTurret(const glm::vec2& position) {
             memcpy(event.data.data() + sizeof(TurretType), &position, sizeof(glm::vec2));
 
             game -> getCurrentWorld() -> replay -> addEvent(event);
-
-            std::cout << "Recorded TURRET_PLACE event: type=" << static_cast<int>(placingTurretType)
-                      << ", position=(" << position.x << ", " << position.y << ")" << std::endl;
         }
     } else {
         std::cout << "Not enough coins to place turret." << std::endl;
