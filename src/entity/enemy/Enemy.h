@@ -22,6 +22,7 @@ enum class EnemyType {
 class Enemy : public Entity {
     private:
         EnemyType type;
+        std::pair<glm::vec2, std::chrono::milliseconds> spawn;
 
     public:
         Enemy(EnemyType type, const glm::vec2& position, float health, float damage, float speed);
@@ -31,6 +32,9 @@ class Enemy : public Entity {
         EnemyType getType() const;
 
         static std::vector<Enemy> generateEnemies(int index, int totalWeight);
+
+        void setSpawn(const glm::vec2& position, std::chrono::milliseconds time) { spawn = {position, time}; }
+        std::pair<glm::vec2, std::chrono::milliseconds> getSpawn() const { return spawn; }
 
     private:
         static float calculateDistance(const glm::vec2& pos1, const glm::vec2& pos2);

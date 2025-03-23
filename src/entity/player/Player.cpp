@@ -125,20 +125,24 @@ void Player::Movement() {
     }
 
     if (canMove(delta)) {
+        auto pos1 = getPosition();
         game -> getCurrentWorld() -> player -> move(delta);
+        auto pos2 = getPosition();
 
-        Event event;
+        if (pos1 != pos2) {
+            Event event;
 
-        event.timestamp = std::chrono::duration_cast<std::chrono::milliseconds>(
-            std::chrono::steady_clock::now() - game -> getCurrentWorld() -> replay -> getStartTime()
-        );
-        event.type = EventType::PLAYER_MOVE;
+            event.timestamp = std::chrono::duration_cast<std::chrono::milliseconds>(
+                std::chrono::steady_clock::now() - game -> getCurrentWorld() -> replay -> getStartTime()
+            );
+            event.type = EventType::PLAYER_MOVE;
 
-        glm::vec2 position = getPosition();
-        event.data.resize(sizeof(glm::vec2));
-        memcpy(event.data.data(), &position, sizeof(glm::vec2));
+            glm::vec2 position = getPosition();
+            event.data.resize(sizeof(glm::vec2));
+            memcpy(event.data.data(), &position, sizeof(glm::vec2));
 
-        game -> getCurrentWorld() -> replay -> addEvent(event);
+            game -> getCurrentWorld() -> replay -> addEvent(event);
+        }
     }
 }
 

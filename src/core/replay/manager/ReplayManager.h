@@ -9,6 +9,10 @@ class World;
 class ReplayManager  {
     private:
         std::unique_ptr<Replay> currentReplay;
+        std::vector<Event> events;
+        size_t currentEventIndex = 0;
+
+
         std::chrono::milliseconds currentTime;
         float playbackSpeed;
         bool playing;

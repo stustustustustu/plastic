@@ -25,6 +25,10 @@ InReplay::InReplay() : Scene("IN_REPLAY") {
     
     pauseToggle -> addCallback([this]() {
         game -> replay -> setPlaying(!game -> replay -> isPlaying());
+
+        if (game -> replay -> getCurrentTime() >= game -> replay -> getCurrentReplayDuration()) {
+            game -> replay -> seek(std::chrono::milliseconds(0));
+        }
     });
 
     timeline -> addCallback([this]() {

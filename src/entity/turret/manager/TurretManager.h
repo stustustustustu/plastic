@@ -32,6 +32,7 @@ class TurretManager {
 
         std::vector<std::shared_ptr<Turret>> getTurrets() const;
         void addTurret(TurretType type, const glm::vec2& position);
+        void clearTurrets();
 
         void renderPreview(const glm::vec2& position) const;
 

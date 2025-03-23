@@ -6,12 +6,14 @@ auto const game = Game::getInstance();
 
 ReplayManager::ReplayManager(): currentTime(0), playbackSpeed(1.0f), playing(false), lastUpdateTime(std::chrono::steady_clock::now()) {}
 
-void ReplayManager::loadReplay(const std::string &path) {
+void ReplayManager::loadReplay(const std::string& path) {
     this -> currentReplay = std::make_unique<Replay>();
     this -> currentReplay -> load(path);
 
-    const auto& initialState = currentReplay -> getInitialWorldState();
+    events = currentReplay -> getEvents();
+    currentEventIndex = 0;
 
+    const auto& initialState = currentReplay -> getInitialWorldState();
     game -> setSize(initialState.windowSize);
 
     tempWorld = std::make_unique<World>(initialState.name, initialState.seed, MEDIUM);
@@ -19,7 +21,18 @@ void ReplayManager::loadReplay(const std::string &path) {
 }
 
 void ReplayManager::seek(std::chrono::milliseconds time) {
+    if (!currentReplay) return;
+
+    tempWorld -> turret -> clearTurrets();
+    tempWorld -> enemies -> clear();
+
+    currentEventIndex = 0;
+
     this -> currentTime = time;
+    while (currentEventIndex < events.size() && events[currentEventIndex].timestamp <= currentTime) {
+        applyEvent(*tempWorld, events[currentEventIndex]);
+        currentEventIndex++;
+    }
 }
 
 void ReplayManager::setPlaybackSpeed(float speed) {
@@ -94,6 +107,62 @@ void ReplayManager::applyEvent(World& world, const Event& event) {
             break;
         }
 
+        case EventType::ENEMY_SPAWN: {
+            if (event.data.size() < sizeof(EnemyType) + sizeof(glm::vec2)) {
+                std::cerr << "Error: Invalid event data size for ENEMY_SPAWN!" << std::endl;
+                return;
+            }
+
+            EnemyType type = *reinterpret_cast<const EnemyType*>(event.data.data());
+            glm::vec2 position = *reinterpret_cast<const glm::vec2*>(event.data.data() + sizeof(EnemyType));
+            float speed = *reinterpret_cast<const float*>(event.data.data() + sizeof(EnemyType) + 2 * sizeof(glm::vec2));
+
+            Enemy enemy(type, position, 100, 50, speed);
+            enemy.setSpawn(position, event.timestamp);
+            world.enemies -> push_back(enemy);
+
+            break;
+        }
+
+        case EventType::ENEMY_MOVE: {
+            if (event.data.size() < sizeof(EnemyType) + sizeof(glm::vec2)) {
+                std::cerr << "Error: Invalid event data size for ENEMY_MOVE!" << std::endl;
+                return;
+            }
+
+            EnemyType type = *reinterpret_cast<const EnemyType*>(event.data.data());
+            glm::vec2 position = *reinterpret_cast<const glm::vec2*>(event.data.data() + sizeof(EnemyType));
+
+            for (auto& enemy : *world.enemies) {
+                if (enemy.getType() == type) {
+                    enemy.setPosition(position);
+                    break;
+                }
+            }
+
+            break;
+        }
+
+        case EventType::ENEMY_DIE: {
+            if (event.data.size() < sizeof(EnemyType)) {
+                std::cerr << "Error: Invalid event data size for ENEMY_DIE!" << std::endl;
+                return;
+            }
+
+            EnemyType type = *reinterpret_cast<const EnemyType*>(event.data.data());
+
+            world.enemies -> erase(
+                std::remove_if(
+                    world.enemies -> begin(),
+                    world.enemies -> end(),
+                    [type](const Enemy& enemy) { return enemy.getType() == type; }
+                ),
+                world.enemies -> end()
+            );
+
+            break;
+        }
+
         default:
             std::cerr << "Unknown event type: " << static_cast<int>(event.type) << std::endl;
             break;
@@ -110,21 +179,17 @@ void ReplayManager::update(World& world) {
         );
 
         currentTime += scaledElapsedTime;
-
         lastUpdateTime = currentTimePoint;
 
         if (currentTime >= currentReplay -> getDuration()) {
             currentTime = currentReplay -> getDuration();
             setPlaying(false);
+            return;
         }
 
-        currentReplay -> setDuration(currentReplay -> getDuration());
-
-        const auto& events = currentReplay -> getEvents();
-        for (const auto& event : events) {
-            if (event.timestamp <= currentTime) {
-                applyEvent(*tempWorld, event);
-            }
+        while (currentEventIndex < events.size() && events[currentEventIndex].timestamp <= currentTime) {
+            applyEvent(*tempWorld, events[currentEventIndex]);
+            currentEventIndex++;
         }
     }
 }

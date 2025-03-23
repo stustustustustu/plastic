@@ -1,6 +1,8 @@
 #ifndef REPLAY_H
 #define REPLAY_H
 
+#include <queue>
+
 #include "../../entity/turret/Turret.h"
 #include "../src/config.h"
 
@@ -13,9 +15,7 @@ enum class EventType {
     ENEMY_MOVE,
     ENEMY_DIE,
     PROJECTILE_FIRE,
-    PROJECTILE_HIT,
-    WAVE_START,
-    WAVE_END
+    PROJECTILE_HIT
 };
 
 struct InitialState {
@@ -29,6 +29,13 @@ struct Event {
     EventType type;
     std::vector<uint8_t> data;
 };
+
+struct CompareEvent {
+    bool operator()(const Event& a, const Event& b) {
+        return a.timestamp > b.timestamp;
+    }
+};
+
 
 class Replay {
     private:

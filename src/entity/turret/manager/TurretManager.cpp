@@ -167,6 +167,10 @@ void TurretManager::placeTurret(const glm::vec2& position) {
     isPlacingTurret = false;
 }
 
+void TurretManager::clearTurrets() {
+    this -> turrets.clear();
+}
+
 void TurretManager::cancelPlacingTurret() {
     isPlacingTurret = false;
 }

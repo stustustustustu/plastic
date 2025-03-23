@@ -322,11 +322,39 @@ void World::update() {
         if (island -> isLand(static_cast<int>((*enemies)[i].getPosition().x / Island::TILE_SIZE),
                             static_cast<int>((*enemies)[i].getPosition().y / Island::TILE_SIZE))) {
             player -> hit((*enemies)[i].getDamage(), false);
+
+            Event event;
+
+            event.timestamp = std::chrono::duration_cast<std::chrono::milliseconds>(
+                std::chrono::steady_clock::now() - replay -> getStartTime()
+            );
+            event.type = EventType::ENEMY_DIE;
+
+            auto type = (*enemies)[i].getType();
+            event.data.resize(sizeof(EnemyType));
+            memcpy(event.data.data(), &type, sizeof(EnemyType));
+
+            replay -> addEvent(event);
+
             enemies -> erase(enemies -> begin() + i);
         }
 
         if ((*enemies)[i].getHealth() <= 0) {
             player -> takeCoins((*enemies)[i], 1.0f);
+
+            Event event;
+
+            event.timestamp = std::chrono::duration_cast<std::chrono::milliseconds>(
+                std::chrono::steady_clock::now() - replay -> getStartTime()
+            );
+            event.type = EventType::ENEMY_DIE;
+
+            auto type = (*enemies)[i].getType();
+            event.data.resize(sizeof(EnemyType));
+            memcpy(event.data.data(), &type, sizeof(EnemyType));
+
+            replay -> addEvent(event);
+
             enemies -> erase(enemies -> begin() + i);
 
             if (enemies -> empty()) {
