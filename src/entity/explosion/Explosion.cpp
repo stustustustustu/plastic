@@ -16,10 +16,8 @@ void Explosion::update() {
 }
 
 void Explosion::render() const {
-    game -> renderer -> DrawSpriteSheet(
-        *game -> texture,
+    game -> renderer -> DrawRect(
         glm::vec2(getRenderPosition().x - size / 2, getRenderPosition().y - size / 2),
-        2, 32, 32,
         glm::vec2(size),
         0, HEXtoRGB(0x000000)
     );

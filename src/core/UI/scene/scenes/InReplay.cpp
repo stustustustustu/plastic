@@ -51,18 +51,18 @@ void InReplay::render() {
         hex = !game -> replay -> isPlaying() ? 0xFF2222 : 0x22FF22;
     }
 
-    game -> renderer -> DrawSpriteSheet(*game -> texture, pauseToggle -> getPosition() + glm::vec2(2), 2, 32, 32, glm::vec2(24, 24), 0, HEXtoRGB(0x000000));
-    game -> renderer -> DrawSpriteSheet(*game -> texture, pauseToggle -> getPosition(), 2, 32, 32, glm::vec2(24, 24), 0, HEXtoRGB(hex));
+    game -> renderer -> DrawRect(pauseToggle -> getPosition() + glm::vec2(2), glm::vec2(24, 24), 0, HEXtoRGB(0x000000));
+    game -> renderer -> DrawRect(pauseToggle -> getPosition(), glm::vec2(24, 24), 0, HEXtoRGB(hex));
 
     speedButton -> render();
 
     debugToggle -> render();
 
     // 00:00
-    game -> renderer -> DrawSpriteSheet(*game -> texture, timeline -> getPosition() - glm::vec2(-border / 2, border) - glm::vec2(2, 14),
-                                        2, 32, 32, glm::vec2(game -> text -> GetWidth("00:00", 16) + 6, 20), 0, HEXtoRGB(0x000000));
-    game -> renderer -> DrawSpriteSheet(*game -> texture, timeline -> getPosition() - glm::vec2(-border / 2, border) - glm::vec2(4, 16),
-                                        2, 32, 32, glm::vec2(game -> text -> GetWidth("00:00", 16) + 6, 20), 0, HEXtoRGB(0x3F3F3F));
+    game -> renderer -> DrawRect(timeline -> getPosition() - glm::vec2(-border / 2, border) - glm::vec2(2, 14),
+                                        glm::vec2(game -> text -> GetWidth("00:00", 16) + 6, 20), 0, HEXtoRGB(0x000000));
+    game -> renderer -> DrawRect(timeline -> getPosition() - glm::vec2(-border / 2, border) - glm::vec2(4, 16),
+                                        glm::vec2(game -> text -> GetWidth("00:00", 16) + 6, 20), 0, HEXtoRGB(0x3F3F3F));
 
     game -> renderer -> DrawText("00:00", timeline -> getPosition() - glm::vec2(-border / 2, border), 16, true);
 
@@ -85,10 +85,10 @@ void InReplay::render() {
                (seconds < 10 ? "0" : "") + std::to_string(seconds);
     }
 
-    game -> renderer -> DrawSpriteSheet(*game -> texture, timeline -> getPosition() + glm::vec2(timeline -> getSize().x - game -> text -> GetWidth(text, 16) - 6, 0) - glm::vec2(-border / 2, border) - glm::vec2(2, 14),
-                                        2, 32, 32, glm::vec2(game -> text -> GetWidth(text, 16) + 6, 20), 0, HEXtoRGB(0x000000));
-    game -> renderer -> DrawSpriteSheet(*game -> texture, timeline -> getPosition() + glm::vec2(timeline -> getSize().x - game -> text -> GetWidth(text, 16) - 6, 0) - glm::vec2(-border / 2, border) - glm::vec2(4, 16),
-                                        2, 32, 32, glm::vec2(game -> text -> GetWidth(text, 16) + 6, 20), 0, HEXtoRGB(0x3F3F3F));
+    game -> renderer -> DrawRect(timeline -> getPosition() + glm::vec2(timeline -> getSize().x - game -> text -> GetWidth(text, 16) - 6, 0) - glm::vec2(-border / 2, border) - glm::vec2(2, 14),
+                                        glm::vec2(game -> text -> GetWidth(text, 16) + 6, 20), 0, HEXtoRGB(0x000000));
+    game -> renderer -> DrawRect(timeline -> getPosition() + glm::vec2(timeline -> getSize().x - game -> text -> GetWidth(text, 16) - 6, 0) - glm::vec2(-border / 2, border) - glm::vec2(4, 16),
+                                        glm::vec2(game -> text -> GetWidth(text, 16) + 6, 20), 0, HEXtoRGB(0x3F3F3F));
 
     game -> renderer -> DrawText(text,
                                 timeline -> getPosition() + glm::vec2(timeline -> getSize().x - game -> text -> GetWidth(text, 16) - 6, 0) - glm::vec2(-border / 2, border),

@@ -24,10 +24,10 @@ UpgradePanel::UpgradePanel(const Upgrade &upgrade, glm::vec2 position, glm::vec2
 
 void UpgradePanel::render() {
     // panel shadows
-    game -> renderer -> DrawSpriteSheet(*game -> texture, position + glm::vec2(6, 6), 2, 32, 32, size - glm::vec2(border, border), 0, HEXtoRGB(0x000000));
+    game -> renderer -> DrawRect(position + glm::vec2(6, 6), size - glm::vec2(border, border), 0, HEXtoRGB(0x000000));
 
     // panels
-    game -> renderer -> DrawSpriteSheet(*game -> texture, position + glm::vec2(4, 4), 2, 32, 32, size - glm::vec2(border, border), 0, HEXtoRGB(0x4F4F4F));
+    game -> renderer -> DrawRect(position + glm::vec2(4, 4), size - glm::vec2(border, border), 0, HEXtoRGB(0x4F4F4F));
 
     // text
     game -> renderer -> DrawText(upgrade.getName(), position + glm::vec2(border, border / 2 + 16), 16.0f, true, HEXtoRGB(0xFFFFFF));

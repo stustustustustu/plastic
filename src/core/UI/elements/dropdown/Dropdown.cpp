@@ -8,9 +8,9 @@ Dropdown::Dropdown(glm::vec2 position, glm::vec2 size, const std::string &label)
 }
 
 void Dropdown::render() {
-    game -> renderer -> DrawSpriteSheet(*game -> texture, position + glm::vec2(2), 2, 32, 32, size, 0, HEXtoRGB(0x000000));
+    game -> renderer -> DrawRect(position + glm::vec2(2), size, 0, HEXtoRGB(0x000000));
 
-    game -> renderer -> DrawSpriteSheet(*game -> texture, position, 2, 32, 32, size, 0, HEXtoRGB(0x3F3F3F));
+    game -> renderer -> DrawRect(position, size, 0, HEXtoRGB(0x3F3F3F));
 
     game -> renderer -> DrawText(options[selectedIndex], getCenteredTextPosition(options[selectedIndex], 16.0f) + glm::vec2(0, 14), 16.0f, true, HEXtoRGB(0xFFFFFF));
 
@@ -18,9 +18,9 @@ void Dropdown::render() {
         for (size_t i = 0; i < options.size(); ++i) {
             glm::vec2 optionPosition = position + glm::vec2(0, size.y * i);
 
-            game -> renderer -> DrawSpriteSheet(*game -> texture, optionPosition + glm::vec2(2), 2, 32, 32, size, 0, HEXtoRGB(0x000000));
+            game -> renderer -> DrawRect(optionPosition + glm::vec2(2), size, 0, HEXtoRGB(0x000000));
 
-            game -> renderer -> DrawSpriteSheet(*game -> texture, optionPosition, 2, 32, 32, size, 0, HEXtoRGB(0x3F3F3F));
+            game -> renderer -> DrawRect(optionPosition, size, 0, HEXtoRGB(0x3F3F3F));
 
             game -> renderer -> DrawText(options[i], getCenteredTextPosition(options[i], 16.0f) + glm::vec2(0, size.y * i) + glm::vec2(0, 14), 16.0f, true, HEXtoRGB(0xFFFFFF));
         }

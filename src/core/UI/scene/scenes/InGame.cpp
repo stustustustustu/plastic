@@ -124,35 +124,35 @@ void InGame::renderPlayerStats() {
         int coinWidth = game -> text -> GetWidth(coinText, 16.0f) + border / 2;
 
         // background shadows
-        game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(4, 4) + glm::vec2(2), 2, 32, 32, glm::vec2(portrait + border), 0, HEXtoRGB(0x000000));
-        game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(portrait + (border + border / 2), 6) + glm::vec2(2), 2, 32, 32, glm::vec2(width + 4, 34), 0, HEXtoRGB(0x000000));
-        game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(portrait + (border + border / 2), 40) + glm::vec2(2), 2, 32, 32, glm::vec2(coinWidth, 16 + border / 2), 0, HEXtoRGB(0x000000));
-        game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(border + border / 2, portrait + (border + border / 2)) + glm::vec2(2), 2, 32, 32, glm::vec2(portrait / 2, portrait / 2), 0, HEXtoRGB(0x000000));
+        game -> renderer -> DrawRect(glm::vec2(4, 4) + glm::vec2(2), glm::vec2(portrait + border), 0, HEXtoRGB(0x000000));
+        game -> renderer -> DrawRect(glm::vec2(portrait + (border + border / 2), 6) + glm::vec2(2), glm::vec2(width + 4, 34), 0, HEXtoRGB(0x000000));
+        game -> renderer -> DrawRect(glm::vec2(portrait + (border + border / 2), 40) + glm::vec2(2), glm::vec2(coinWidth, 16 + border / 2), 0, HEXtoRGB(0x000000));
+        game -> renderer -> DrawRect(glm::vec2(border + border / 2, portrait + (border + border / 2)) + glm::vec2(2), glm::vec2(portrait / 2, portrait / 2), 0, HEXtoRGB(0x000000));
 
         // backgrounds
-        game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(4, 4), 2, 32, 32, glm::vec2(portrait + border), 0, HEXtoRGB(0x2F2F2F));
-        game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(portrait + (border + border / 2), 6), 2, 32, 32, glm::vec2(width + 4, 34), 0, HEXtoRGB(0x2F2F2F));
-        game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(portrait + (border + border / 2), 40), 2, 32, 32, glm::vec2(coinWidth, 16 + border / 2), 0, HEXtoRGB(0x2F2F2F));
-        game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(border + border / 2, portrait + (border + border / 2)), 2, 32, 32, glm::vec2(portrait / 2, portrait / 2), 0, HEXtoRGB(0x2F2F2F));
+        game -> renderer -> DrawRect(glm::vec2(4, 4), glm::vec2(portrait + border), 0, HEXtoRGB(0x2F2F2F));
+        game -> renderer -> DrawRect(glm::vec2(portrait + (border + border / 2), 6), glm::vec2(width + 4, 34), 0, HEXtoRGB(0x2F2F2F));
+        game -> renderer -> DrawRect(glm::vec2(portrait + (border + border / 2), 40), glm::vec2(coinWidth, 16 + border / 2), 0, HEXtoRGB(0x2F2F2F));
+        game -> renderer -> DrawRect(glm::vec2(border + border / 2, portrait + (border + border / 2)), glm::vec2(portrait / 2, portrait / 2), 0, HEXtoRGB(0x2F2F2F));
 
         // bar background
-        game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(portrait + (border + border / 2), 10), 2, 32, 32, glm::vec2(width, 12), 0, HEXtoRGB(0x191919));
-        game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(portrait + (border + border / 2), 24), 2, 32, 32, glm::vec2(width, 12), 0, HEXtoRGB(0x191919));
+        game -> renderer -> DrawRect(glm::vec2(portrait + (border + border / 2), 10), glm::vec2(width, 12), 0, HEXtoRGB(0x191919));
+        game -> renderer -> DrawRect(glm::vec2(portrait + (border + border / 2), 24), glm::vec2(width, 12), 0, HEXtoRGB(0x191919));
 
         // portrait
-        game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(border), 2, 32, 32, glm::vec2(portrait), 0, HEXtoRGB(0xFFFFFF));
+        game -> renderer -> DrawRect(glm::vec2(border), glm::vec2(portrait), 0, HEXtoRGB(0xFFFFFF));
 
         // health
         float health = game -> getCurrentWorld() -> player -> getHealth() / game -> getCurrentWorld() -> player -> getMaxHealth();
-        game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(portrait + (border + border / 2), 10), 2, 32, 32, glm::vec2(width * health, 12), 0, HEXtoRGB(0xC04C47));
-        game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(portrait + (border + border / 2), 20), 2, 32, 32, glm::vec2(width * health, 2), 0, HEXtoRGB(0x963531));
-        game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(portrait + (border + border / 2) + width * health - 2, 10), 2, 32, 32, glm::vec2(2, 12), 0, HEXtoRGB(0x963531));
+        game -> renderer -> DrawRect(glm::vec2(portrait + (border + border / 2), 10), glm::vec2(width * health, 12), 0, HEXtoRGB(0xC04C47));
+        game -> renderer -> DrawRect(glm::vec2(portrait + (border + border / 2), 20), glm::vec2(width * health, 2), 0, HEXtoRGB(0x963531));
+        game -> renderer -> DrawRect(glm::vec2(portrait + (border + border / 2) + width * health - 2, 10), glm::vec2(2, 12), 0, HEXtoRGB(0x963531));
 
         // shield
         float shield = game -> getCurrentWorld() -> player -> getShield() / game -> getCurrentWorld() -> player -> getMaxShield();
-        game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(portrait + (border + border / 2), 24), 2, 32, 32, glm::vec2(width * shield, 12), 0, HEXtoRGB(0x6699AA));
-        game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(portrait + (border + border / 2), 34), 2, 32, 32, glm::vec2(width * shield, 2), 0, HEXtoRGB(0x426977));
-        game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(portrait + (border + border / 2) + width * shield - 2, 24), 2, 32, 32, glm::vec2(2, 12), 0, HEXtoRGB(0x426977));
+        game -> renderer -> DrawRect(glm::vec2(portrait + (border + border / 2), 24), glm::vec2(width * shield, 12), 0, HEXtoRGB(0x6699AA));
+        game -> renderer -> DrawRect(glm::vec2(portrait + (border + border / 2), 34), glm::vec2(width * shield, 2), 0, HEXtoRGB(0x426977));
+        game -> renderer -> DrawRect(glm::vec2(portrait + (border + border / 2) + width * shield - 2, 24), glm::vec2(2, 12), 0, HEXtoRGB(0x426977));
 
         // coins
         game -> renderer -> DrawText(coinText, glm::vec2(portrait + (border + border / 2), portrait + border), 16.0f, true, HEXtoRGB(0xFDFF74));
@@ -202,19 +202,19 @@ void InGame::renderAdvancedStats() {
     int coinWidth = game -> text -> GetWidth(coinStream.str(), 16.0f) + border / 2 + 2;
 
     // background shadows
-    game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(4, 4) + glm::vec2(2), 2, 32, 32, glm::vec2(portrait + border), 0, HEXtoRGB(0x000000));
-    game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(portrait + (border + border / 2), 6) + glm::vec2(2), 2, 32, 32, glm::vec2(textWidth + (2 * border), 84), 0, HEXtoRGB(0x000000));
-    game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(portrait + (border + border / 2), 90) + glm::vec2(2), 2, 32, 32, glm::vec2(coinWidth, 16 + border / 2), 0, HEXtoRGB(0x000000));
-    game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(border + border / 2, portrait + (border + border / 2)) + glm::vec2(2), 2, 32, 32, glm::vec2(portrait / 2, portrait / 2), 0, HEXtoRGB(0x000000));
+    game -> renderer -> DrawRect(glm::vec2(4, 4) + glm::vec2(2), glm::vec2(portrait + border), 0, HEXtoRGB(0x000000));
+    game -> renderer -> DrawRect(glm::vec2(portrait + (border + border / 2), 6) + glm::vec2(2), glm::vec2(textWidth + (2 * border), 84), 0, HEXtoRGB(0x000000));
+    game -> renderer -> DrawRect(glm::vec2(portrait + (border + border / 2), 90) + glm::vec2(2), glm::vec2(coinWidth, 16 + border / 2), 0, HEXtoRGB(0x000000));
+    game -> renderer -> DrawRect(glm::vec2(border + border / 2, portrait + (border + border / 2)) + glm::vec2(2), glm::vec2(portrait / 2, portrait / 2), 0, HEXtoRGB(0x000000));
 
     // backgrounds
-    game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(4, 4), 2, 32, 32, glm::vec2(portrait + border), 0, HEXtoRGB(0x2F2F2F));
-    game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(portrait + (border + border / 2), 6), 2, 32, 32, glm::vec2(textWidth + (2 * border), 84), 0, HEXtoRGB(0x2F2F2F));
-    game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(portrait + (border + border / 2), 90), 2, 32, 32, glm::vec2(coinWidth, 16 + border / 2), 0, HEXtoRGB(0x2F2F2F));
-    game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(border + border / 2, portrait + (border + border / 2)), 2, 32, 32, glm::vec2(portrait / 2, portrait / 2), 0, HEXtoRGB(0x2F2F2F));
+    game -> renderer -> DrawRect(glm::vec2(4, 4), glm::vec2(portrait + border), 0, HEXtoRGB(0x2F2F2F));
+    game -> renderer -> DrawRect(glm::vec2(portrait + (border + border / 2), 6), glm::vec2(textWidth + (2 * border), 84), 0, HEXtoRGB(0x2F2F2F));
+    game -> renderer -> DrawRect(glm::vec2(portrait + (border + border / 2), 90), glm::vec2(coinWidth, 16 + border / 2), 0, HEXtoRGB(0x2F2F2F));
+    game -> renderer -> DrawRect(glm::vec2(border + border / 2, portrait + (border + border / 2)), glm::vec2(portrait / 2, portrait / 2), 0, HEXtoRGB(0x2F2F2F));
 
     // portrait
-    game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(border), 2, 32, 32, glm::vec2(portrait), 0, HEXtoRGB(0xFFFFFF));
+    game -> renderer -> DrawRect(glm::vec2(border), glm::vec2(portrait), 0, HEXtoRGB(0xFFFFFF));
 
     // stats
     glm::vec2 startPos = glm::vec2(portrait + (border + border / 2), border + 16);
@@ -233,10 +233,10 @@ void InGame::renderPlayerShop() {
     isAdvancedView ? pos = glm::vec2(4, 2 * (portrait + border) + 2) : pos = glm::vec2(4, 2 * border + portrait + portrait / 2);
 
     // background shadows
-    game -> renderer -> DrawSpriteSheet(*game -> texture, pos + glm::vec2(2), 2, 32, 32, size, 0, HEXtoRGB(0x000000));
+    game -> renderer -> DrawRect(pos + glm::vec2(2), size, 0, HEXtoRGB(0x000000));
 
     // backgrounds
-    game -> renderer -> DrawSpriteSheet(*game -> texture, pos, 2, 32, 32, size, 0, HEXtoRGB(0x2F2F2F));
+    game -> renderer -> DrawRect(pos, size, 0, HEXtoRGB(0x2F2F2F));
 
     // upgrade panels
     for (auto &panel : upgradePanels) {
@@ -250,25 +250,25 @@ void InGame::renderTurretShop() {
 
     if (isTurretShopOpen) {
         // background shadows
-        game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(screenWidth - size.x - 4, portrait) + glm::vec2(2), 2, 32, 32, size, 0, HEXtoRGB(0x000000));
-        game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(screenWidth - size.x - 4 - portrait / 2, portrait) + glm::vec2(2), 2, 32, 32, glm::vec2(portrait / 2, portrait / 2), 0, HEXtoRGB(0x000000));
+        game -> renderer -> DrawRect(glm::vec2(screenWidth - size.x - 4, portrait) + glm::vec2(2), size, 0, HEXtoRGB(0x000000));
+        game -> renderer -> DrawRect(glm::vec2(screenWidth - size.x - 4 - portrait / 2, portrait) + glm::vec2(2), glm::vec2(portrait / 2, portrait / 2), 0, HEXtoRGB(0x000000));
 
         // backgrounds
-        game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(screenWidth - size.x - 4, portrait), 2, 32, 32, size, 0, HEXtoRGB(0x2F2F2F));
-        game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(screenWidth - size.x - 4 - portrait / 2, portrait), 2, 32, 32, glm::vec2(portrait / 2, portrait / 2), 0, HEXtoRGB(0x2F2F2F));
+        game -> renderer -> DrawRect(glm::vec2(screenWidth - size.x - 4, portrait), size, 0, HEXtoRGB(0x2F2F2F));
+        game -> renderer -> DrawRect(glm::vec2(screenWidth - size.x - 4 - portrait / 2, portrait), glm::vec2(portrait / 2, portrait / 2), 0, HEXtoRGB(0x2F2F2F));
 
         // turret image
-        game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(screenWidth - size.x, portrait + 4) + glm::vec2(4, 4), 2, 32, 32, glm::vec2(portrait), 0, HEXtoRGB(0xFFFFFFF));
+        game -> renderer -> DrawRect(glm::vec2(screenWidth - size.x, portrait + 4) + glm::vec2(4, 4), glm::vec2(portrait), 0, HEXtoRGB(0xFFFFFFF));
 
         for (auto &panel : shopPanels) {
             panel -> render();
         }
     } else {
         // background shadows
-        game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(screenWidth - 2 - portrait / 2, portrait) + glm::vec2(2), 2, 32, 32, glm::vec2(portrait / 2, portrait / 2), 0, HEXtoRGB(0x000000));
+        game -> renderer -> DrawRect(glm::vec2(screenWidth - 2 - portrait / 2, portrait) + glm::vec2(2), glm::vec2(portrait / 2, portrait / 2), 0, HEXtoRGB(0x000000));
 
         // backgrounds
-        game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(screenWidth - 2 - portrait / 2, portrait), 2, 32, 32, glm::vec2(portrait / 2, portrait / 2), 0, HEXtoRGB(0x2F2F2F));
+        game -> renderer -> DrawRect(glm::vec2(screenWidth - 2 - portrait / 2, portrait), glm::vec2(portrait / 2, portrait / 2), 0, HEXtoRGB(0x2F2F2F));
     }
 }
 
@@ -280,10 +280,10 @@ void InGame::renderTurretUpgrades() {
     auto popupSize = game -> getCurrentWorld() -> turret -> menuSize;
 
     // shadow
-    game -> renderer -> DrawSpriteSheet(*game -> texture, popupPosition + glm::vec2(2), 2, 32, 32, popupSize, 0.0f, HEXtoRGB(0x000000));
+    game -> renderer -> DrawRect(popupPosition + glm::vec2(2), popupSize, 0.0f, HEXtoRGB(0x000000));
 
     // background
-    game -> renderer -> DrawSpriteSheet(*game -> texture, popupPosition, 2, 32, 32, popupSize, 0.0f, HEXtoRGB(0x2F2F2F));
+    game -> renderer -> DrawRect(popupPosition, popupSize, 0.0f, HEXtoRGB(0x2F2F2F));
 
     // X button
     turretUpgradeClose.render();
@@ -322,8 +322,8 @@ void InGame::renderPopup(const std::string &text, const glm::vec2 &position, con
     int textWidth = game -> text -> GetWidth(text, 16.0f);
     int textHeight = 16;
 
-    game -> renderer -> DrawSpriteSheet(*game -> texture, position + glm::vec2(2), 2, 32, 32, glm::vec2(textWidth + 10, textHeight + 10), 0, HEXtoRGB(0x000000)); // shadow
-    game -> renderer -> DrawSpriteSheet(*game -> texture, position, 2, 32, 32, glm::vec2(textWidth + 10, textHeight + 10), 0, HEXtoRGB(0x2F2F2F));
+    game -> renderer -> DrawRect(position + glm::vec2(2), glm::vec2(textWidth + 10, textHeight + 10), 0, HEXtoRGB(0x000000)); // shadow
+    game -> renderer -> DrawRect(position, glm::vec2(textWidth + 10, textHeight + 10), 0, HEXtoRGB(0x2F2F2F));
 
     game -> renderer -> DrawText(text, position + glm::vec2(5, textHeight + 2), 16.0f, true, color);
 }

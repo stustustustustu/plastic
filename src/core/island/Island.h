@@ -6,7 +6,7 @@
 #include "../src/utils/render/sprites/Texture.h"
 
 enum class Tile {
-    EMPTY = 1000,                   // empty tile
+    EMPTY = -1,
     WATER = 3,                      // Water tile
     ISOLATED = 2,                   // Isolated land tile
     CENTER = 4,                     // Full land tile

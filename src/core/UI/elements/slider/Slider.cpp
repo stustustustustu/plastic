@@ -4,16 +4,16 @@
 const auto game = Game::getInstance();
 
 void Slider::render() {
-    game -> renderer -> DrawSpriteSheet(*game -> texture, position + glm::vec2(2), 2, 32, 32, size, 0, HEXtoRGB(0x000000));
+    game -> renderer -> DrawRect(position + glm::vec2(2), size, 0, HEXtoRGB(0x000000));
 
-    game -> renderer -> DrawSpriteSheet(*game -> texture, position, 2, 32, 32, size, 0, HEXtoRGB(0x3F3F3F));
+    game -> renderer -> DrawRect(position, size, 0, HEXtoRGB(0x3F3F3F));
 
     float normalizedValue = (value - min) / (max - min);
     glm::vec2 thumbPosition = position + glm::vec2(normalizedValue * size.x - 5, -2);
 
-    game -> renderer -> DrawSpriteSheet(*game -> texture, thumbPosition + glm::vec2(2), 2, 32, 32, {10, size.y + 4}, 0, HEXtoRGB(0x000000));
+    game -> renderer -> DrawRect(thumbPosition + glm::vec2(2), {10, size.y + 4}, 0, HEXtoRGB(0x000000));
 
-    game -> renderer -> DrawSpriteSheet(*game -> texture, thumbPosition, 2, 32, 32, {10, size.y + 4}, 0, HEXtoRGB(0x646464));
+    game -> renderer -> DrawRect(thumbPosition, {10, size.y + 4}, 0, HEXtoRGB(0x646464));
 }
 
 void Slider::update() {

@@ -32,6 +32,14 @@ class Renderer {
             TextAlignment alignment = TextAlignment::LEFT
         ) const;
 
+        void DrawRect(
+            glm::vec2 position,
+            glm::vec2 size,
+            float rotate = 0.0f,
+            glm::vec3 color = glm::vec3(1.0f),
+            float opacity = 1.0f
+        ) const;
+
         void DrawSprite(
             Texture &texture,
             glm::vec2 position,

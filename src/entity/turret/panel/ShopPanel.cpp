@@ -21,10 +21,10 @@ ShopPanel::ShopPanel(glm::vec2 position, glm::vec2 size, TurretType type)
 
 void ShopPanel::render() {
     // panel shadow
-    game -> renderer -> DrawSpriteSheet(*game -> texture, position + glm::vec2(border / 2 + 2), 2, 32, 32, size - glm::vec2(border, 0), 0, HEXtoRGB(0x000000));
+    game -> renderer -> DrawRect(position + glm::vec2(border / 2 + 2), size - glm::vec2(border, 0), 0, HEXtoRGB(0x000000));
 
     // panel
-    game -> renderer -> DrawSpriteSheet(*game -> texture, position + glm::vec2(border / 2), 2, 32, 32, size - glm::vec2(border, 0), 0, HEXtoRGB(0x4F4F4F));
+    game -> renderer -> DrawRect(position + glm::vec2(border / 2), size - glm::vec2(border, 0), 0, HEXtoRGB(0x4F4F4F));
 
     // turret image
     int hex;
@@ -54,7 +54,7 @@ void ShopPanel::render() {
             break;
     }
 
-    game -> renderer -> DrawSpriteSheet(*game -> texture, position + glm::vec2(border, border), 2, 32, 32, glm::vec2(portrait), 0, HEXtoRGB(hex));
+    game -> renderer -> DrawRect(position + glm::vec2(border, border), glm::vec2(portrait), 0, HEXtoRGB(hex));
 
     // text
     game -> renderer -> DrawText(name, position + glm::vec2(portrait + 2 * border, 16 + border / 2), 16.0f, true, HEXtoRGB(hex)); // name

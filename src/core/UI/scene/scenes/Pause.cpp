@@ -35,7 +35,7 @@ Pause::Pause() : Scene("PAUSE") {
 
 void Pause::render() {
     // darken
-    game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(0, 0), 2, 32, 32, glm::vec2(game -> getSize().x, game -> getSize().y), 0, HEXtoRGB(0x000000), 0.25);
+    game -> renderer -> DrawRect(glm::vec2(0, 0), glm::vec2(game -> getSize().x, game -> getSize().y), 0, HEXtoRGB(0x000000), 0.25);
 
     game -> renderer -> DrawText("GAME PAUSED", {(game -> getSize().x - game -> text -> GetWidth("GAME PAUSED", 48)) / 2, (game -> getSize().y - 275.0f) / 2 - 40}, 48.0f, true);
 

@@ -76,6 +76,10 @@ void Renderer::DrawText(const std::string &text, glm::vec2 position, int size, b
 	game -> text -> DrawText(text, position, size, color, alignment);
 }
 
+void Renderer::DrawRect(glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color, float opacity) const {
+	this -> DrawSprite(*pixel, position, size, rotate, color, opacity);
+}
+
 void Renderer::DrawSprite(Texture &texture, glm::vec2 position, float u1, float v1, float u2, float v2, glm::vec2 size, float rotate, glm::vec3 color, float opacity) const {
     this -> shader.Use();
 
@@ -135,7 +139,7 @@ void Renderer::DrawSpriteSheet(Texture &texture, glm::vec2 position, int index, 
     float u2 = static_cast<float>((index % cols) + 1) / cols;
     float v2 = static_cast<float>((index / cols) + 1) / rows;
 
-    this->DrawSprite(texture, position, u1, v1, u2, v2, size, rotate, color, opacity);
+    this -> DrawSprite(texture, position, u1, v1, u2, v2, size, rotate, color, opacity);
 }
 
 void Renderer::DrawLine(glm::vec2 position1, glm::vec2 position2, float thickness, glm::vec3 color) const {

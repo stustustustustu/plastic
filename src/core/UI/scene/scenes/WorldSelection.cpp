@@ -143,9 +143,9 @@ void WorldSelection::render() {
     for (size_t i = 0; i < worldNames.size(); ++i) {
         auto size = std::max(200.0f, game -> text -> GetWidth(worldNames[i], 24) + border);
 
-        game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(27, 27 + i * (100 + border)), 2, 32, 32, glm::vec2(size + 48 + border, 100), 0, HEXtoRGB(0x000000));
+        game -> renderer -> DrawRect(glm::vec2(27, 27 + i * (100 + border)), glm::vec2(size + 48 + border, 100), 0, HEXtoRGB(0x000000));
 
-        game -> renderer -> DrawSpriteSheet(*game -> texture, glm::vec2(25, 25 + i * (100 + border)), 2, 32, 32, glm::vec2(size + 48 + border, 100), 0, HEXtoRGB(0x2F2F2F));
+        game -> renderer -> DrawRect(glm::vec2(25, 25 + i * (100 + border)), glm::vec2(size + 48 + border, 100), 0, HEXtoRGB(0x2F2F2F));
 
         game -> renderer -> DrawText(worldNames[i], glm::vec2(25 + border / 2, 50 + i * (100 + border)), 24.0f, true);
         game -> renderer -> DrawText("Difficulty: " + worldDifficulties[i], glm::vec2(25 + border / 2, 80 + i * (100 + border)), 16.0f, true);
