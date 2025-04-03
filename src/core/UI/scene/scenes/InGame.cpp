@@ -54,6 +54,7 @@ void InGame::resize() {
 void InGame::render() {
     renderPlayerStats();
     renderWaveInfo();
+    renderScore();
 
     if (isPlayerShopOpen) {
         renderPlayerShop();
@@ -92,7 +93,7 @@ void InGame::update() {
     if (isPlayerShopOpen) {
         for (size_t i = 0; i < upgradePanels.size(); ++i) {
             glm::vec2 panelPosition = isAdvancedView
-                ? glm::vec2(4, 2 * (portrait + border) + 2 + i * (upgradePanels[i] -> getSize().y + border))
+                ? glm::vec2(4, 2 * (portrait + border) + 2 + i * (upgradePanels[i] -> getSize().y + border) - 21)
                 : glm::vec2(4, 2 * border + portrait + portrait / 2 + i * (upgradePanels[i] -> getSize().y + border));
             upgradePanels[i] -> setPosition(panelPosition);
             upgradePanels[i] -> update();
@@ -182,11 +183,10 @@ void InGame::renderPlayerStats() {
 
 void InGame::renderAdvancedStats() {
     // prep values / texts
-    std::ostringstream healthStream, shieldStream, coinStream, damageStream, speedStream;
+    std::ostringstream healthStream, shieldStream, coinStream, damageStream;
     healthStream << std::fixed << std::setprecision(1) << game -> getCurrentWorld() -> player -> getHealth() << " / " << game -> getCurrentWorld() -> player -> getMaxHealth();
     shieldStream << std::fixed << std::setprecision(1) << game -> getCurrentWorld() -> player -> getShield() << " / " << game -> getCurrentWorld() -> player -> getMaxShield();
     damageStream << game -> getCurrentWorld() -> player -> getDamage();
-    speedStream << game -> getCurrentWorld() -> player -> getSpeed();
 
     coinStream << "$" << game -> getCurrentWorld() -> player -> getCoins();
 
@@ -194,23 +194,22 @@ void InGame::renderAdvancedStats() {
         std::max(
             game -> text -> GetWidth(healthStream.str(), 16),
             game -> text -> GetWidth(shieldStream.str(), 16)),
-        std::max(
-            game -> text -> GetWidth(damageStream.str(), 16),
-            game -> text -> GetWidth(speedStream.str(), 16))
+
+        game -> text -> GetWidth(damageStream.str(), 16)
     );
 
     int coinWidth = game -> text -> GetWidth(coinStream.str(), 16.0f) + border / 2 + 2;
 
     // background shadows
     game -> renderer -> DrawRect(glm::vec2(4, 4) + glm::vec2(2), glm::vec2(portrait + border), 0, HEXtoRGB(0x000000));
-    game -> renderer -> DrawRect(glm::vec2(portrait + (border + border / 2), 6) + glm::vec2(2), glm::vec2(textWidth + (2 * border), 84), 0, HEXtoRGB(0x000000));
-    game -> renderer -> DrawRect(glm::vec2(portrait + (border + border / 2), 90) + glm::vec2(2), glm::vec2(coinWidth, 16 + border / 2), 0, HEXtoRGB(0x000000));
+    game -> renderer -> DrawRect(glm::vec2(portrait + (border + border / 2), 6) + glm::vec2(2), glm::vec2(textWidth + (2 * border), 63), 0, HEXtoRGB(0x000000));
+    game -> renderer -> DrawRect(glm::vec2(portrait + (border + border / 2), 69) + glm::vec2(2), glm::vec2(coinWidth, 16 + border / 2), 0, HEXtoRGB(0x000000));
     game -> renderer -> DrawRect(glm::vec2(border + border / 2, portrait + (border + border / 2)) + glm::vec2(2), glm::vec2(portrait / 2, portrait / 2), 0, HEXtoRGB(0x000000));
 
     // backgrounds
     game -> renderer -> DrawRect(glm::vec2(4, 4), glm::vec2(portrait + border), 0, HEXtoRGB(0x2F2F2F));
-    game -> renderer -> DrawRect(glm::vec2(portrait + (border + border / 2), 6), glm::vec2(textWidth + (2 * border), 84), 0, HEXtoRGB(0x2F2F2F));
-    game -> renderer -> DrawRect(glm::vec2(portrait + (border + border / 2), 90), glm::vec2(coinWidth, 16 + border / 2), 0, HEXtoRGB(0x2F2F2F));
+    game -> renderer -> DrawRect(glm::vec2(portrait + (border + border / 2), 6), glm::vec2(textWidth + (2 * border), 63), 0, HEXtoRGB(0x2F2F2F));
+    game -> renderer -> DrawRect(glm::vec2(portrait + (border + border / 2), 69), glm::vec2(coinWidth, 16 + border / 2), 0, HEXtoRGB(0x2F2F2F));
     game -> renderer -> DrawRect(glm::vec2(border + border / 2, portrait + (border + border / 2)), glm::vec2(portrait / 2, portrait / 2), 0, HEXtoRGB(0x2F2F2F));
 
     // portrait
@@ -221,16 +220,15 @@ void InGame::renderAdvancedStats() {
     game -> renderer -> DrawText(healthStream.str(), startPos + glm::vec2(border, 0 * 20), 16.0f, true, HEXtoRGB(0xC04C47));
     game -> renderer -> DrawText(shieldStream.str(), startPos + glm::vec2(border, 1 * 20), 16.0f, true, HEXtoRGB(0x6699AA));
     game -> renderer -> DrawText(damageStream.str(), startPos + glm::vec2(border, 2 * 20), 16.0f, true, HEXtoRGB(0xFFFFFF));
-    game -> renderer -> DrawText(speedStream.str(), startPos + glm::vec2(border, 3 * 20), 16.0f, true, HEXtoRGB(0xFFFFFF));
 
     // coins
-    game -> renderer -> DrawText(coinStream.str(), glm::vec2(portrait + (2 * border), border + 98), 16.0f, true, HEXtoRGB(0xFDFF74));
+    game -> renderer -> DrawText(coinStream.str(), glm::vec2(portrait + (2 * border), border + 77), 16.0f, true, HEXtoRGB(0xFDFF74));
 }
 
 void InGame::renderPlayerShop() {
     glm::vec2 pos;
-    glm::vec2 size(2 * portrait + border + width, 8 * portrait);
-    isAdvancedView ? pos = glm::vec2(4, 2 * (portrait + border) + 2) : pos = glm::vec2(4, 2 * border + portrait + portrait / 2);
+    glm::vec2 size(2 * portrait + border + width, 6 * portrait);
+    isAdvancedView ? pos = glm::vec2(4, 2 * (portrait + border) - 19) : pos = glm::vec2(4, 2 * border + portrait + portrait / 2);
 
     // background shadows
     game -> renderer -> DrawRect(pos + glm::vec2(2), size, 0, HEXtoRGB(0x000000));
@@ -316,6 +314,14 @@ void InGame::renderTurretUpgrades() {
 
 void InGame::renderWaveInfo() {
     game -> renderer -> DrawText("Enemies alive: " + std::to_string(game -> getCurrentWorld() -> wave -> getCurrentEnemies() -> size()), glm::vec2((game -> getSize().x / 2) - 50, 40), 24.0f, true);
+}
+
+void InGame::renderScore() {
+    game -> renderer -> DrawRect(glm::vec2(border / 2, game -> getSize().y - 32.0f) + glm::vec2(2), glm::vec2(game -> text -> GetWidth("Score: " + std::to_string(game -> getCurrentWorld() -> getScore()), 16.0f) + 8, 26), 0, HEXtoRGB(0x000000));
+
+    game -> renderer -> DrawRect(glm::vec2(border / 2, game -> getSize().y - 32.0f), glm::vec2(game -> text -> GetWidth("Score: " + std::to_string(game -> getCurrentWorld() -> getScore()), 16.0f) + 8, 26), 0, HEXtoRGB(0x2F2F2F));
+
+    game -> renderer -> DrawText("Score: " + std::to_string(game -> getCurrentWorld() -> getScore()), glm::vec2(border, game -> getSize().y - 12.0f), 16.0f, true);
 }
 
 void InGame::renderPopup(const std::string &text, const glm::vec2 &position, const glm::vec3 &color) {

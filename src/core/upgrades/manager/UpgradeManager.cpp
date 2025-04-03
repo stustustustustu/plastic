@@ -3,7 +3,6 @@
 UpgradeManager::UpgradeManager(Inventory &inventory) : inventory(inventory) {
     addPath(DAMAGE);
     addPath(HEALTH);
-    addPath(SPEED);
     addPath(SHIELD);
 }
 

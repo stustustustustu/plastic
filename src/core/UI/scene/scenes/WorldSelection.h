@@ -12,6 +12,7 @@ class WorldSelection : public Scene {
     private:
         std::vector<std::string> worldNames;
         std::vector<std::string> worldDifficulties;
+        std::vector<unsigned int> worldScores;
         std::vector<int> waveIndices;
         std::vector<std::unique_ptr<Button>> playButtons;
         std::vector<std::unique_ptr<Button>> replayButtons;

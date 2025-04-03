@@ -5,7 +5,7 @@
 const auto game = Game::getInstance();
 
 World::World(std::string name, unsigned int seed, Difficulty difficulty)
-    : name(name), seed(seed), difficulty(difficulty), enemies(new std::vector<Enemy>()) {}
+    : name(name), seed(seed), difficulty(difficulty), score(0), enemies(new std::vector<Enemy>()) {}
 
 void World::init() {
     island = std::make_unique<Island>(seed);
@@ -30,7 +30,7 @@ void World::initial() {
     InitialState state;
     state.name = name;
     state.seed = seed;
-    state.windowSize = game -> getSize(); // Now returns glm::vec2
+    state.windowSize = game -> getSize();
 
     replay -> setInitialWorldState(state);
 
@@ -56,9 +56,10 @@ void World::save(const std::string &world) {
     file.write(reinterpret_cast<const char*>(&nameLength), sizeof(nameLength));
     file.write(name.c_str(), nameLength);
 
-    // seed, difficulty, and wave index
+    // seed, difficulty, score and wave index
     file.write(reinterpret_cast<const char*>(&seed), sizeof(seed));
     file.write(reinterpret_cast<const char*>(&difficulty), sizeof(difficulty));
+    file.write(reinterpret_cast<const char*>(&score), sizeof(score));
     int currentWaveIndex = wave -> getCurrentWaveIndex();
     file.write(reinterpret_cast<const char*>(&currentWaveIndex), sizeof(currentWaveIndex));
 
@@ -168,6 +169,7 @@ void World::load(const std::string &world) {
     // seed, difficulty, and wave index
     file.read(reinterpret_cast<char*>(&seed), sizeof(seed));
     file.read(reinterpret_cast<char*>(&difficulty), sizeof(difficulty));
+    file.read(reinterpret_cast<char*>(&score), sizeof(score));
     int currentWaveIndex;
     file.read(reinterpret_cast<char*>(&currentWaveIndex), sizeof(currentWaveIndex));
 
@@ -340,6 +342,7 @@ void World::update() {
         }
 
         if ((*enemies)[i].getHealth() <= 0) {
+            this -> setScore(getScore() + (*enemies)[i].getCoins());
             player -> takeCoins((*enemies)[i], 1.0f);
 
             Event event;

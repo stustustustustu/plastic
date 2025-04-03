@@ -27,6 +27,8 @@ class World {
         unsigned int seed;
         Difficulty difficulty;
 
+        unsigned int score;
+
     public:
         std::unique_ptr<Replay> replay;
 
@@ -65,6 +67,9 @@ class World {
 
         Difficulty getDifficulty() const { return this -> difficulty; }
         void setDifficulty(Difficulty difficulty) { this -> difficulty = difficulty; }
+
+        unsigned int getScore() const { return this -> score; }
+        void setScore(unsigned int score) { this -> score = score; }
 };
 
 #endif //WORLD_H
