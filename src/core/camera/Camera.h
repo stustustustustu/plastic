@@ -14,8 +14,8 @@ class Camera {
 
         float screenWidth, screenHeight;
 
-        const float minZoom = 0.5f;
-        const float maxZoom = 2.0f; // to be changed
+        const float minZoom = 1.0f;
+        const float maxZoom = 3.0f; // to be changed
 
         bool smoothMovement = true;
 

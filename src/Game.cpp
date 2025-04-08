@@ -199,6 +199,10 @@ void Game::loop() {
         render();
     }
 
+    if (getCurrentWorld()) {
+        getCurrentWorld() -> save(getCurrentWorld() -> getName());
+    }
+
     glDeleteProgram(shader -> ID);
     glfwDestroyWindow(window);
     glfwTerminate();

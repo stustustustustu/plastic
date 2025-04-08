@@ -87,7 +87,7 @@ void WorldSelection::loadWorlds() {
             worldScores.push_back(score);
             waveIndices.push_back(waveIndex);
 
-            std::cout << "Loaded world: " << name << ", Difficulty: " << diff << ", Score: " << score << ", Wave: " << waveIndex << std::endl;
+            // std::cout << "Loaded world: " << name << ", Difficulty: " << diff << ", Score: " << score << ", Wave: " << waveIndex << std::endl;
 
             file.close();
         }
@@ -179,6 +179,7 @@ void WorldSelection::update() {
 }
 
 void WorldSelection::resize() {
+    loadWorlds();
     createWorldButtons();
 
     backButton -> setPosition(game -> getSize() - glm::vec2(175, 75));
