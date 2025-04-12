@@ -2,6 +2,7 @@
 
 #include <glm/ext/matrix_clip_space.hpp>
 
+#include "core/UI/scene/scenes/DeathScreen.h"
 #include "core/UI/scene/scenes/InGame.h"
 #include "core/UI/scene/scenes/InReplay.h"
 #include "core/UI/scene/scenes/MainMenu.h"
@@ -147,6 +148,7 @@ bool Game::init() {
     scenes -> addScene("MAIN_MENU", std::make_unique<MainMenu>());
     scenes -> addScene("WORLD_CREATION", std::make_unique<WorldCreation>());
     scenes -> addScene("WORLD_SELECTION", std::make_unique<WorldSelection>());
+    scenes -> addScene("DEATH_SCREEN", std::make_unique<DeathScreen>());
     scenes -> addScene("SETTINGS", std::make_unique<Settings>());
     scenes -> addScene("PAUSE", std::make_unique<Pause>());
     scenes -> addScene("IN_REPLAY", std::make_unique<InReplay>());
@@ -163,7 +165,12 @@ void Game::update() {
 
     if (currentWorld) {
         if (scenes -> getScene() == "IN_GAME") {
-            currentWorld -> update();
+            if (currentWorld -> player -> getHealth() > 0) {
+                currentWorld -> update();
+            } else {
+                scenes -> switchScene("DEATH_SCREEN");
+            }
+
         } else if (scenes -> getScene() == "IN_REPLAY") {
             replay -> update();
         }

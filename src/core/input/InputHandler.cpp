@@ -16,6 +16,7 @@ void InputHandler::InitBindings() {
     bindKeyCombo( {GLFW_KEY_D}, "RIGHT");
 
     bindKeyCombo( {GLFW_MOUSE_BUTTON_1}, "SHOOT");
+    bindKeyCombo( {GLFW_KEY_F1}, "KILL");
 
     // turret
     bindKeyCombo( {GLFW_MOUSE_BUTTON_2}, "PLACE_TURRET", true);
@@ -38,6 +39,11 @@ void InputHandler::RegisterActions() {
     getActionManager().registerAction("SHOOT", []() {
         if (game -> getCurrentWorld() && game -> getCurrentWorld() -> turret) {
             game -> getCurrentWorld() -> turret -> handleClick(getMousePosition());
+        }
+    });
+    getActionManager().registerAction("KILL", []() {
+        if (game -> getCurrentWorld() && game -> getCurrentWorld() -> player) {
+            game -> getCurrentWorld() -> player -> setHealth(0);
         }
     });
 

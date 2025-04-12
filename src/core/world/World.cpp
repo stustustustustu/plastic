@@ -388,16 +388,16 @@ void World::render() {
         explosion -> render();
     }
 
-    if (player -> getHealth() > 0) {
-        player -> drawEntity(game -> texture);
-    }
-
     if (wave) {
         for (const auto& enemy : *enemies) {
             if (enemy.getHealth() > 0) {
                 enemy.drawEntity(game -> texture);
             }
         }
+    }
+
+    if (player -> getHealth() > 0) {
+        player -> drawEntity(game -> texture);
     }
 
     player -> drawLaser();

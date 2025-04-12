@@ -119,6 +119,8 @@ add_executable(
         src/core/replay/manager/ReplayManager.h
         src/core/UI/scene/scenes/InReplay.cpp
         src/core/UI/scene/scenes/InReplay.h
+        src/core/UI/scene/scenes/DeathScreen.cpp
+        src/core/UI/scene/scenes/DeathScreen.h
 )
 
 target_include_directories(plastic PRIVATE dependencies) # Includes location
