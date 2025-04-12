@@ -209,11 +209,13 @@ void Game::loop() {
 }
 
 void Game::handlePause() {
-    if (state == GameState::ACTIVE) {
-        scenes -> switchScene("PAUSE");
-        state = GameState::PAUSED;
-    } else if (state == GameState::PAUSED) {
-        scenes -> goBack();
-        state = GameState::ACTIVE;
+    if (scenes -> getScene() == "IN_GAME" || scenes -> getScene() == "IN_REPLAY") {
+        if (state == GameState::ACTIVE) {
+            scenes -> switchScene("PAUSE");
+            state = GameState::PAUSED;
+        } else if (state == GameState::PAUSED) {
+            scenes -> goBack();
+            state = GameState::ACTIVE;
+        }
     }
 }

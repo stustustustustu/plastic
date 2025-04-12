@@ -5,7 +5,7 @@ const auto game = Game::getInstance();
 
 Camera::Camera(float screenWidth, float screenHeight) : screenWidth(screenWidth), screenHeight(screenHeight),
                                                         position(screenWidth / 2.0f, screenHeight / 2.0f),
-                                                        zoom(2.0f), targetZoom(2.0f), initialMousePos(0, 0) {}
+                                                        zoom(1.5f), targetZoom(1.5f), initialMousePos(0, 0) {}
 
 void Camera::Update() {
     auto mousePos = game -> input -> getMousePosition();
@@ -20,9 +20,9 @@ void Camera::Update() {
     }
 
     if (glm::distance(position, glm::vec2(0.0f, 0.0f)) < 0.5f &&
-        glm::abs(zoom - 2.0f) < 0.01f) {
+        glm::abs(zoom - 1.5f) < 0.01f) {
         targetPosition = glm::vec2(0.0f, 0.0f);
-        targetZoom = 2.0f;
+        targetZoom = 1.5f;
     }
 
     // quick reset back to original position if camera isn't being interacted with
@@ -117,7 +117,7 @@ void Camera::setSmoothMovement(bool enabled) {
 
 void Camera::returnToDefault() {
     targetPosition = glm::vec2(screenWidth / 2.0f, screenHeight / 2.0f);
-    targetZoom = 2.0f;
+    targetZoom = 1.5f;
 }
 
 void Camera::setSize(int screenWidth, int screenHeight) {

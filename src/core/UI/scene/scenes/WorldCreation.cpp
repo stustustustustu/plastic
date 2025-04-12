@@ -28,7 +28,7 @@ WorldCreation::WorldCreation() : Scene("WORLD_CREATION"), islandPreview(0) {
     seedInput -> setText(std::to_string(currentSeed));
 
     backButton -> addCallback([]() {
-        game -> scenes -> goBack();
+        game -> scenes -> switchScene("MAIN_MENU");
     });
 
     generateSeedButton -> addCallback([this]() {
