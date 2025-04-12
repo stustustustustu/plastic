@@ -7,19 +7,19 @@ Turret::Turret(glm::vec2 position, TurretType type)
     : Entity(position), type(type), target(NULL), currentAngle(0.0f), timeSinceLastShot(0.0f), lastUpdateTime(std::chrono::steady_clock::now()) {
     switch (type) {
         case TurretType::LASER:
-            fireRate = 10.0f;
+            fireRate = 25.0f;
             setDamage(1.0f);
-            cost = 20;
+            cost = 200;
             break;
         case TurretType::RIFLE:
-            fireRate = 20.0f;
+            fireRate = 10.0f;
             setDamage(5.0f);
-            cost = 50;
+            cost = 350;
             break;
         case TurretType::BOMB:
             fireRate = 2.0f;
             setDamage(25.0f);
-            cost = 100;
+            cost = 500;
             break;
     }
 
@@ -122,11 +122,11 @@ void Turret::render(Texture *texture) const {
 int Turret::getCost(TurretType type) {
     switch (type) {
         case TurretType::LASER:
-            return 20;
+            return 200;
         case TurretType::RIFLE:
-            return 50;
+            return 350;
         case TurretType::BOMB:
-            return 100;
+            return 500;
         default:
             return 0;
     }

@@ -48,7 +48,7 @@ std::vector<Enemy> Enemy::generateEnemies(int index, int totalWeight) {
     int screenWidth, screenHeight;
     glfwGetFramebufferSize(window, &screenWidth, &screenHeight);
 
-    const float minDist = 150;
+    const float minDist = 100;
 
     std::vector<Enemy> enemies;
     auto enemyData = getEnemyData();

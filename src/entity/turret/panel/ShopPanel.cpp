@@ -34,14 +34,14 @@ void ShopPanel::render() {
         case TurretType::LASER:
             hex = 0xFF5733;
             damage << std::fixed << std::setprecision(1) << 1.0f;
-            fireRate << std::fixed << std::setprecision(1) << 10.0f;
+            fireRate << std::fixed << std::setprecision(1) << 25.0f;
             cost << "$" << Turret::getCost(TurretType::LASER);
             name = "LASER";
             break;
         case TurretType::RIFLE:
             hex = 0xF2EE0A;
             damage << std::fixed << std::setprecision(1) << 5.0f;
-            fireRate << std::fixed << std::setprecision(1) << 20.0f;
+            fireRate << std::fixed << std::setprecision(1) << 10.0f;
             cost << "$" << Turret::getCost(TurretType::RIFLE);
             name = "RIFLE";
             break;

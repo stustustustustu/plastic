@@ -192,9 +192,8 @@ void TurretManager::handleClick(const glm::vec2& mousePos) {
     auto worldPos = game -> camera -> screenToWorld(mousePos);
 
     for (const auto &turret : turrets) {
-        auto turretPos = turret -> getPosition();
         if (Collision::isPointInRectangle({ worldPos.x, worldPos.y }, { turret -> getPosition().x + 16 / 2, turret -> getPosition().y + 16 / 2 }, {16, 16}) && glfwGetMouseButton(game -> window, GLFW_MOUSE_BUTTON_1)) {
-            openUpgradeMenu(turret);
+            // openUpgradeMenu(turret);
             return;
         }
     }
