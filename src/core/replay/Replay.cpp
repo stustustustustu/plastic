@@ -85,6 +85,7 @@ void Replay::load(const std::string& path) {
     file.read(reinterpret_cast<char*>(&initial.windowSize), sizeof(initial.windowSize));
 
     file.read(reinterpret_cast<char*>(&duration), sizeof(duration));
+    std::cout << duration << std::endl;
 
     size_t eventCount;
     file.read(reinterpret_cast<char*>(&eventCount), sizeof(eventCount));

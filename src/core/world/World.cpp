@@ -32,6 +32,7 @@ void World::initial() {
     state.seed = seed;
     state.windowSize = game -> getSize();
 
+    replay -> setDuration(std::chrono::milliseconds(0));
     replay -> setInitialWorldState(state);
 
     std::filesystem::path replayPath = folder / "replay.bin";
@@ -138,8 +139,8 @@ void World::save(const std::string &world) {
     file.close();
 
     auto currentTime = std::chrono::steady_clock::now();
-    auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - replay->getStartTime());
-    replay->setDuration(replay->getDuration() + elapsedTime);
+    auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - replay -> getStartTime());
+    replay -> setDuration(elapsedTime);
 
     std::filesystem::path replayPath = folder / "replay.bin";
     replay -> save(replayPath.string());
@@ -359,15 +360,15 @@ void World::update() {
             replay -> addEvent(event);
 
             enemies -> erase(enemies -> begin() + i);
-
-            if (enemies -> empty()) {
-                wave -> startNextWave();
-                wave -> updateWaveStatus();
-                enemies = wave -> getCurrentEnemies();
-            }
         } else {
             ++i;
         }
+    }
+
+    if (enemies -> empty()) {
+        wave -> startNextWave();
+        wave -> updateWaveStatus();
+        enemies = wave -> getCurrentEnemies();
     }
 
     player -> Movement();

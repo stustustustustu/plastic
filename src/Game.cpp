@@ -62,7 +62,7 @@ void Game::loadWorld(const std::string &path) {
     currentWorld = std::make_unique<World>("New World", 0, MEDIUM);
     currentWorld -> load(path);
 
-    scenes->addScene("IN_GAME", std::make_unique<InGame>());
+    scenes -> addScene("IN_GAME", std::make_unique<InGame>());
 }
 
 GameState Game::getState() const {
