@@ -5,7 +5,7 @@ auto const game = Game::getInstance();
 
 Enemy::Enemy(EnemyType type, const glm::vec2& position, float health, float damage, float speed)
     : Entity(position, speed * 0.5f, damage, health), type(type), spawn({position, std::chrono::milliseconds(0)}) {
-    setCoins(std::max(1, rand() % static_cast<int>(health)) / 10);
+    setCoins(std::max(1, rand() % static_cast<int>(health + 1)) / 10);
 
     if (game -> getCurrentWorld()) {
         switch (game -> getCurrentWorld() -> getDifficulty()) {

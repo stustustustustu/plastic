@@ -101,7 +101,7 @@ void WorldSelection::createWorldButtons() {
     for (size_t i = 0; i < worldNames.size(); ++i) {
         auto size = std::max(200.0f, game -> text -> GetWidth(worldNames[i], 24) + border);
 
-        glm::vec2 position(size + 24 + border, 25 + i * (100 + border));
+        glm::vec2 position(size + 24 + border, 25 + i * (120 + border));
         playButtons.push_back(std::make_unique<Button>(position + glm::vec2(-border / 2, border / 2), glm::vec2(48, 24), "PLAY", HEXtoRGB(0x3F3F3F)));
         replayButtons.push_back(std::make_unique<Button>(position + glm::vec2(-border / 2 - 20, border + 24), glm::vec2(68, 24), "REPLAY", HEXtoRGB(0x3F3F3F)));
         deleteButtons.push_back(std::make_unique<Button>(position + glm::vec2(24 - border / 2, 120 - 24 - border / 2), glm::vec2(24, 24), "", HEXtoRGB(0xFF4444)));
@@ -147,15 +147,15 @@ void WorldSelection::render() {
     for (size_t i = 0; i < worldNames.size(); ++i) {
         auto size = std::max(200.0f, game -> text -> GetWidth(worldNames[i], 24) + border);
 
-        game -> renderer -> DrawRect(glm::vec2(27, 27 + i * (100 + border)), glm::vec2(size + 48 + border, 120), 0, HEXtoRGB(0x000000));
+        game -> renderer -> DrawRect(glm::vec2(27, 27 + i * (120 + border)), glm::vec2(size + 48 + border, 120), 0, HEXtoRGB(0x000000));
 
-        game -> renderer -> DrawRect(glm::vec2(25, 25 + i * (100 + border)), glm::vec2(size + 48 + border, 120), 0, HEXtoRGB(0x2F2F2F));
+        game -> renderer -> DrawRect(glm::vec2(25, 25 + i * (120 + border)), glm::vec2(size + 48 + border, 120), 0, HEXtoRGB(0x2F2F2F));
 
-        game -> renderer -> DrawText(worldNames[i], glm::vec2(25 + border / 2, 50 + i * (100 + border)), 24.0f, true);
-        game -> renderer -> DrawText("Difficulty: " + worldDifficulties[i], glm::vec2(25 + border / 2, 80 + i * (100 + border)), 16.0f, true);
-        game -> renderer -> DrawText("Score: " + std::to_string(worldScores[i]), glm::vec2(25 + border / 2, 100 + i * (100 + border)), 16.0f, true);
-        game -> renderer -> DrawText("Wave: " + std::to_string(waveIndices[i]), glm::vec2(25 + border / 2, 120 + i * (100 + border)), 16.0f, true);
-        game -> renderer -> DrawText("Window size: " + std::to_string(static_cast<int>(game -> getSize().x)) + "x" + std::to_string(static_cast<int>(game -> getSize().y)), glm::vec2(25 + border / 2, 140 + i * (100 + border)), 16.0f, true);
+        game -> renderer -> DrawText(worldNames[i], glm::vec2(25 + border / 2, 50 + i * (120 + border)), 24.0f, true);
+        game -> renderer -> DrawText("Difficulty: " + worldDifficulties[i], glm::vec2(25 + border / 2, 80 + i * (120 + border)), 16.0f, true);
+        game -> renderer -> DrawText("Score: " + std::to_string(worldScores[i]), glm::vec2(25 + border / 2, 100 + i * (120 + border)), 16.0f, true);
+        game -> renderer -> DrawText("Wave: " + std::to_string(waveIndices[i]), glm::vec2(25 + border / 2, 120 + i * (120 + border)), 16.0f, true);
+        game -> renderer -> DrawText("Window size: " + std::to_string(static_cast<int>(game -> getSize().x)) + "x" + std::to_string(static_cast<int>(game -> getSize().y)), glm::vec2(25 + border / 2, 140 + i * (120 + border)), 16.0f, true);
 
         playButtons[i] -> render();
         replayButtons[i] -> render();

@@ -21,4 +21,4 @@ inline std::string intToRoman(int n) {
     return out;
 }
 
-#endif //NUMBER_H
+#endif
