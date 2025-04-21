@@ -27,6 +27,7 @@ Settings::Settings() : Scene("SETTINGS") {
         game -> setVolume(volume);
 
         std::string size = sizeDropdown -> getSelectedOption();
+        game -> setFullscreen(false);
         game -> setSize(size);
 
         game -> scenes -> goBack();

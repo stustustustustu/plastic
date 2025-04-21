@@ -120,20 +120,14 @@ void InGame::update() {
 
     turretShopToggle.update();
 
-    if (game -> getCurrentWorld()) {
-        canForceNextWave = game -> getCurrentWorld() -> wave -> isActive() &&
-                           game -> getCurrentWorld() -> wave -> getCurrentEnemies() &&
-                           game -> getCurrentWorld() -> wave -> getCurrentEnemies() -> size() > 0;
-    }
-
     hoveredEnemy = nullptr;
     if (game -> getCurrentWorld() && game -> getCurrentWorld() -> wave -> getCurrentEnemies()) {
         auto mousePos = game -> camera -> screenToWorld(game -> input -> getMousePosition());
         for (const auto& enemy : *game -> getCurrentWorld() -> wave -> getCurrentEnemies()) {
-            if (Collision::isPointInRectangle(mousePos, enemy.getPosition() + enemy.getSizeScale() * 8, glm::vec2(enemy.getSizeScale() * 16))) {
+            if (Collision::isPointInRectangle(mousePos, enemy.getHitboxCenter(), enemy.getHitboxSize() / 2.0f)) {
                 hoveredEnemy = &enemy;
             }
-            if (Collision::lineRectangleIntersection(game -> getCurrentWorld() -> player -> getPosition() + glm::vec2(16), mousePos, enemy.getPosition() + enemy.getSizeScale() * 8, glm::vec2(enemy.getSizeScale() * 16)) &&
+            if (Collision::lineRectangleIntersection(game -> getCurrentWorld() -> player -> getPosition() + glm::vec2(16), mousePos, enemy.getHitboxCenter(), enemy.getHitboxSize() / 2.0f) &&
                 glfwGetMouseButton(game  ->  window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS) {
                 hoveredEnemy = &enemy;
             }

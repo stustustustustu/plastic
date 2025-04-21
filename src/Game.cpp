@@ -113,6 +113,30 @@ void Game::setVolume(float volume) {
     this -> volume = volume;
 }
 
+bool Game::getFullscreen() const {
+    return this -> fullscreen;
+}
+
+void Game::setFullscreen(bool fullscreen) {
+    if (this -> fullscreen == fullscreen) return;
+
+    this -> fullscreen = fullscreen;
+
+    GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+    const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+
+    if (fullscreen) {
+        glfwGetWindowPos(window, &windowedPos.x, &windowedPos.y);
+        glfwGetWindowSize(window, &windowedSize.x, &windowedSize.y);
+
+        glfwSetWindowMonitor(window, monitor, 0, 0, mode -> width, mode -> height, mode -> refreshRate);
+    } else {
+        glfwSetWindowMonitor(window, NULL, windowedPos.x, windowedPos.y, windowedSize.x, windowedSize.y, 0);
+    }
+
+    setSize(windowedSize);
+}
+
 bool Game::init() {
     srand(time(NULL));
 

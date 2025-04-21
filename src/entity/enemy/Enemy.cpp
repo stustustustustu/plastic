@@ -102,7 +102,7 @@ std::vector<Enemy> Enemy::generateEnemies(int index, int totalWeight) {
 }
 
 std::map<EnemyType, std::tuple<float, float, float, float>> Enemy::getEnemyData() {
-    return {
+    static const std::map<EnemyType, std::tuple<float, float, float, float>> data = {
         {EnemyType::ABANDONED_SHIP, {100, 200, 50, 0.4f}},      // Slow but tanky
         {EnemyType::SHIPPING_CONTAINER, {75, 150, 40, 0.5f}},   // Slightly faster, less health
         {EnemyType::OIL_BARREL, {50, 100, 30, 0.6f}},           // Balanced health and speed
@@ -117,6 +117,8 @@ std::map<EnemyType, std::tuple<float, float, float, float>> Enemy::getEnemyData(
         {EnemyType::TIRE, {1, 5, 0.2f, 1.5f}},                  // Fastest, almost no health
         {EnemyType::PLASTIC_BOTTLE, {0.5f, 3, 0.1f, 1.6f}}      // Fastest, almost no health
     };
+
+    return data;
 }
 
 EnemyType Enemy::getType() const {
@@ -185,11 +187,7 @@ void Enemy::moveTowards(const glm::vec2& targetPos) {
 }
 
 void Enemy::drawEntity() const {
-    auto scale = getSizeScale();
-    glm::vec2 scaledSize(32 * scale, 32 * scale);
-    glm::vec2 offset((32 - scaledSize.x) / 2, (32 - scaledSize.y) / 2);
-
-    game -> renderer -> DrawRect(getPosition() + offset, scaledSize, 0, HEXtoRGB(0xAC3232));
+    game -> renderer -> DrawRect(getPosition(), getHitboxSize(), 0, HEXtoRGB(0xAC3232));
 }
 
 float Enemy::calculateDistance(const glm::vec2& pos1, const glm::vec2& pos2) {

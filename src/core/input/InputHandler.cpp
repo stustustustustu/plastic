@@ -17,6 +17,7 @@ void InputHandler::InitBindings() {
 
     bindKeyCombo( {GLFW_MOUSE_BUTTON_1}, "SHOOT");
     bindKeyCombo( {GLFW_KEY_F1}, "KILL");
+    bindKeyCombo( {GLFW_KEY_F11}, "FULLSCREEN", true);
 
     // turret
     bindKeyCombo( {GLFW_MOUSE_BUTTON_2}, "PLACE_TURRET", true);
@@ -26,8 +27,6 @@ void InputHandler::InitBindings() {
     bindKeyCombo( {GLFW_MOUSE_BUTTON_3}, "CAMERA_PAN");
     bindKeyCombo( {GLFW_KEY_UP}, "CAMERA_ZOOM_IN");
     bindKeyCombo( {GLFW_KEY_DOWN}, "CAMERA_ZOOM_OUT");
-
-    //bindKeyCombo( {GLFW_KEY_ESCAPE}, "PAUSE");
 }
 
 void InputHandler::RegisterActions() {
@@ -45,6 +44,10 @@ void InputHandler::RegisterActions() {
         if (game -> getCurrentWorld() && game -> getCurrentWorld() -> player) {
             game -> getCurrentWorld() -> player -> setHealth(0);
         }
+    });
+
+    getActionManager().registerAction("FULLSCREEN", []() {
+        game -> setFullscreen(!game -> getFullscreen());
     });
 
     getActionManager().registerAction("PLACE_TURRET", []() {

@@ -161,10 +161,7 @@ void Player::shoot(const glm::vec2& cursorPos) {
 
     if (game -> getCurrentWorld()) {
         for (auto& enemy : *game -> getCurrentWorld() -> enemies) {
-            glm::vec2 enemyCenter = enemy.getPosition() + glm::vec2(16.0f, 16.0f);
-            glm::vec2 enemyHalfDimensions = {16.0f, 16.0f};
-
-            if (Collision::lineRectangleIntersection(laserStart, laserEnd, enemyCenter, enemyHalfDimensions)) {
+            if (Collision::lineRectangleIntersection(game -> getCurrentWorld() -> player -> getPosition() + glm::vec2(16), laserEnd, enemy.getHitboxCenter(), enemy.getHitboxSize() / 2.0f)) {
                 enemy.hit(getDamage() * 0.5f, false);
             }
         }
@@ -229,12 +226,4 @@ bool Player::canMove(glm::vec2& delta) {
     if (!yValid) delta.y = 0;
 
     return xValid || yValid;
-}
-
-bool Player::isMouseOver(double x, double y) {
-    double mouseX, mouseY;
-
-    glfwGetCursorPos(game -> window, &mouseX, &mouseY);
-
-    return mouseX >= x && mouseX <= x + 32 && mouseY >= y && mouseY <= y + 32;
 }

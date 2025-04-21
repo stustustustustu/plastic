@@ -340,6 +340,7 @@ void World::update() {
             replay -> addEvent(event);
 
             enemies -> erase(enemies -> begin() + i);
+            continue;
         }
 
         if ((*enemies)[i].getHealth() <= 0) {
@@ -360,6 +361,7 @@ void World::update() {
             replay -> addEvent(event);
 
             enemies -> erase(enemies -> begin() + i);
+            continue;
         } else {
             ++i;
         }

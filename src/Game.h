@@ -36,6 +36,12 @@ class Game {
         GameState state;
         float width, height; // window dimensions
         float volume = 0.5f;
+        bool fullscreen = false;
+
+        glm::ivec2 windowedPos;
+        glm::ivec2 windowedSize;
+        glm::ivec2 gameResolution = glm::ivec2(1280, 960);
+
 
     public:
         // rendering
@@ -73,6 +79,9 @@ class Game {
 
         float getVolume() const;
         void setVolume(float volume);
+
+        bool getFullscreen() const;
+        void setFullscreen(bool fullscreen);
 
         bool init();
         void update();

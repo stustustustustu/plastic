@@ -23,8 +23,6 @@ class Player : public Entity {
         void drawLaser();
 
         bool canMove(glm::vec2 &delta);
-
-        bool isMouseOver(double mouseX, double mouseY);
 };
 
 #endif //PLAYER_H
