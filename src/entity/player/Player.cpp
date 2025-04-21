@@ -106,7 +106,7 @@ void Player::Movement() {
 
     // Shooting
     if (game -> input -> getActionManager().getActionState("SHOOT")) {
-        glm::vec2 cursorWorldPos = game -> camera -> screenToWorld(InputHandler::getMousePosition());
+        glm::vec2 cursorWorldPos = game -> camera -> screenToWorld(game->input->getMousePosition());
 
         shoot(cursorWorldPos);
 

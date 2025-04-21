@@ -31,6 +31,9 @@ class Enemy : public Entity {
         static std::map<EnemyType, std::tuple<float, float, float, float>> getEnemyData();
         EnemyType getType() const;
 
+        std::string getTypeString() const;
+        std::string getInfoString() const;
+
         static std::vector<Enemy> generateEnemies(int index, int totalWeight);
 
         void setSpawn(const glm::vec2& position, std::chrono::milliseconds time) { spawn = {position, time}; }
@@ -38,6 +41,9 @@ class Enemy : public Entity {
 
     private:
         static float calculateDistance(const glm::vec2& pos1, const glm::vec2& pos2);
+
+        static std::map<EnemyType, std::string> getEnemyTypeStrings();
+
 
 };
 

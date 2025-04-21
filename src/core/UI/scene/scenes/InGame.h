@@ -20,6 +20,8 @@ class InGame : public Scene {
         bool isTurretShopOpen = false;
         bool isAdvancedView = false;
 
+        const Enemy *hoveredEnemy = NULL;
+
     private:
         Button portraitToggle;
         Button playerShopToggle;
@@ -47,6 +49,8 @@ class InGame : public Scene {
         void renderWaveInfo();
 
         void renderScore();
+
+        void renderEnemyPopups();
 
         void renderPopup(const std::string& text, const glm::vec2& position, const glm::vec3 &color);
         void renderConnection(const glm::vec2& from, const glm::vec2& to, const glm::vec3 &color);

@@ -60,6 +60,10 @@ void InGame::render() {
         renderPlayerShop();
     }
 
+    if (hoveredEnemy) {
+        renderEnemyPopups();
+    }
+
     renderTurretShop();
     renderTurretUpgrades();
 }
@@ -115,6 +119,16 @@ void InGame::update() {
     }
 
     turretShopToggle.update();
+
+    hoveredEnemy = nullptr;
+    if (game -> getCurrentWorld() && game -> getCurrentWorld() -> wave -> getCurrentEnemies()) {
+        auto mousePos = game  ->  camera  ->  screenToWorld(game -> input -> getMousePosition());
+        for (const auto& enemy : *game -> getCurrentWorld() -> wave -> getCurrentEnemies()) {
+            if (Collision::isPointInRectangle(mousePos, enemy.getPosition() + glm::vec2(16), glm::vec2(16))) {
+                hoveredEnemy = &enemy;
+            }
+        }
+    }
 }
 
 void InGame::renderPlayerStats() {
@@ -322,6 +336,35 @@ void InGame::renderScore() {
     game -> renderer -> DrawRect(glm::vec2(border / 2, game -> getSize().y - 32.0f), glm::vec2(game -> text -> GetWidth("Score: " + std::to_string(game -> getCurrentWorld() -> getScore()), 16.0f) + 8, 26), 0, HEXtoRGB(0x2F2F2F));
 
     game -> renderer -> DrawText("Score: " + std::to_string(game -> getCurrentWorld() -> getScore()), glm::vec2(border, game -> getSize().y - 12.0f), 16.0f, true);
+}
+
+void InGame::renderEnemyPopups() {
+    std::string info = hoveredEnemy -> getInfoString();
+    glm::vec2 popupPos = hoveredEnemy -> getPosition() + glm::vec2(32 + 16, -16);
+
+    int lineCount = std::count(info.begin(), info.end(), '\n') + 1;
+    int textHeight = lineCount * 24;
+    int maxLineWidth = 0;
+
+    std::istringstream iss(info);
+    std::string line;
+    while (std::getline(iss, line)) {
+        int lineWidth = game -> text -> GetWidth(line, 24.0f);
+        if (lineWidth > maxLineWidth) maxLineWidth = lineWidth;
+    }
+
+    game -> renderer -> SetProjection(game -> camera -> getCameraProjection());
+    game -> renderer -> DrawRect(popupPos + glm::vec2(2), glm::vec2(maxLineWidth + 20, textHeight + 28), 0, HEXtoRGB(0x000000)); // shadow
+    game -> renderer -> DrawRect(popupPos, glm::vec2(maxLineWidth + 20, textHeight + 28), 0, HEXtoRGB(0x2F2F2F)); // background
+
+    iss.clear();
+    iss.str(info);
+    int lineIndex = 1;
+    while (std::getline(iss, line)) {
+        game -> renderer -> DrawText(line, popupPos + glm::vec2(10, 10 + lineIndex * 24), 24.0f, true, HEXtoRGB(0xFFFFFF));
+        lineIndex++;
+    }
+    game -> renderer -> SetProjection(game -> camera -> getStaticProjection());
 }
 
 void InGame::renderPopup(const std::string &text, const glm::vec2 &position, const glm::vec3 &color) {

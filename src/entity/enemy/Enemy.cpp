@@ -123,6 +123,39 @@ EnemyType Enemy::getType() const {
     return this -> type;
 }
 
+std::map<EnemyType, std::string> Enemy::getEnemyTypeStrings() {
+    return {
+            {EnemyType::ABANDONED_SHIP, "Abandoned Ship"},
+            {EnemyType::SHIPPING_CONTAINER, "Shipping Container"},
+            {EnemyType::OIL_BARREL, "Oil Barrel"},
+            {EnemyType::BUOY_SYSTEM, "Buoy System"},
+            {EnemyType::PLASTIC_CANOE, "Plastic Canoe"},
+            {EnemyType::INDUSTRIAL_PACKAGING, "Industrial Packaging"},
+            {EnemyType::FISHERMANS_BARREL, "Fisherman's Barrel"},
+            {EnemyType::FLOATING_PLATFORM, "Floating Platform"},
+            {EnemyType::WATER_TANK, "Water Tank"},
+            {EnemyType::FISHING_GEAR, "Fishing Gear"},
+            {EnemyType::PLASTIC_BAG, "Plastic Bag"},
+            {EnemyType::TIRE, "Tire"},
+            {EnemyType::PLASTIC_BOTTLE, "Plastic Bottle"}
+    };
+}
+
+std::string Enemy::getTypeString() const {
+    auto typeStrings = getEnemyTypeStrings();
+    return typeStrings.at(type);
+}
+
+std::string Enemy::getInfoString() const {
+    std::ostringstream oss;
+    oss << getTypeString() << "\n"
+        << "Health: " << std::fixed << std::setprecision(1) << getHealth() << "\n"
+        << "Damage: " << getDamage() << "\n"
+        << "Speed: " << getSpeed() << "\n"
+        << "Coins: " << getCoins();
+    return oss.str();
+}
+
 void Enemy::moveTowards(const glm::vec2& targetPos) {
     auto currentPos = this -> getPosition();
     glm::vec2 direction = targetPos - currentPos;
