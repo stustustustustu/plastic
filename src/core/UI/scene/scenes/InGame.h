@@ -19,6 +19,7 @@ class InGame : public Scene {
         bool isPlayerShopOpen = false;
         bool isTurretShopOpen = false;
         bool isAdvancedView = false;
+        bool canForceNextWave = false;
 
         const Enemy *hoveredEnemy = NULL;
 
