@@ -392,7 +392,7 @@ void World::render() {
     if (wave) {
         for (const auto& enemy : *enemies) {
             if (enemy.getHealth() > 0) {
-                enemy.drawEntity(game -> texture);
+                enemy.drawEntity();
             }
         }
     }

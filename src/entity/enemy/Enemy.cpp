@@ -184,6 +184,14 @@ void Enemy::moveTowards(const glm::vec2& targetPos) {
     updateBounds();
 }
 
+void Enemy::drawEntity() const {
+    auto scale = getSizeScale();
+    glm::vec2 scaledSize(32 * scale, 32 * scale);
+    glm::vec2 offset((32 - scaledSize.x) / 2, (32 - scaledSize.y) / 2);
+
+    game -> renderer -> DrawRect(getPosition() + offset, scaledSize, 0, HEXtoRGB(0xAC3232));
+}
+
 float Enemy::calculateDistance(const glm::vec2& pos1, const glm::vec2& pos2) {
     return glm::length(pos1 - pos2);
 }

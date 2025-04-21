@@ -34,6 +34,13 @@ class Enemy : public Entity {
         std::string getTypeString() const;
         std::string getInfoString() const;
 
+        float getSizeScale() const {
+            float healthRatio = std::get<1>(getEnemyData().at(type)) / getMaxHealth();
+            return 0.5f + healthRatio * 0.75f;
+        }
+
+        void drawEntity() const;
+
         static std::vector<Enemy> generateEnemies(int index, int totalWeight);
 
         void setSpawn(const glm::vec2& position, std::chrono::milliseconds time) { spawn = {position, time}; }

@@ -49,7 +49,7 @@ WorldCreation::WorldCreation() : Scene("WORLD_CREATION"), islandPreview(0) {
             }
         }
 
-        currentSeed = seed % (INT_MAX + 1);
+        currentSeed = seed % (INT_MAX - 1);
 
         updateIslandPreview();
     });

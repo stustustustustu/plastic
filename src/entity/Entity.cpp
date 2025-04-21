@@ -38,11 +38,6 @@ Entity::Entity(
     const std::vector<glm::vec2> bounds
 ) : position(position), speed(speed), damage(damage), health(health), maxHealth(maxHealth), shield(shield), maxShield(maxShield), level(level), coins(coins), targets(targets), maxTargets(maxTargets), bounds(bounds) {}
 
-/**
- * @brief Draws the Entity on screen and the health bar of the said Entity.
- *
- * @param hex The color of the entity to draw.
- */
 void Entity::drawEntity(Texture *texture) const {
     game -> renderer -> DrawSpriteSheet(*texture, getPosition(), 0, 32, 32);
 }
